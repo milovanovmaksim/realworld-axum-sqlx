@@ -1,3 +1,4 @@
+use bcrypt::BcryptError;
 use serde_json::{json, Value as JsonValue};
 use sqlx::error::ErrorKind;
 use sqlx::Error as DbError;
@@ -41,5 +42,11 @@ impl From<DbError> for AppError {
             }
             _ => AppError::InternalServerError,
         }
+    }
+}
+
+impl From<BcryptError> for AppError {
+    fn from(_err: BcryptError) -> Self {
+        AppError::InternalServerError
     }
 }
