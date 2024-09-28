@@ -1,11 +1,12 @@
+use crate::app::domain::error::AppError;
+use async_trait::async_trait;
 use sqlx::types::time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::app::domain::error::AppError;
-
 pub type Token = String;
 
-pub trait UserUseCase {
+#[async_trait]
+pub trait UserUseCase: Send + Sync + 'static {
     async fn signup(
         &self,
         username: &str,
