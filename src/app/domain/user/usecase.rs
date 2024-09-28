@@ -10,10 +10,10 @@ pub trait UserUseCase: Send + Sync + 'static {
         username: &str,
         email: &str,
         naive_password: &str,
-    ) -> Result<SignupUserResult, AppError>;
+    ) -> Result<SignUpResult, AppError>;
 }
 
-pub struct SignupUserResult {
+pub struct SignUpResult {
     pub id: Uuid,
     pub email: String,
     pub username: String,
