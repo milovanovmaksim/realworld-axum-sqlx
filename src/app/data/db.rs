@@ -3,8 +3,7 @@ use std::env;
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Error, Pool, Postgres};
-
-use super::constants::env_key;
+use crate::app::constants::env_key;
 
 pub type DbPool = Pool<Postgres>;
 

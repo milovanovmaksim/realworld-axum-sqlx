@@ -1,18 +1,19 @@
 use sqlx::query_file_as;
 
 use crate::app::{
-    core::{
+    data::{db::DbPool, utils::hasher},
+    domain::{
         error::AppError,
-        user::{entity::User, repository::UsersRepository},
+        user::{entity::User, repository::UserRepository},
     },
-    infrastructure::{db::DbPool, utils::hasher},
 };
 
+#[derive(Clone)]
 pub struct UsersRepositoryImpl {
     pool: DbPool,
 }
 
-impl UsersRepository for UsersRepositoryImpl {
+impl UserRepository for UsersRepositoryImpl {
     async fn signup(
         &self,
         email: &str,
@@ -20,14 +21,15 @@ impl UsersRepository for UsersRepositoryImpl {
         naive_password: &str,
     ) -> Result<User, AppError> {
         let hashed_password = hasher::hash_password(naive_password)?;
-        query_file_as!(
+        let user = query_file_as!(
             User,
-            "./src/app/infrastructure/queries/users/insert.sql",
+            "./src/app/data/queries/users/insert.sql",
             username,
             email,
             hashed_password
         )
         .fetch_one(&self.pool)
-        .await
+        .await?;
+        Ok(user)
     }
 }

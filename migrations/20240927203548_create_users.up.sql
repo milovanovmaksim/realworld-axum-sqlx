@@ -7,8 +7,8 @@ create table
         username varchar not null,
         email varchar not null,
         password varchar not null,
-        bio varchar default '',
-        image varchar default '',
+        bio varchar,
+        image varchar,
         created_at timestamptz not null default current_timestamp,
         updated_at timestamptz not null default current_timestamp
     );

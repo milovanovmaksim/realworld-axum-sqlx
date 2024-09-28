@@ -30,7 +30,7 @@ jsonwebtoken = { version = "8.3" }
 bcrypt = { version = "0.14.0" }
 
 # The async SQL toolkit for Rust
-sqlx = { version = "^0.8.2", features = ["runtime-tokio-rustls", "postgres"] }
+sqlx = { version = "^0.8.2", features = ["runtime-tokio-rustls", "postgres", "time", "uuid"] }
 
 # Tokio is an event-driven, non-blocking I/O platform for writing asynchronous applications. 
 tokio = { version = "1", features = ["full"] }

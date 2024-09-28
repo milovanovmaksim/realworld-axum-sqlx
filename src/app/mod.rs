@@ -1,2 +1,3 @@
-pub mod core;
-pub mod infrastructure;
+pub mod domain;
+pub mod data;
+pub mod constants;

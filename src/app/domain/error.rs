@@ -27,7 +27,7 @@ pub enum AppError {
     InternalServerError,
 }
 
-impl From<DbError> for AppError {
+impl From<sqlx::Error> for AppError {
     fn from(err: DbError) -> Self {
         match err {
             DbError::Database(db_err) => match db_err.kind() {

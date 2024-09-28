@@ -1,7 +1,7 @@
 use super::entity::User;
-use crate::app::core::error::AppError;
+use crate::app::domain::error::AppError;
 
-pub trait UsersRepository: Send + Sync + 'static {
+pub trait UserRepository: Send + Sync {
     async fn signup(
         &self,
         email: &str,
