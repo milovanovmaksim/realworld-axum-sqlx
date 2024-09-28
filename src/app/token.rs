@@ -1,12 +1,11 @@
 use std::env;
-
 use jsonwebtoken::{errors::Error, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::constants::env_key;
+use crate::app::constants::env_key;
 
-static ONE_DAY: i64 = 60 * 60 * 24; // in seconds
+
 
 fn get_secret_key() -> String {
     env::var(env_key::SECRET_KEY).expect("SECRET_KEY must be set")
@@ -45,10 +44,10 @@ pub struct Claims {
 }
 
 impl Claims {
-    pub fn new(user_id: Uuid, now: i64) -> Self {
+    pub fn new(user_id: Uuid, now: i64, offset: i64) -> Self {
         Claims {
             exp: now,
-            iat: now + ONE_DAY,
+            iat: now + offset,
             user_id,
         }
     }
