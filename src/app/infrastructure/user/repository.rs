@@ -1,9 +1,9 @@
 use crate::app::{
-    data::{db::DbPool, utils::hasher},
     domain::{
         error::AppError,
         user::{entity::User, repository::UserRepository},
     },
+    infrastructure::{pgsql::db::DbPool, utils::hasher},
 };
 use async_trait::async_trait;
 use sqlx::query_file_as;
@@ -24,7 +24,7 @@ impl UserRepository for UsersRepositoryImpl {
         let hashed_password = hasher::hash_password(naive_password)?;
         let user = query_file_as!(
             User,
-            "./src/app/data/queries/users/insert.sql",
+            "./src/app/infrastructure/queries/users/insert.sql",
             username,
             email,
             hashed_password
