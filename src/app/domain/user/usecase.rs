@@ -3,8 +3,6 @@ use async_trait::async_trait;
 use sqlx::types::time::OffsetDateTime;
 use uuid::Uuid;
 
-pub type Token = String;
-
 #[async_trait]
 pub trait UserUseCase: Send + Sync + 'static {
     async fn signup(
@@ -24,5 +22,5 @@ pub struct SignupUserResult {
     pub image: Option<String>,
     pub created_at: OffsetDateTime,
     pub updated_at: OffsetDateTime,
-    pub token: Token,
+    pub token: String,
 }
