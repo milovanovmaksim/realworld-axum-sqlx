@@ -36,8 +36,9 @@ impl UserUseCase for UserUseCaseImpl {
             .user_repository
             .signup(email, username, naive_password)
             .await?;
+        let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-        let token = Token::from_claims(Claims::new(user.id, now))?.token();
+        let token = Token::from_claims(Claims::new(user.id, now, one_day))?.token();
         Ok(SignupUserResult {
             id: user.id,
             username: user.username,
