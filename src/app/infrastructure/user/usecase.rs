@@ -2,15 +2,13 @@ use async_trait::async_trait;
 use chrono::Utc;
 use std::sync::Arc;
 
-use crate::app::{
-    domain::{
-        error::AppError,
-        user::{
-            repository::UserRepository,
-            usecase::{SignupUserResult, UserUseCase},
-        },
+use super::token::{Claims, JwtAuthToken};
+use crate::app::domain::{
+    error::AppError,
+    user::{
+        repository::UserRepository,
+        usecase::{SignUpResult, UserUseCase},
     },
-    token::{Claims, Token},
 };
 
 #[derive(Clone)]
@@ -31,15 +29,15 @@ impl UserUseCase for UserUseCaseImpl {
         username: &str,
         email: &str,
         naive_password: &str,
-    ) -> Result<SignupUserResult, AppError> {
+    ) -> Result<SignUpResult, AppError> {
         let user = self
             .user_repository
             .signup(email, username, naive_password)
             .await?;
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-        let token = Token::from_claims(Claims::new(user.id, now, one_day))?.token();
-        Ok(SignupUserResult {
+        let token = JwtAuthToken::from_claims(Claims::new(user.id, now, one_day))?.token();
+        Ok(SignUpResult {
             id: user.id,
             username: user.username,
             email: user.email,

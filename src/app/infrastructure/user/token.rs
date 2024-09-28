@@ -1,21 +1,19 @@
-use std::env;
 use jsonwebtoken::{errors::Error, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
+use std::env;
 use uuid::Uuid;
 
 use crate::app::constants::env_key;
-
-
 
 fn get_secret_key() -> String {
     env::var(env_key::SECRET_KEY).expect("SECRET_KEY must be set")
 }
 
-pub struct Token {
+pub struct JwtAuthToken {
     token: String,
 }
 
-impl Token {
+impl JwtAuthToken {
     fn new(token: String) -> Self {
         Self { token }
     }
@@ -28,7 +26,7 @@ impl Token {
             &claims,
             &EncodingKey::from_secret(secret_key),
         )?;
-        Ok(Token::new(token))
+        Ok(Self::new(token))
     }
 
     pub fn token(&self) -> String {
