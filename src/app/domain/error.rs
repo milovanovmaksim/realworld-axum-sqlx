@@ -1,4 +1,5 @@
 use bcrypt::BcryptError;
+use jsonwebtoken::errors::{Error as JwtError, ErrorKind as JwtErrorKind};
 use serde_json::{json, Value as JsonValue};
 use sqlx::error::ErrorKind;
 use sqlx::Error as DbError;
@@ -48,5 +49,21 @@ impl From<sqlx::Error> for AppError {
 impl From<BcryptError> for AppError {
     fn from(_err: BcryptError) -> Self {
         AppError::InternalServerError
+    }
+}
+
+impl From<JwtError> for AppError {
+    fn from(err: JwtError) -> Self {
+        match err.kind() {
+            JwtErrorKind::InvalidToken => AppError::Unauthorized(json!({
+                "error": "Token is invalid"
+            })),
+            JwtErrorKind::InvalidIssuer => AppError::Unauthorized(json!({
+                "error": "Issuer is invalid",
+            })),
+            _ => AppError::Unauthorized(json!({
+                "error": "An issue was found with the token provided",
+            })),
+        }
     }
 }

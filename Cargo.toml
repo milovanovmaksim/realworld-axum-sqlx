@@ -35,6 +35,9 @@ sqlx = { version = "^0.8.2", features = ["runtime-tokio-rustls", "postgres", "ti
 # Tokio is an event-driven, non-blocking I/O platform for writing asynchronous applications. 
 tokio = { version = "1", features = ["full"] }
 
+# Type erasure for async trait methods
+async-trait = "0.1.83"
+
 # A library to generate and parse UUIDs.
 # Compatible version is here: https://github.com/diesel-rs/diesel/blob/master/diesel/Cargo.toml#L26
 # uuid = { version = "0.8", features = ["serde", "v4"] }

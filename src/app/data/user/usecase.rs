@@ -1,11 +1,16 @@
+use async_trait::async_trait;
+use chrono::Utc;
 use std::sync::Arc;
 
-use crate::app::domain::{
-    error::AppError,
-    user::{
-        repository::UserRepository,
-        usecase::{SignupUserResult, UserUseCase},
+use crate::app::{
+    domain::{
+        error::AppError,
+        user::{
+            repository::UserRepository,
+            usecase::{SignupUserResult, UserUseCase},
+        },
     },
+    token::{Claims, Token},
 };
 
 #[derive(Clone)]
@@ -19,6 +24,7 @@ impl UserUseCaseImpl {
     }
 }
 
+#[async_trait]
 impl UserUseCase for UserUseCaseImpl {
     async fn signup(
         &self,
@@ -30,7 +36,8 @@ impl UserUseCase for UserUseCaseImpl {
             .user_repository
             .signup(email, username, naive_password)
             .await?;
-        let token = user.generate_token();
+        let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
+        let token = Token::from_claims(Claims::new(user.id, now))?.token();
         Ok(SignupUserResult {
             id: user.id,
             username: user.username,
@@ -40,7 +47,7 @@ impl UserUseCase for UserUseCaseImpl {
             image: user.image,
             created_at: user.created_at,
             updated_at: user.updated_at,
-            token: token,
+            token,
         })
     }
 }

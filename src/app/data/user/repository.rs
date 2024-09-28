@@ -1,5 +1,3 @@
-use sqlx::query_file_as;
-
 use crate::app::{
     data::{db::DbPool, utils::hasher},
     domain::{
@@ -7,12 +5,15 @@ use crate::app::{
         user::{entity::User, repository::UserRepository},
     },
 };
+use async_trait::async_trait;
+use sqlx::query_file_as;
 
 #[derive(Clone)]
 pub struct UsersRepositoryImpl {
     pool: DbPool,
 }
 
+#[async_trait]
 impl UserRepository for UsersRepositoryImpl {
     async fn signup(
         &self,
