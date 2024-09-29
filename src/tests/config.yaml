@@ -7,6 +7,9 @@ database:
   port: 5432
   username: "postgres"
   password: "postgres"
-  database_name: "realworld"
+  database_name: "realworld_test"
+  max_connections: 5
+  require_ssl: false
 jwt_token:
-  secret_key: 465465456321454
+  secret_key: 465465456321454 
+

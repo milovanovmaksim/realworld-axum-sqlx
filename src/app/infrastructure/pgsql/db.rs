@@ -50,7 +50,6 @@ impl PostgreSQL {
             .execute(format!(r#"CREATE DATABASE "{}";"#, database_name).as_str())
             .await
             .expect("PostgreSQL::migration || error: failed to create database.");
-
         sqlx::migrate!("./migrations")
             .run(&self.pool)
             .await

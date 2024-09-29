@@ -8,5 +8,7 @@ database:
   username: "postgres"
   password: "postgres"
   database_name: "realworld"
+  max_connections: 5
+  require_ssl: false
 jwt_token:
   secret_key: 465465456321454 
