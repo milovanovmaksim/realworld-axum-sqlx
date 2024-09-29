@@ -2,34 +2,29 @@ use async_trait::async_trait;
 use chrono::Utc;
 use std::sync::Arc;
 
-use crate::app::{
-    domain::{
-        error::AppError,
-        user::{
-            repository::UserRepository,
-            usecase::{SignUpResult, UserUseCase},
-        },
-    },
-    infrastructure::jwt_token::{
-        jwt_token::{Claims, JwtAuthToken},
-        settings::JwtTokenSettings,
+use crate::app::domain::{
+    error::AppError,
+    jwt_token::jwt_token::JwtAuthToken,
+    user::{
+        repository::UserRepository,
+        usecase::{SignUpResult, UserUseCase},
     },
 };
 
 #[derive(Clone)]
 pub struct UserUseCaseImpl {
-    pub jwt_token_settings: JwtTokenSettings,
+    pub jwt_auth_token: Arc<dyn JwtAuthToken>,
     pub user_repository: Arc<dyn UserRepository>,
 }
 
 impl UserUseCaseImpl {
     pub fn new(
         user_repository: Arc<dyn UserRepository>,
-        jwt_token_settings: JwtTokenSettings,
+        jwt_auth_token: Arc<dyn JwtAuthToken>,
     ) -> Self {
         Self {
-            jwt_token_settings,
             user_repository,
+            jwt_auth_token,
         }
     }
 }
@@ -48,11 +43,7 @@ impl UserUseCase for UserUseCaseImpl {
             .await?;
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-        let token = JwtAuthToken::generate_token(
-            Claims::new(user.id, now, one_day),
-            &self.jwt_token_settings,
-        )?
-        .token();
+        let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
         Ok(SignUpResult {
             id: user.id,
             username: user.username,

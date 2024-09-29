@@ -2,7 +2,6 @@ use crate::app::constants::env_key;
 use dotenv::dotenv;
 use std::env;
 
-#[derive(Clone)]
 pub struct JwtTokenSettings {
     pub secret_key: String,
 }
