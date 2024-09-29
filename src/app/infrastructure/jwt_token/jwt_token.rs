@@ -1,36 +1,32 @@
+use super::settings::JwtTokenSettings;
 use jsonwebtoken::{errors::Error, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
-use std::env;
 use uuid::Uuid;
 
-use crate::app::constants::env_key;
-
-fn get_secret_key() -> String {
-    env::var(env_key::SECRET_KEY).expect("SECRET_KEY must be set")
-}
-
 pub struct JwtAuthToken {
-    token: String,
+    jwt_token: String,
 }
 
 impl JwtAuthToken {
-    fn new(token: String) -> Self {
-        Self { token }
+    pub fn new(jwt_token: String) -> Self {
+        Self { jwt_token }
     }
 
-    pub fn from_claims(claims: Claims) -> Result<Self, Error> {
-        let binding = get_secret_key();
-        let secret_key = binding.as_bytes();
-        let token = jsonwebtoken::encode(
+    pub fn generate_token(
+        claims: Claims,
+        jwt_token_settings: &JwtTokenSettings,
+    ) -> Result<Self, Error> {
+        let secret_key = jwt_token_settings.secret_key.as_bytes();
+        let jwt_token = jsonwebtoken::encode(
             &Header::default(),
             &claims,
             &EncodingKey::from_secret(secret_key),
         )?;
-        Ok(Self::new(token))
+        Ok(Self::new(jwt_token))
     }
 
     pub fn token(&self) -> String {
-        self.token.clone()
+        self.jwt_token.clone()
     }
 }
 
