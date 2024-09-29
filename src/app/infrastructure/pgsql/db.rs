@@ -1,12 +1,13 @@
 use sqlx::{
-    postgres::{PgConnectOptions, PgSslMode},
-    Executor, PgPool, Pool, Postgres,
+    postgres::{PgConnectOptions, PgPoolOptions, PgSslMode},
+    Executor, Pool, Postgres,
 };
 
 use super::settings::DatabaseSettings;
 
 pub type DbPool = Pool<Postgres>;
 
+#[derive(Clone)]
 pub struct PostgreSQL {
     pool: DbPool,
 }
@@ -28,9 +29,12 @@ impl PostgreSQL {
             .port(config.port)
             .database(&config.database_name)
             .ssl_mode(ssl_mode);
-        let pool = PgPool::connect_with(connection)
+        let pool = PgPoolOptions::new()
+            .max_connections(config.max_connections)
+            .connect_with(connection)
             .await
-            .expect("Failed to connect to Postgres");
+            .expect("PostgreSQL::configure_database || error: failed to connect to Postgres");
+
         PostgreSQL::new(pool)
     }
 
