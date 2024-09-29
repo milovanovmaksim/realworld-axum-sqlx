@@ -1,11 +1,12 @@
 application:
   port: 8080
   host: 0.0.0.0
+  frontend_origin: http://localhost:3000
 database:
   host: "localhost"
   port: 5432
   username: "postgres"
   password: "postgres"
-  database_name: "realworld_test"
+  database_name: "realworld"
 jwt_token:
   secret_key: 465465456321454
