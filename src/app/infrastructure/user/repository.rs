@@ -3,14 +3,13 @@ use crate::app::{
         error::AppError,
         user::{entity::User, repository::UserRepository},
     },
-    infrastructure::{pgsql::db::DbPool, utils::hasher},
+    infrastructure::{pgsql::db::PostgreSQL, utils::hasher},
 };
 use async_trait::async_trait;
 use sqlx::query_file_as;
 
-#[derive(Clone)]
 pub struct UsersRepositoryImpl {
-    pool: DbPool,
+    pg_sql: PostgreSQL,
 }
 
 #[async_trait]
@@ -29,7 +28,7 @@ impl UserRepository for UsersRepositoryImpl {
             email,
             hashed_password
         )
-        .fetch_one(&self.pool)
+        .fetch_one(&self.pg_sql.pool())
         .await?;
         Ok(user)
     }
