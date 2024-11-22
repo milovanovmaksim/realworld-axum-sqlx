@@ -5,7 +5,7 @@ create table
     if not exists users (
         id UUID primary key default uuid_generate_v4(),
         username varchar not null,
-        email varchar not null,
+        email varchar not null unique,
         password varchar not null,
         bio varchar,
         image varchar,

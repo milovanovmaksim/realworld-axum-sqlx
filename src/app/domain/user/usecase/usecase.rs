@@ -1,26 +1,16 @@
 use crate::app::domain::error::AppError;
 use async_trait::async_trait;
 use sqlx::types::time::OffsetDateTime;
+use tokio::signal::unix::{Signal, SignalKind};
 use uuid::Uuid;
+
+use super::{
+    requests::{SigninRequest, SignupRequest},
+    responses::{SigninResponse, SignupResponse},
+};
 
 #[async_trait]
 pub trait UserUseCase: Send + Sync + 'static {
-    async fn signup(
-        &self,
-        username: &str,
-        email: &str,
-        naive_password: &str,
-    ) -> Result<SignUpResult, AppError>;
-}
-
-pub struct SignUpResult {
-    pub id: Uuid,
-    pub email: String,
-    pub username: String,
-    pub password: String,
-    pub bio: Option<String>,
-    pub image: Option<String>,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
-    pub token: String,
+    async fn signup(&self, request: SignupRequest) -> Result<SignupResponse, AppError>;
+    async fn signin(&self, request: SigninRequest) -> Result<SigninResponse, AppError>;
 }

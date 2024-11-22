@@ -1,14 +1,22 @@
-use async_trait::async_trait;
-use chrono::Utc;
 use std::sync::Arc;
 
-use crate::app::domain::{
-    error::AppError,
-    jwt_token::jwt_token::JwtAuthToken,
-    user::{
-        repository::UserRepository,
-        usecase::{SignUpResult, UserUseCase},
+use async_trait::async_trait;
+use chrono::Utc;
+
+use crate::app::{
+    domain::{
+        error::AppError,
+        jwt_token::jwt_token::JwtAuthToken,
+        user::{
+            repository::{self, repository::UserRepository, requests},
+            usecase::{
+                requests::{SigninRequest, SignupRequest},
+                responses::{AuthUser, SigninResponse, SignupResponse},
+                usecase::UserUseCase,
+            },
+        },
     },
+    infrastructure::utils::hasher,
 };
 
 #[derive(Clone)]
@@ -31,30 +39,52 @@ impl UserUseCaseImpl {
 
 #[async_trait]
 impl UserUseCase for UserUseCaseImpl {
-    async fn signup(
-        &self,
-        username: &str,
-        email: &str,
-        naive_password: &str,
-    ) -> Result<SignUpResult, AppError> {
-        let hashed_password = hasher::hash_password(naive_password)?;
+    async fn signin(&self, request: SigninRequest) -> Result<SigninResponse, AppError> {
         let user = self
             .user_repository
-            .signup(email, username, hashed_password)
+            .signin(requests::SigninRequest {
+                email: request.email,
+            })
+            .await?;
+
+        hasher::verify(&request.naive_password, &user.password)?;
+
+        let one_day: i64 = 60 * 60 * 24;
+        let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
+        let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
+
+        Ok(SigninResponse {
+            user: AuthUser {
+                email: user.email,
+                username: user.username,
+                bio: user.bio,
+                image: user.image,
+                token,
+            },
+        })
+    }
+
+    async fn signup(&self, request: SignupRequest) -> Result<SignupResponse, AppError> {
+        let hashed_password = hasher::hash_password(&request.naive_password)?;
+        let user = self
+            .user_repository
+            .signup(repository::requests::SignupRequest {
+                username: request.username,
+                email: request.email,
+                hashed_password,
+            })
             .await?;
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
-        Ok(SignUpResult {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            password: user.password,
-            bio: user.bio,
-            image: user.image,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-            token,
+        Ok(SignupResponse {
+            user: AuthUser {
+                username: user.username,
+                email: user.email,
+                bio: user.bio,
+                image: user.image,
+                token,
+            },
         })
     }
 }

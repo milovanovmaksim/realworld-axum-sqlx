@@ -1,4 +1,7 @@
-pub struct SignupResponse {
+use sqlx::types::time::OffsetDateTime;
+use uuid::Uuid;
+
+pub struct User {
     pub id: Uuid,
     pub email: String,
     pub username: String,
@@ -6,12 +9,5 @@ pub struct SignupResponse {
     pub bio: Option<String>,
     pub image: Option<String>,
     pub created_at: OffsetDateTime,
-}
-
-pub struct SigninResponse {
-    pub id: Uuid,
-    pub email: String,
-    pub username: String,
-    pub bio: Option<String>,
-    pub image: Option<String>,
+    pub updated_at: OffsetDateTime,
 }
