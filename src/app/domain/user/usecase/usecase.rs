@@ -1,8 +1,5 @@
 use crate::app::domain::error::AppError;
 use async_trait::async_trait;
-use sqlx::types::time::OffsetDateTime;
-use tokio::signal::unix::{Signal, SignalKind};
-use uuid::Uuid;
 
 use super::{
     requests::{SigninRequest, SignupRequest},
