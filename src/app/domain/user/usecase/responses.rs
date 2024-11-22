@@ -1,10 +1,12 @@
 use crate::app::domain::user::repository::entities::User;
 
+type Token = String;
+
 pub struct SignupResponse {
     pub user: AuthUser,
 }
 
-impl From<(User, String)> for SignupResponse {
+impl From<(User, Token)> for SignupResponse {
     fn from((user, token): (User, String)) -> Self {
         SignupResponse {
             user: AuthUser {
@@ -22,7 +24,7 @@ pub struct SigninResponse {
     pub user: AuthUser,
 }
 
-impl From<(User, String)> for SigninResponse {
+impl From<(User, Token)> for SigninResponse {
     fn from((user, token): (User, String)) -> Self {
         SigninResponse {
             user: AuthUser {
