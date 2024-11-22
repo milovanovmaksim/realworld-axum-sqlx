@@ -37,9 +37,10 @@ impl UserUseCase for UserUseCaseImpl {
         email: &str,
         naive_password: &str,
     ) -> Result<SignUpResult, AppError> {
+        let hashed_password = hasher::hash_password(naive_password)?;
         let user = self
             .user_repository
-            .signup(email, username, naive_password)
+            .signup(email, username, hashed_password)
             .await?;
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second

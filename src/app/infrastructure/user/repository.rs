@@ -18,9 +18,8 @@ impl UserRepository for UsersRepositoryImpl {
         &self,
         email: &str,
         username: &str,
-        naive_password: &str,
+        hash_password: &str,
     ) -> Result<User, AppError> {
-        let hashed_password = hasher::hash_password(naive_password)?;
         let user = query_file_as!(
             User,
             "./src/app/infrastructure/queries/users/insert.sql",

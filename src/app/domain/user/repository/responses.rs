@@ -1,12 +1,4 @@
-use chrono::Utc;
-use jsonwebtoken::errors::Error;
-use sqlx::types::time::OffsetDateTime;
-use uuid::Uuid;
-
-
-
-#[derive(Debug)]
-pub struct User {
+pub struct SignupResponse {
     pub id: Uuid,
     pub email: String,
     pub username: String,
@@ -14,5 +6,12 @@ pub struct User {
     pub bio: Option<String>,
     pub image: Option<String>,
     pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+}
+
+pub struct SigninResponse {
+    pub id: Uuid,
+    pub email: String,
+    pub username: String,
+    pub bio: Option<String>,
+    pub image: Option<String>,
 }
