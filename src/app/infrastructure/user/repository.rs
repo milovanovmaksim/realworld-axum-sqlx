@@ -20,18 +20,7 @@ pub struct UsersRepositoryImpl {
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
     async fn signin(&self, request: SigninRequest) -> Result<User, AppError> {
-        let user = query_as!(
-            User,
-            r#"
-        select *
-        from users
-        where email = $1
-            "#,
-            request.email,
-        )
-        .fetch_one(&self.pg_sql.pool())
-        .await?;
-        Ok(user)
+        self.get_user_by_email(&request.email).await
     }
 
     async fn signup(&self, request: SignupRequest) -> Result<User, AppError> {
@@ -41,6 +30,23 @@ impl UserRepository for UsersRepositoryImpl {
             request.username,
             request.email,
             request.hashed_password
+        )
+        .fetch_one(&self.pg_sql.pool())
+        .await?;
+        Ok(user)
+    }
+}
+
+impl UsersRepositoryImpl {
+    async fn get_user_by_email(&self, email: &str) -> Result<User, AppError> {
+        let user = query_as!(
+            User,
+            r#"
+        select *
+        from users
+        where email = $1
+            "#,
+            email,
         )
         .fetch_one(&self.pg_sql.pool())
         .await?;
