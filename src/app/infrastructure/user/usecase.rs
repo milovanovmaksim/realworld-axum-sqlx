@@ -11,7 +11,7 @@ use crate::app::{
             repository::{self, repository::UserRepository, requests},
             usecase::{
                 requests::{SigninRequest, SignupRequest},
-                responses::{AuthUser, SigninResponse, SignupResponse},
+                responses::{SigninResponse, SignupResponse},
                 usecase::UserUseCase,
             },
         },
