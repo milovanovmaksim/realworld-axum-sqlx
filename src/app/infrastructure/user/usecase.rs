@@ -52,20 +52,12 @@ impl UserUseCase for UserUseCaseImpl {
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
-
-        Ok(SigninResponse {
-            user: AuthUser {
-                email: user.email,
-                username: user.username,
-                bio: user.bio,
-                image: user.image,
-                token,
-            },
-        })
+        Ok(SigninResponse::from((user, token)))
     }
 
     async fn signup(&self, request: SignupRequest) -> Result<SignupResponse, AppError> {
         let hashed_password = hasher::hash_password(&request.naive_password)?;
+
         let user = self
             .user_repository
             .signup(repository::requests::SignupRequest {
@@ -74,17 +66,11 @@ impl UserUseCase for UserUseCaseImpl {
                 hashed_password,
             })
             .await?;
+
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
-        Ok(SignupResponse {
-            user: AuthUser {
-                username: user.username,
-                email: user.email,
-                bio: user.bio,
-                image: user.image,
-                token,
-            },
-        })
+
+        Ok(SignupResponse::from((user, token)))
     }
 }
