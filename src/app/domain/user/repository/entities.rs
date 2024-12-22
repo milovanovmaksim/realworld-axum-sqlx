@@ -1,4 +1,4 @@
-use sqlx::types::time::OffsetDateTime;
+use chrono::NaiveDateTime;
 use uuid::Uuid;
 
 pub struct User {
@@ -8,6 +8,6 @@ pub struct User {
     pub password: String,
     pub bio: Option<String>,
     pub image: Option<String>,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
