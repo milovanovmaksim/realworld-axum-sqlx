@@ -8,19 +8,19 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum AppError {
     // 401
-    #[error("Unauthorized: {}", _0)]
+    #[error("Unauthorized: {0}")]
     Unauthorized(JsonValue),
 
     // 403
-    #[error("Forbidden: {}", _0)]
+    #[error("Forbidden: {0}")]
     Forbidden(JsonValue),
 
     // 404
-    #[error("Not Found: {}", _0)]
+    #[error("Not Found: {0}")]
     NotFound(JsonValue),
 
     // 422
-    #[error("Unprocessable Entity: {}", _0)]
+    #[error("Unprocessable Entity: {0}")]
     UnprocessableEntity(JsonValue),
 
     // 500
