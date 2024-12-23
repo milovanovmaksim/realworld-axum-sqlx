@@ -8,6 +8,10 @@ dotenv = { version = "0.15" }
 # A lightweight logging facade for Rust
 log = { version = "0.4.17" }
 
+# A web application framework that focuses on ergonomics and modularity.
+axum = { version = "0.5.1"}
+
+
 # A logging implementation for `log` which is configured via an environment variable.
 env_logger = { version = "0.10.0" }
 
@@ -28,6 +32,9 @@ jsonwebtoken = { version = "8.3" }
 
 # Easily hash and verify passwords using bcrypt
 bcrypt = { version = "0.14.0" }
+
+# Common validation functions (email, url, length, ...) and trait - to be used with `validator_derive`
+validator = { version = "0.15", features = ["derive"] }
 
 # The async SQL toolkit for Rust
 sqlx = { version = "^0.8.2", features = ["runtime-tokio-rustls", "postgres", "time", "uuid", "migrate",] }
