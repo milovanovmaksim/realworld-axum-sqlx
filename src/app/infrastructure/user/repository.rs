@@ -13,8 +13,15 @@ use crate::app::{
 use async_trait::async_trait;
 use sqlx::{query_as, query_file_as};
 
+#[derive(Clone)]
 pub struct UsersRepositoryImpl {
     pg_sql: PostgreSQL,
+}
+
+impl UsersRepositoryImpl {
+    pub fn new(pg_sql: PostgreSQL) -> UsersRepositoryImpl {
+        UsersRepositoryImpl { pg_sql }
+    }
 }
 
 #[async_trait]

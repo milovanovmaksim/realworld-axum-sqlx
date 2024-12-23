@@ -1,12 +1,10 @@
-use crate::app::domain::{
-    error::AppError,
-    jwt_token::jwt_token::JwtAuthToken,
-};
+use crate::app::domain::{error::AppError, jwt_token::jwt_token::JwtAuthToken};
 
 use super::{claims::Claims, settings::JwtTokenSettings};
 use jsonwebtoken::{EncodingKey, Header};
 use uuid::Uuid;
 
+#[derive(Clone)]
 pub struct JwtAuthTokenImpl {
     jwt_token_settings: JwtTokenSettings,
 }
