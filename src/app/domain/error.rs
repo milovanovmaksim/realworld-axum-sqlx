@@ -115,11 +115,15 @@ impl IntoResponse for AppError {
 
         let (status, error_message) = match self {
             AppError::Unauthorized(v) => (StatusCode::UNAUTHORIZED, Json(v)),
-            AppError::Forbidden => (StatusCode::FORBIDDEN, Json(json!({"message": AppError::Forbidden.to_string()}))),
+            AppError::Forbidden => (
+                StatusCode::FORBIDDEN,
+                Json(json!({"message": AppError::Forbidden.to_string()})),
+            ),
             AppError::NotFound(v) => (StatusCode::NOT_FOUND, Json(v)),
-            AppError::UnprocessableEntity(v) =>(StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
+            AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             _ => todo!(),
         };
-        todo!()
+
+        (status, error_message).into_response()
     }
 }
