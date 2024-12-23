@@ -119,7 +119,7 @@ impl IntoResponse for AppError {
             AppError::NotFound(v) => (StatusCode::NOT_FOUND, Json(v)),
             AppError::UnprocessableEntity(v) =>(StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             _ => todo!(),
-        }
+        };
         todo!()
     }
 }
