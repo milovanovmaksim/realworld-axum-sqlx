@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 #[derive(Deserialize, Serialize, Debug, Validate)]
-pub struct Signup {
+pub struct SignupRequest {
     #[validate]
     pub user: SignupUser,
 }
