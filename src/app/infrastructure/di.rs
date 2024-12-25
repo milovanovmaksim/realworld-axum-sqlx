@@ -6,28 +6,35 @@ use super::{
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
+#[derive(Clone)]
 pub struct DiContainer {
     /**
      * User
      */
-    pub user_repository: UsersRepositoryImpl,
-    pub user_usecase: UserUseCaseImpl,
+    pub user_repository: Arc<UsersRepositoryImpl>,
+    pub user_usecase: Arc<UserUseCaseImpl>,
 
-    pub jwt_auth_token: JwtAuthTokenImpl,
+    /**
+     *Utility services
+     */
+    pub jwt_auth_token: Arc<JwtAuthTokenImpl>,
 }
 
 impl DiContainer {
     pub async fn new<T: AsRef<Path>>(path: T) -> Self {
-        let jwt_auth_token = JwtAuthTokenImpl::new(JwtTokenSettings::from_yaml(path.as_ref()));
+        // Utility services
+        let jwt_auth_token = Arc::new(JwtAuthTokenImpl::new(JwtTokenSettings::from_yaml(
+            path.as_ref(),
+        )));
         let pg_sql =
             PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref())).await;
 
         // User
-        let user_repository = UsersRepositoryImpl::new(pg_sql.clone());
-        let user_usecase = UserUseCaseImpl::new(
-            Arc::new(user_repository.clone()),
-            Arc::new(jwt_auth_token.clone()),
-        );
+        let user_repository = Arc::new(UsersRepositoryImpl::new(pg_sql.clone()));
+        let user_usecase = Arc::new(UserUseCaseImpl::new(
+            user_repository.clone(),
+            jwt_auth_token.clone(),
+        ));
 
         Self {
             user_repository,
