@@ -19,7 +19,6 @@ use crate::app::{
     infrastructure::utils::hasher,
 };
 
-#[derive(Clone)]
 pub struct UserUseCaseImpl {
     pub jwt_auth_token: Arc<dyn JwtAuthToken>,
     pub user_repository: Arc<dyn UserRepository>,
