@@ -20,7 +20,7 @@ impl JwtTokenSettings {
             .expect("JwtTokenSettings::form_yaml || error: failed to parse data from file");
         let value = res
             .get("jwt_token")
-            .expect("JwtTokenSettings::form_yaml || error: failed to deserialize JWT settings");
+            .expect("JwtTokenSettings::form_yaml || error: key 'jwt_token' does not exest. ");
         JwtTokenSettings::deserialize(value)
             .expect("JwtTokenSettings::from_yaml || error: failed to deserialize JWT settings.")
     }
