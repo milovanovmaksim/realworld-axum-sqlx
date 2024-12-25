@@ -40,6 +40,9 @@ pub enum AppError {
 
     #[error(transparent)]
     ValidationError(#[from] ValidationErrors),
+
+    #[error(transparent)]
+    AxumJsonRejection(#[from] axum::extract::rejection::JsonRejection),
 }
 
 impl From<sqlx::Error> for AppError {
@@ -83,7 +86,7 @@ impl From<JwtError> for AppError {
 }
 
 impl AppError {
-    fn unprocessable_entity(errors: ValidationErrors) -> Response {
+    fn unprocessable_entity(errors: ValidationErrors) -> (StatusCode, Json<JsonValue>) {
         let mut validation_errors = AppErrorMap::new();
 
         for (_, error_kind) in errors.into_errors() {
@@ -103,16 +106,12 @@ impl AppError {
             }
         }
         let body = Json(json!({"error": validation_errors}));
-        (StatusCode::UNPROCESSABLE_ENTITY, body).into_response()
+        (StatusCode::UNPROCESSABLE_ENTITY, body)
     }
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        if let Self::ValidationError(e) = self {
-            return Self::unprocessable_entity(e);
-        }
-
         let (status, error_message) = match self {
             AppError::Unauthorized(v) => (StatusCode::UNAUTHORIZED, Json(v)),
             AppError::Forbidden => (
@@ -121,7 +120,11 @@ impl IntoResponse for AppError {
             ),
             AppError::NotFound(v) => (StatusCode::NOT_FOUND, Json(v)),
             AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
-            _ => todo!(),
+            AppError::ValidationError(e) => Self::unprocessable_entity(e),
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"message": "unexpected error occurred" })),
+            ),
         };
 
         (status, error_message).into_response()
