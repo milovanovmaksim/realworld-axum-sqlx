@@ -21,13 +21,13 @@ pub struct DiContainer {
 }
 
 impl DiContainer {
-    pub async fn new<T: AsRef<Path>>(path: T) -> Self {
+    pub async fn new<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         // Utility services
         let jwt_auth_token = Arc::new(JwtAuthTokenImpl::new(JwtTokenSettings::from_yaml(
             path.as_ref(),
-        )));
+        )?));
         let pg_sql =
-            PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref())).await;
+            PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref())?).await;
 
         // User
         let user_repository = Arc::new(UsersRepositoryImpl::new(pg_sql.clone()));
@@ -36,10 +36,10 @@ impl DiContainer {
             jwt_auth_token.clone(),
         ));
 
-        Self {
+        Ok(Self {
             user_repository,
             user_usecase,
             jwt_auth_token,
-        }
+        })
     }
 }
