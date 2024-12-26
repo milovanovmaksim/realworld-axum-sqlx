@@ -1,4 +1,4 @@
-use std::{fs::File, path::Path};
+use std::{error::Error, fs::File, path::Path};
 
 use serde::Deserialize;
 use serde_yaml::Mapping;
@@ -35,17 +35,24 @@ impl DatabaseSettings {
         }
     }
 
-    pub fn from_yaml<T: AsRef<Path>>(path: T) -> Self {
-        let file =
-            File::open(path).expect("DatabaseSettings::form_yaml || error: failed to open file");
-        let res: Mapping = serde_yaml::from_reader(file)
-            .expect("DatabaseSettings::form_yaml || error: failed to parse data from file");
+    pub fn from_yaml<T: AsRef<Path>>(path: T) -> Result<Self, String> {
+        let file = File::open(path.as_ref()).map_err(|e| {
+            format!("DatabaseSettings::form_yaml || error: failed to open file {e}")
+        })?;
+        let res: Mapping = serde_yaml::from_reader(file).map_err(|_| {
+            format!(
+                "DatabaseSettings::form_yaml || error: failed to parse data from file {}.",
+                path.as_ref().to_string_lossy()
+            )
+        })?;
         let value = res
             .get("database")
-            .expect("DatabaseSettings::form_yaml || error: failed to get database");
-        let database_settings = DatabaseSettings::deserialize(value).expect(
-            "DatabaseSettings::form_yaml || error: failed to deserialize database settings",
-        );
-        database_settings
+            .ok_or("DatabaseSettings::from_yaml || error: key 'database' was not found.")?;
+        let database_settings = DatabaseSettings::deserialize(value).map_err(|e| {
+            format!(
+                "DatabaseSettings::form_yaml || error: failed to deserialize database settings {e}"
+            )
+        })?;
+        Ok(database_settings)
     }
 }
