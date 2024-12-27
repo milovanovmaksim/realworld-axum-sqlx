@@ -1,4 +1,4 @@
-use std::{error::Error, fs::File, path::Path};
+use std::{fs::File, path::Path};
 
 use serde::Deserialize;
 use serde_yaml::Mapping;
