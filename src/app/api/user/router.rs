@@ -19,8 +19,8 @@ pub fn user_router(di: DiContainer) -> Router {
 }
 
 pub async fn signup(
-    ValidationExtractor(request): ValidationExtractor<SignupRequest>,
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
+    ValidationExtractor(request): ValidationExtractor<SignupRequest>,
 ) -> ApiResponse<Json<SignupResponse>> {
     let request = UserUsecaseSignupRequest::from(request);
     let user = user_usecase.signup(request).await?;
