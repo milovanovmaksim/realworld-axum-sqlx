@@ -23,11 +23,16 @@ pub struct DiContainer {
 impl DiContainer {
     pub async fn new<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         // Utility services
-        let jwt_auth_token = Arc::new(JwtAuthTokenImpl::new(JwtTokenSettings::from_yaml(
-            path.as_ref(),
-        )?));
+        let jwt_auth_token = Arc::new(JwtAuthTokenImpl::new(
+            JwtTokenSettings::from_yaml(path.as_ref()).map_err(|e| {
+                format!("DiContainer::new || error: failed to create jwt auth token service {e}")
+            })?,
+        ));
         let pg_sql =
-            PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref())?).await;
+            PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref()).map_err(
+                |e| format!("DiContainer::new || error: failed to create postgresql client {e}"),
+            )?)
+            .await;
 
         // User
         let user_repository = Arc::new(UsersRepositoryImpl::new(pg_sql.clone()));
