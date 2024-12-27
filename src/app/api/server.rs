@@ -1,8 +1,8 @@
-use axum::Router;
-
-use crate::app::infrastructure::di::DiContainer;
-
 use super::{config::ApiConfig, user::router::user_router};
+use crate::app::infrastructure::di::DiContainer;
+use axum::{http::HeaderValue, Router};
+use tower::ServiceBuilder;
+use tower_http::{cors::Any, cors::CorsLayer, trace::TraceLayer};
 
 pub struct Server {
     api_config: ApiConfig,
@@ -17,16 +17,35 @@ impl Server {
         }
     }
     pub async fn start(&self) -> Result<(), String> {
-        let router = Router::new().nest("/api", user_router(self.di_container.clone()));
+        let router = Router::new()
+            .nest("/api", user_router(self.di_container.clone()))
+            .layer(
+                ServiceBuilder::new()
+                    // High level logging of requests and responses
+                    .layer(TraceLayer::new_for_http()),
+            )
+            .layer(
+                CorsLayer::new()
+                    .allow_origin(
+                        self.api_config
+                            .frontend_origin
+                            .parse::<HeaderValue>()
+                            .unwrap(),
+                    )
+                    .allow_methods(Any),
+            );
 
-        let soket_addr = &format!("{}:{}", self.api_config.host, self.api_config.port)
-            .parse()
-            .map_err(|e| format!("Server::start || error: failed to parse soket addres {e}"))?;
+        let tcp_listener = tokio::net::TcpListener::bind(format!(
+            "{}:{}",
+            self.api_config.host, self.api_config.port
+        ))
+        .await
+        .map_err(|e| format!("Server::start || error: failed to parse soket addres {e}"))?;
 
-        axum::Server::bind(&soket_addr)
-            .serve(router.into_make_service())
+        axum::serve(tcp_listener, router)
             .await
             .map_err(|e| format!("Server::start || error: failed to start server {e}"))?;
+
         Ok(())
     }
 }
