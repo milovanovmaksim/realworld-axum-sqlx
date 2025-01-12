@@ -3,11 +3,11 @@ use async_trait::async_trait;
 
 use super::{
     entities::User,
-    requests::{SigninRequest, SignupRequest},
+    requests::{SigninUserRepositoryRequest, SignupUserRepositoryRequest},
 };
 
 #[async_trait]
 pub trait UserRepository: Send + Sync + 'static {
-    async fn signup(&self, request: SignupRequest) -> Result<User, AppError>;
-    async fn signin(&self, request: SigninRequest) -> Result<User, AppError>;
+    async fn signup(&self, request: SignupUserRepositoryRequest) -> Result<User, AppError>;
+    async fn signin(&self, request: SigninUserRepositoryRequest) -> Result<User, AppError>;
 }

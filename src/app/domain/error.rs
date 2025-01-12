@@ -35,7 +35,7 @@ pub enum AppError {
     UnprocessableEntity(JsonValue),
 
     // 500
-    #[error("Internal Server Error")]
+    #[error("Internal server error")]
     InternalServerError,
 
     #[error(transparent)]
@@ -105,7 +105,7 @@ impl AppError {
                 }
             }
         }
-        let body = Json(json!({"error": validation_errors}));
+        let body = Json(json!({"errors": validation_errors}));
         (StatusCode::UNPROCESSABLE_ENTITY, body)
     }
 }
@@ -123,7 +123,7 @@ impl IntoResponse for AppError {
             AppError::ValidationError(e) => Self::unprocessable_entity(e),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({"message": "unexpected error occurred" })),
+                Json(json!({"message": AppError::InternalServerError.to_string() })),
             ),
         };
 

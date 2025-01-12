@@ -10,8 +10,8 @@ use crate::app::{
         user::{
             repository::{self, repository::UserRepository, requests},
             usecase::{
-                requests::{SigninRequest, SignupRequest},
-                responses::{SigninResponse, SignupResponse},
+                requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest},
+                responses::{SigninUserUsecaseResponse, SignupUserUsecaseResponse},
                 usecase::UserUseCase,
             },
         },
@@ -38,10 +38,13 @@ impl UserUseCaseImpl {
 
 #[async_trait]
 impl UserUseCase for UserUseCaseImpl {
-    async fn signin(&self, request: SigninRequest) -> Result<SigninResponse, AppError> {
+    async fn signin(
+        &self,
+        request: SigninUserUsecaseRequest,
+    ) -> Result<SigninUserUsecaseResponse, AppError> {
         let user = self
             .user_repository
-            .signin(requests::SigninRequest {
+            .signin(requests::SigninUserRepositoryRequest {
                 email: request.email,
             })
             .await?;
@@ -51,15 +54,18 @@ impl UserUseCase for UserUseCaseImpl {
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
-        Ok(SigninResponse::from((user, token)))
+        Ok(SigninUserUsecaseResponse::from((user, token)))
     }
 
-    async fn signup(&self, request: SignupRequest) -> Result<SignupResponse, AppError> {
+    async fn signup(
+        &self,
+        request: SignupUserUsecaseRequest,
+    ) -> Result<SignupUserUsecaseResponse, AppError> {
         let hashed_password = hasher::hash_password(&request.naive_password)?;
 
         let user = self
             .user_repository
-            .signup(repository::requests::SignupRequest {
+            .signup(repository::requests::SignupUserRepositoryRequest {
                 username: request.username,
                 email: request.email,
                 hashed_password,
@@ -70,6 +76,6 @@ impl UserUseCase for UserUseCaseImpl {
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
 
-        Ok(SignupResponse::from((user, token)))
+        Ok(SignupUserUsecaseResponse::from((user, token)))
     }
 }

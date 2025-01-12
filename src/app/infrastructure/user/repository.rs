@@ -4,7 +4,7 @@ use crate::app::{
         user::repository::{
             entities::User,
             repository::UserRepository,
-            requests::{SigninRequest, SignupRequest},
+            requests::{SigninUserRepositoryRequest, SignupUserRepositoryRequest},
         },
     },
     infrastructure::pgsql::db::PostgreSQL,
@@ -25,11 +25,11 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn signin(&self, request: SigninRequest) -> Result<User, AppError> {
+    async fn signin(&self, request: SigninUserRepositoryRequest) -> Result<User, AppError> {
         self.get_user_by_email(&request.email).await
     }
 
-    async fn signup(&self, request: SignupRequest) -> Result<User, AppError> {
+    async fn signup(&self, request: SignupUserRepositoryRequest) -> Result<User, AppError> {
         let user = query_file_as!(
             User,
             "./src/app/infrastructure/queries/users/insert.sql",

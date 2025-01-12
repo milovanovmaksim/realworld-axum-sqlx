@@ -2,12 +2,18 @@ use crate::app::domain::error::AppError;
 use async_trait::async_trait;
 
 use super::{
-    requests::{SigninRequest, SignupRequest},
-    responses::{SigninResponse, SignupResponse},
+    requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest},
+    responses::{SigninUserUsecaseResponse, SignupUserUsecaseResponse},
 };
 
 #[async_trait]
 pub trait UserUseCase: Send + Sync + 'static {
-    async fn signup(&self, request: SignupRequest) -> Result<SignupResponse, AppError>;
-    async fn signin(&self, request: SigninRequest) -> Result<SigninResponse, AppError>;
+    async fn signup(
+        &self,
+        request: SignupUserUsecaseRequest,
+    ) -> Result<SignupUserUsecaseResponse, AppError>;
+    async fn signin(
+        &self,
+        request: SigninUserUsecaseRequest,
+    ) -> Result<SigninUserUsecaseResponse, AppError>;
 }

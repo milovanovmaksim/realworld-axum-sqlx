@@ -2,13 +2,13 @@ use crate::app::domain::user::repository::entities::User;
 
 type Token = String;
 
-pub struct SignupResponse {
+pub struct SignupUserUsecaseResponse {
     pub user: AuthUser,
 }
 
-impl From<(User, Token)> for SignupResponse {
+impl From<(User, Token)> for SignupUserUsecaseResponse {
     fn from((user, token): (User, String)) -> Self {
-        SignupResponse {
+        SignupUserUsecaseResponse {
             user: AuthUser {
                 email: user.email,
                 username: user.username,
@@ -20,13 +20,13 @@ impl From<(User, Token)> for SignupResponse {
     }
 }
 
-pub struct SigninResponse {
+pub struct SigninUserUsecaseResponse {
     pub user: AuthUser,
 }
 
-impl From<(User, Token)> for SigninResponse {
+impl From<(User, Token)> for SigninUserUsecaseResponse {
     fn from((user, token): (User, String)) -> Self {
-        SigninResponse {
+        SigninUserUsecaseResponse {
             user: AuthUser {
                 email: user.email,
                 username: user.username,
