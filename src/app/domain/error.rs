@@ -51,12 +51,12 @@ impl From<sqlx::Error> for AppError {
             DbError::Database(db_err) => match db_err.kind() {
                 ErrorKind::UniqueViolation => {
                     let message = db_err.message();
-                    AppError::UnprocessableEntity(json!({"message": message}))
+                    AppError::UnprocessableEntity(json!({"error": message}))
                 }
                 _ => AppError::InternalServerError,
             },
             DbError::RowNotFound => {
-                AppError::NotFound(json!({"message": "Requested record was not found"}))
+                AppError::NotFound(json!({"error": "Requested record was not found"}))
             }
             _ => AppError::InternalServerError,
         }
@@ -73,13 +73,13 @@ impl From<JwtError> for AppError {
     fn from(err: JwtError) -> Self {
         match err.kind() {
             JwtErrorKind::InvalidToken => AppError::Unauthorized(json!({
-                "message": "Token is invalid"
+                "error": "Token is invalid"
             })),
             JwtErrorKind::InvalidIssuer => AppError::Unauthorized(json!({
-                "message": "Issuer is invalid",
+                "error": "Issuer is invalid",
             })),
             _ => AppError::Unauthorized(json!({
-                "message": "Authentication is required to access this resource",
+                "error": "Authentication is required to access this resource",
             })),
         }
     }
@@ -116,14 +116,14 @@ impl IntoResponse for AppError {
             AppError::Unauthorized(v) => (StatusCode::UNAUTHORIZED, Json(v)),
             AppError::Forbidden => (
                 StatusCode::FORBIDDEN,
-                Json(json!({"message": AppError::Forbidden.to_string()})),
+                Json(json!({"error": AppError::Forbidden.to_string()})),
             ),
             AppError::NotFound(v) => (StatusCode::NOT_FOUND, Json(v)),
             AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             AppError::ValidationError(e) => Self::unprocessable_entity(e),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({"message": AppError::InternalServerError.to_string() })),
+                Json(json!({"error": AppError::InternalServerError.to_string() })),
             ),
         };
 
