@@ -8,7 +8,7 @@ pub struct SignupUserRequest {
     pub user: SignupUser,
 }
 
-#[derive(Deserialize, Serialize, Debug, Validate)]
+#[derive(Deserialize, Serialize, Debug, Validate, ToSchema)]
 pub struct SignupUser {
     #[validate(required, length(min = 1))]
     pub username: Option<String>,

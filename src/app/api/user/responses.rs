@@ -22,7 +22,7 @@ impl From<user_usecase_response::SignupUserUsecaseResponse> for SignupUserRespon
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct AuthUser {
     pub email: String,
     pub username: String,
