@@ -27,8 +27,12 @@ pub enum AppError {
     Forbidden,
 
     // 404
+    #[error("Requested record was not found")]
+    NotFound,
+
+    // 409
     #[error("{0}")]
-    NotFound(JsonValue),
+    Conflict(String),
 
     // 422
     #[error("{0}")]
@@ -49,15 +53,10 @@ impl From<sqlx::Error> for AppError {
     fn from(err: DbError) -> Self {
         match err {
             DbError::Database(db_err) => match db_err.kind() {
-                ErrorKind::UniqueViolation => {
-                    let message = db_err.message();
-                    AppError::UnprocessableEntity(json!({"error": message}))
-                }
+                ErrorKind::UniqueViolation => AppError::Conflict(db_err.message().to_string()),
                 _ => AppError::InternalServerError,
             },
-            DbError::RowNotFound => {
-                AppError::NotFound(json!({"error": "Requested record was not found"}))
-            }
+            DbError::RowNotFound => AppError::NotFound,
             _ => AppError::InternalServerError,
         }
     }
@@ -118,7 +117,10 @@ impl IntoResponse for AppError {
                 StatusCode::FORBIDDEN,
                 Json(json!({"error": AppError::Forbidden.to_string()})),
             ),
-            AppError::NotFound(v) => (StatusCode::NOT_FOUND, Json(v)),
+            AppError::NotFound => (
+                StatusCode::NOT_FOUND,
+                Json(json!({"error": AppError::NotFound.to_string()})),
+            ),
             AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             AppError::ValidationError(e) => Self::unprocessable_entity(e),
             _ => (
