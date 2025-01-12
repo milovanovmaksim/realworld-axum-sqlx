@@ -2,11 +2,13 @@ use std::sync::Arc;
 
 use crate::app::{
     api::{extractors::validation_extractor::ValidationExtractor, response::ApiResponse},
-    domain::user::usecase::{requests::SignupUserUsecaseRequest, usecase::UserUseCase},
+    domain::{
+        error::AppError,
+        user::usecase::{requests::SignupUserUsecaseRequest, usecase::UserUseCase},
+    },
     infrastructure::{di::DiContainer, user::usecase::UserUseCaseImpl},
 };
 use axum::{routing::post, Extension, Json, Router};
-use serde_json::json;
 
 use super::{requests::SignupUserRequest, responses::SignupUserResponse};
 
@@ -31,7 +33,7 @@ pub fn user_router(di: DiContainer) -> Router {
                 }
             })),
         (status = INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
-            example = json!({"message": "Internal server error"}))
+            example = json!({"error": AppError::InternalServerError.to_string()}))
     )
 )]
 pub async fn signup(
