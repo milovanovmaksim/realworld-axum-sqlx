@@ -123,6 +123,8 @@ impl IntoResponse for AppError {
             ),
             AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             AppError::ValidationError(e) => Self::unprocessable_entity(e),
+            AppError::Conflict(e) => (StatusCode::CONFLICT, Json(json!({"error": e}))),
+            AppError::AxumJsonRejection(e) => (e.status(), Json(json!({"error": e.body_text()}))),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"error": AppError::InternalServerError.to_string() })),
