@@ -9,7 +9,7 @@ use crate::app::api::user::{requests::SignupUserRequest, responses::SignupUserRe
         schemas(SignupUserRequest, SignupUserResponse),
     ),
     tags(
-        (name = "users", description = "users endpoints")
-    )
+        (name = "users", description = "Users endpoints")
+    ),
 )]
 pub struct ApiDocunentation;
