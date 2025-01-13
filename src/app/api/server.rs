@@ -18,7 +18,7 @@ impl Server {
     }
     pub async fn start(&self) -> Result<(), String> {
         let router = Router::new()
-            .nest("/api", user_router(self.di_container.clone()))
+            .nest("/api/v1", user_router(self.di_container.clone()))
             .layer(
                 ServiceBuilder::new()
                     // High level logging of requests and responses
