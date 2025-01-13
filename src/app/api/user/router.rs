@@ -22,19 +22,22 @@ pub fn user_router(di: DiContainer) -> Router {
 #[utoipa::path(post,
     path = "/api/v1/users",
     tag = "User and  Authentication",
-    request_body = SignupUserRequest,
+    request_body(content = SignupUserRequest, content_type = "applicationjson"),
     description = "Register a new user",
     responses(
-        (status = StatusCode::OK, description = "New user has been created", body = SignupUserResponse),
+        (status = StatusCode::OK, description = "New user has been created", body = SignupUserResponse, content_type = "application/json"),
         (status = StatusCode::UNPROCESSABLE_ENTITY, description = "Unprocessable entity", body = HashMap<String, HashMap<String, Vec<String>>>,
+            content_type = "application/json",
             example = json!({
                 "errors": {
                     "body": ["body is required"]
                 }
             })),
         (status = StatusCode::CONFLICT, description = "Conflict", body = HashMap<String, String>,
+            content_type = "application/json",
             example=json!({"error": "User with email 'example@gmail.com' allredy exists"})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
+            content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
     )
 )]
