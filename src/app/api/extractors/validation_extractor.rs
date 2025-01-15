@@ -2,12 +2,11 @@ use axum::{
     extract::{FromRequest, Request},
     Json,
 };
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::de::DeserializeOwned;
 use validator::Validate;
 
 use crate::app::domain::error::AppError;
 
-#[derive(Debug, Serialize, Deserialize)]
 pub struct ValidationExtractor<T>(pub T);
 
 impl<S, T> FromRequest<S> for ValidationExtractor<T>
