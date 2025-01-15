@@ -1,8 +1,10 @@
-use super::{config::ApiConfig, user::router::user_router};
+use super::{config::ApiConfig, openapi, user::router::user_router};
 use crate::app::infrastructure::di::DiContainer;
 use axum::{http::HeaderValue, Router};
 use tower::ServiceBuilder;
 use tower_http::{cors::Any, cors::CorsLayer, trace::TraceLayer};
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 pub struct Server {
     api_config: ApiConfig,
@@ -18,6 +20,11 @@ impl Server {
     }
     pub async fn start(&self) -> Result<(), String> {
         let router = Router::new()
+            .merge(SwaggerUi::new("/swagger").url(
+                "/api-docs/openapi.json",
+                openapi::ApiDocumentation::openapi(),
+            ))
+            .merge(openapi::router())
             .nest("/api/v1", user_router(self.di_container.clone()))
             .layer(
                 ServiceBuilder::new()
