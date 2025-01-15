@@ -10,7 +10,7 @@ dotenv = { version = "0.15" }
 log = { version = "0.4.17" }
 
 # A web application framework that focuses on ergonomics and modularity.
-axum = { version = "0.7.9", features = ["tower-log"] }
+axum = { version = "0.8", features = ["tower-log"] }
 
 # Generates better error messages.
 axum-macros = "0.4.2"
