@@ -19,7 +19,6 @@ use crate::app::api::user::{requests::SignupUserRequest, responses::SignupUserRe
 )]
 pub struct ApiDocumentation;
 
-
 /// Return JSON version of an OpenAPI schema
 #[utoipa::path(
     get,
@@ -31,7 +30,6 @@ pub struct ApiDocumentation;
 async fn openapi() -> Json<utoipa::openapi::OpenApi> {
     Json(ApiDocumentation::openapi())
 }
-
 
 pub fn router() -> Router {
     axum::Router::new().route("/api-docs/openapi.json", get(openapi))
