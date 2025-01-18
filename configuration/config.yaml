@@ -4,7 +4,7 @@ api:
   frontend_origin: http://localhost:3000
 database:
   host: "localhost"
-  port: 5432
+  port: 54321
   username: "postgres"
   password: "postgres"
   database_name: "realworld"
