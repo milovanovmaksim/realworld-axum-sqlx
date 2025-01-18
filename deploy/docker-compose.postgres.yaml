@@ -1,0 +1,15 @@
+services:
+  greatest_earth_map_postgres:
+    container_name: realworld_postgres
+    image: postgres:latest
+    restart: always
+    env_file:
+      - ../.env
+      - ../.env.docker
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "54321:5432"
