@@ -9,7 +9,7 @@ mod tests;
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
-    let di_container = DiContainer::new("./configuration/config.yaml")
+    let di_container = DiContainer::new("./config/config.yaml")
         .await
         .expect("Failed to create di container");
     let api_config =
