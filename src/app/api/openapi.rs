@@ -6,7 +6,7 @@ use crate::app::api::user::{requests::SignupUserRequest, responses::SignupUserRe
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        crate::app::api::user::router::signup,
+        super::user::endpoints::signup,
         openapi
     ),
     components(
