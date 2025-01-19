@@ -24,7 +24,6 @@ impl Server {
                 "/api-docs/openapi.json",
                 openapi::ApiDocumentation::openapi(),
             ))
-            .merge(openapi::router())
             .nest("/api/v1", user_router(self.di_container.clone()))
             .layer(
                 ServiceBuilder::new()
