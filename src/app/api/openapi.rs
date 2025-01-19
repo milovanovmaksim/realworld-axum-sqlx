@@ -13,7 +13,7 @@ use crate::app::api::user::{requests::SignupUserRequest, responses::SignupUserRe
         schemas(SignupUserRequest, SignupUserResponse),
     ),
     tags(
-        (name = "users", description = "Users endpoints"),
+        (name = "User and Authentication", description = "Users endpoints"),
         (name = "api-docs", description = "Openapi endpoints")
     ),
 )]
@@ -22,6 +22,7 @@ pub struct ApiDocumentation;
 /// Return JSON version of an OpenAPI schema
 #[utoipa::path(
     get,
+    tag = "api-docs",
     path = "/api-docs/openapi.json",
     responses(
         (status = 200, description = "JSON file", body = ())
