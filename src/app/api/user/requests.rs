@@ -10,12 +10,18 @@ pub struct SignupUserRequest {
 
 #[derive(Deserialize, Serialize, Debug, Validate, ToSchema)]
 pub struct SignupUser {
-    #[validate(required, length(min = 1))]
+    #[validate(
+        required,
+        length(min = 1, message = "username must be more than 1 character")
+    )]
     pub username: Option<String>,
 
     #[validate(required, length(min = 1), email(message = "email is invalid"))]
     pub email: Option<String>,
 
-    #[validate(required, length(min = 8))]
+    #[validate(
+        required,
+        length(min = 8, message = "password must be more than 8 characters")
+    )]
     pub password: Option<String>,
 }
