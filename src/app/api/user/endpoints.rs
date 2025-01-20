@@ -41,6 +41,8 @@ pub async fn signup(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     ValidationExtractor(request): ValidationExtractor<SignupUserRequest>,
 ) -> ApiResponse<Json<SignupUserResponse>> {
+    info!("recieved request to create new user {:?}/{:?}", request.user.email, request.user.username);
+
     let request = SignupUserUsecaseRequest::from(request);
     let user = user_usecase.signup(request).await?;
     Ok(Json(SignupUserResponse::from(user)))
@@ -75,6 +77,8 @@ pub async fn login(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     ValidationExtractor(request): ValidationExtractor<SigninUserRequest>,
 ) -> ApiResponse<Json<SigninUserResponse>> {
+    info!("recieved request to login a user {:?}", request.user.email);
+
     let request = SigninUserUsecaseRequest::from(request);
     let user = user_usecase.login(request).await?;
     Ok(Json(SigninUserResponse::from(user)))
