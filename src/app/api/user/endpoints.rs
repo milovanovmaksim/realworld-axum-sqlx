@@ -75,7 +75,6 @@ pub async fn login(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     ValidationExtractor(request): ValidationExtractor<SigninUserRequest>,
 ) -> ApiResponse<Json<SigninUserResponse>> {
-    info!("here");
     let request = SigninUserUsecaseRequest::from(request);
     let user = user_usecase.login(request).await?;
     Ok(Json(SigninUserResponse::from(user)))
