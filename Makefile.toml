@@ -5,18 +5,16 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 default_to_workspace = false
 
 [tasks.docker-build]
-command = "docker"
+command = "docker-compose"
 args = [
-    "compose",
     "-f", "./deploy/docker-compose.postgres.yaml",
     "up",
     "--build"
 ]
 
 [tasks.docker-start]
-command = "docker"
+command = "docker-compose"
 args = [
-    "compose",
     "-f", "./deploy/docker-compose.postgres.yaml",
     "start"
 ]

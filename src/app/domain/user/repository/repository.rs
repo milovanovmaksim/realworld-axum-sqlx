@@ -9,5 +9,5 @@ use super::{
 #[async_trait]
 pub trait UserRepository: Send + Sync + 'static {
     async fn signup(&self, request: SignupUserRepositoryRequest) -> Result<User, AppError>;
-    async fn login(&self, request: SigninUserRepositoryRequest) -> Result<User, AppError>;
+    async fn login(&self, request: SigninUserRepositoryRequest) -> Result<Option<User>, AppError>;
 }

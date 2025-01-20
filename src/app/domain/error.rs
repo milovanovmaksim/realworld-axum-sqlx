@@ -18,6 +18,10 @@ pub type AppErrorMap = HashMap<Cow<'static, str>, Vec<Cow<'static, str>>>;
 
 #[derive(Error, Debug)]
 pub enum AppError {
+    // 400
+    #[error("{0}")]
+    BadRequest(String),
+
     // 401
     #[error("{0}")]
     Unauthorized(JsonValue),
@@ -27,8 +31,8 @@ pub enum AppError {
     Forbidden,
 
     // 404
-    #[error("Requested record was not found")]
-    NotFound,
+    #[error("{0}")]
+    NotFound(String),
 
     // 409
     #[error("{0}")]
@@ -56,7 +60,9 @@ impl From<sqlx::Error> for AppError {
                 ErrorKind::UniqueViolation => AppError::Conflict(db_err.message().to_string()),
                 _ => AppError::InternalServerError,
             },
-            DbError::RowNotFound => AppError::NotFound,
+            DbError::RowNotFound => {
+                AppError::NotFound(String::from("Requested record was not found"))
+            }
             _ => AppError::InternalServerError,
         }
     }
@@ -117,10 +123,8 @@ impl IntoResponse for AppError {
                 StatusCode::FORBIDDEN,
                 Json(json!({"error": AppError::Forbidden.to_string()})),
             ),
-            AppError::NotFound => (
-                StatusCode::NOT_FOUND,
-                Json(json!({"error": AppError::NotFound.to_string()})),
-            ),
+            AppError::NotFound(e) => (StatusCode::NOT_FOUND, Json(json!({"error": e}))),
+            AppError::BadRequest(e) => (StatusCode::BAD_REQUEST, Json(json!({"error": e}))),
             AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             AppError::ValidationError(e) => Self::unprocessable_entity(e),
             AppError::Conflict(e) => (StatusCode::CONFLICT, Json(json!({"error": e}))),

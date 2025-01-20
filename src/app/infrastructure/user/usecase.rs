@@ -16,7 +16,7 @@ use crate::app::{
             },
         },
     },
-    infrastructure::utils::hasher,
+    infrastructure::{jwt_token::claims::Claims, utils::hasher},
 };
 
 pub struct UserUseCaseImpl {
@@ -45,16 +45,27 @@ impl UserUseCase for UserUseCaseImpl {
         let user = self
             .user_repository
             .login(requests::SigninUserRepositoryRequest {
-                email: request.email,
+                email: request.email.clone(),
             })
             .await?;
 
-        hasher::verify(&request.naive_password, &user.password)?;
+        match user {
+            Some(user) => {
+                if hasher::verify(&request.naive_password, &user.password)? {
+                    let one_day: i64 = 60 * 60 * 24;
+                    let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
+                    let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
+                    Ok(SigninUserUsecaseResponse::from((user, token)))
+                    
+                } else {
+                    return Err(AppError::BadRequest(String::from(format!("password is incorrect"))));
+                }
+            },
+            None => {
+                return Err(AppError::NotFound(String::from(format!("User with email '{}' not found", request.email.clone()))));
+            }          
+        }
 
-        let one_day: i64 = 60 * 60 * 24;
-        let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-        let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
-        Ok(SigninUserUsecaseResponse::from((user, token)))
     }
 
     async fn signup(
@@ -74,7 +85,7 @@ impl UserUseCase for UserUseCaseImpl {
 
         let one_day: i64 = 60 * 60 * 24;
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-        let token = self.jwt_auth_token.generate_token(user.id, now, one_day)?;
+        let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
 
         Ok(SignupUserUsecaseResponse::from((user, token)))
     }

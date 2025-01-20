@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
 use axum::{Extension, Json};
+use tracing::info;
 
 use crate::app::{
     api::{extractors::validation_extractor::ValidationExtractor, response::ApiResponse},
     domain::{
         error::AppError,
-        user::usecase::{requests::SignupUserUsecaseRequest, usecase::UserUseCase},
+        user::usecase::{requests::{SignupUserUsecaseRequest, SigninUserUsecaseRequest}, usecase::UserUseCase},
     },
     infrastructure::user::usecase::UserUseCaseImpl,
 };
@@ -53,6 +54,9 @@ pub async fn signup(
     description = "Login for existing user",
     responses(
         (status = StatusCode::OK, description = "User has been logged", body = SigninUserResponse, content_type = "application/json"),
+        (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
+                    content_type = "application/json",
+                    example=json!({"error": "password is incorrect"})),
         (status = StatusCode::UNPROCESSABLE_ENTITY, description = "Unprocessable entity", body = HashMap<String, HashMap<String, Vec<String>>>,
             content_type = "application/json",
             example = json!({
@@ -61,17 +65,18 @@ pub async fn signup(
                     "password": ["password must be more than 8 characters"]
                 }
             })),
-            example=json!({"error": "duplicate key value violates unique constraint \"users_email_key\""})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
+        )
     
 )]
 pub async fn login(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     ValidationExtractor(request): ValidationExtractor<SigninUserRequest>,
 ) -> ApiResponse<Json<SigninUserResponse>> {
+    info!("here");
     let request = SigninUserUsecaseRequest::from(request);
-    let user = user_usecase.signin(request).await?;
+    let user = user_usecase.login(request).await?;
     Ok(Json(SigninUserResponse::from(user)))
 }

@@ -25,7 +25,7 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn login(&self, request: SigninUserRepositoryRequest) -> Result<User, AppError> {
+    async fn login(&self, request: SigninUserRepositoryRequest) -> Result<Option<User>, AppError> {
         self.get_user_by_email(&request.email).await
     }
 
@@ -44,7 +44,7 @@ impl UserRepository for UsersRepositoryImpl {
 }
 
 impl UsersRepositoryImpl {
-    async fn get_user_by_email(&self, email: &str) -> Result<User, AppError> {
+    async fn get_user_by_email(&self, email: &str) -> Result<Option<User>, AppError> {
         let user = query_as!(
             User,
             r#"
@@ -54,7 +54,7 @@ impl UsersRepositoryImpl {
             "#,
             email,
         )
-        .fetch_one(&self.pg_sql.pool())
+        .fetch_optional(&self.pg_sql.pool())
         .await?;
         Ok(user)
     }

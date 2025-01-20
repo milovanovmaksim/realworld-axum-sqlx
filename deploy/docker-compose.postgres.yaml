@@ -1,5 +1,5 @@
 services:
-  greatest_earth_map_postgres:
+  realworld_postgres:
     container_name: realworld_postgres
     image: postgres:latest
     restart: always

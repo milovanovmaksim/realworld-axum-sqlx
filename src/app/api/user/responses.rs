@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
 use crate::app::domain::user::usecase::responses::{
-    self as user_usecase_response, SigninUserUsecaseResponse,
+    SigninUserUsecaseResponse, SignupUserUsecaseResponse,
 };
 
 #[derive(Serialize, Debug, ToSchema)]
@@ -10,8 +10,8 @@ pub struct SignupUserResponse {
     user: AuthUser,
 }
 
-impl From<user_usecase_response::SignupUserUsecaseResponse> for SignupUserResponse {
-    fn from(value: user_usecase_response::SignupUserUsecaseResponse) -> Self {
+impl From<SignupUserUsecaseResponse> for SignupUserResponse {
+    fn from(value: SignupUserUsecaseResponse) -> Self {
         SignupUserResponse {
             user: AuthUser {
                 email: value.user.email,
@@ -38,8 +38,8 @@ pub struct SigninUserResponse {
     user: AuthUser,
 }
 
-impl From<user_usecase_response::SigninUserUsecaseResponse> for SigninUserResponse {
-    fn from(value: user_usecase_response::SigninUserUsecaseResponse) -> Self {
+impl From<SigninUserUsecaseResponse> for SigninUserResponse {
+    fn from(value: SigninUserUsecaseResponse) -> Self {
         SigninUserResponse {
             user: AuthUser {
                 email: value.user.email,

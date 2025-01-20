@@ -62,7 +62,7 @@ tracing-subscriber = "0.3"
 utoipa = { version = "5.3.1", features = ["axum_extras"] }
 
 # This crate implements necessary boilerplate code to serve Swagger UI via web server.
-utoipa-swagger-ui = { version = "8.1.0", features = ["axum"] }
+utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 
 # A library to generate and parse UUIDs.
 # Compatible version is here: https://github.com/diesel-rs/diesel/blob/master/diesel/Cargo.toml#L26

@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use utoipa::ToSchema;
 use validator::Validate;
 
-#[derive(Deserialize, Serialize, Debug, Validate, ToSchema)]
+#[derive(Deserialize, Debug, Validate, ToSchema)]
 pub struct SignupUserRequest {
     #[validate]
     pub user: SignupUser,
@@ -38,6 +38,7 @@ pub struct SigninUser {
     pub password: Option<String>,
 }
 
+#[derive(Deserialize, Debug, Validate, ToSchema)]
 pub struct SigninUserRequest {
     #[validate]
     pub user: SigninUser,

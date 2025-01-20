@@ -24,8 +24,8 @@ impl From<user_api_requests::SignupUserRequest> for SignupUserUsecaseRequest {
 impl From<user_api_requests::SigninUserRequest> for SigninUserUsecaseRequest {
     fn from(value: user_api_requests::SigninUserRequest) -> Self {
         SigninUserUsecaseRequest {
-            email: value.user.email,
-            naive_password: value.user.password,
+            email: value.user.email.unwrap(),
+            naive_password: value.user.password.unwrap(),
         }
     }
 }
