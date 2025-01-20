@@ -12,6 +12,7 @@ use crate::app::{
 
 use async_trait::async_trait;
 use sqlx::{query_as, query_file_as};
+use tracing::info;
 
 pub struct UsersRepositoryImpl {
     pg_sql: PostgreSQL,
@@ -30,6 +31,8 @@ impl UserRepository for UsersRepositoryImpl {
     }
 
     async fn signup(&self, request: SignupUserRepositoryRequest) -> Result<User, AppError> {
+        info!("Creating new user {:?}/{:?}", request.email, request.username);
+
         let user = query_file_as!(
             User,
             "./src/app/infrastructure/queries/users/insert.sql",
@@ -45,6 +48,8 @@ impl UserRepository for UsersRepositoryImpl {
 
 impl UsersRepositoryImpl {
     async fn get_user_by_email(&self, email: &str) -> Result<Option<User>, AppError> {
+        info!("Searching for user by email in db {:?}", email);
+
         let user = query_as!(
             User,
             r#"
