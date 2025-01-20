@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use chrono::Utc;
+use tracing::{error, info};
 
 use crate::app::{
     domain::{
@@ -51,17 +52,26 @@ impl UserUseCase for UserUseCaseImpl {
 
         match user {
             Some(user) => {
+                info!("User has been found, verifying password hash for user {:?}", request.email);
+
                 if hasher::verify(&request.naive_password, &user.password)? {
                     let one_day: i64 = 60 * 60 * 24;
                     let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
+                    
+                    info!("user login successful, generating token");
+
                     let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
                     Ok(SigninUserUsecaseResponse::from((user, token)))
                     
                 } else {
+                    error!("invalid login attempt for user {:?}", request.email);
+
                     return Err(AppError::BadRequest(String::from(format!("password is incorrect"))));
                 }
             },
             None => {
+                error!("user {:?} not found", request.email);
+
                 return Err(AppError::NotFound(String::from(format!("User with email '{}' not found", request.email.clone()))));
             }          
         }
