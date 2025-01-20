@@ -7,10 +7,11 @@ use crate::app::api::user::{requests::SignupUserRequest, responses::SignupUserRe
 #[openapi(
     paths(
         super::user::endpoints::signup,
+        super::user::endpoints::signin,
         openapi
     ),
     components(
-        schemas(SignupUserRequest, SignupUserResponse),
+        schemas(SignupUserRequest, SignupUserResponse, SigninUserRequest, SigninUserResponse),
     ),
     tags(
         (name = "User and Authentication", description = "Users endpoints"),

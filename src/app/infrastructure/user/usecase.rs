@@ -38,13 +38,13 @@ impl UserUseCaseImpl {
 
 #[async_trait]
 impl UserUseCase for UserUseCaseImpl {
-    async fn signin(
+    async fn login(
         &self,
         request: SigninUserUsecaseRequest,
     ) -> Result<SigninUserUsecaseResponse, AppError> {
         let user = self
             .user_repository
-            .signin(requests::SigninUserRepositoryRequest {
+            .login(requests::SigninUserRepositoryRequest {
                 email: request.email,
             })
             .await?;

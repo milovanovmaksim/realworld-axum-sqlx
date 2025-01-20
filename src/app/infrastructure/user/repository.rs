@@ -25,7 +25,7 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn signin(&self, request: SigninUserRepositoryRequest) -> Result<User, AppError> {
+    async fn login(&self, request: SigninUserRepositoryRequest) -> Result<User, AppError> {
         self.get_user_by_email(&request.email).await
     }
 

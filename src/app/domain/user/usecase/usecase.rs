@@ -12,7 +12,7 @@ pub trait UserUseCase: Send + Sync + 'static {
         &self,
         request: SignupUserUsecaseRequest,
     ) -> Result<SignupUserUsecaseResponse, AppError>;
-    async fn signin(
+    async fn login(
         &self,
         request: SigninUserUsecaseRequest,
     ) -> Result<SigninUserUsecaseResponse, AppError>;
