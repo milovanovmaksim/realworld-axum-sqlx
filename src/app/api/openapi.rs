@@ -8,6 +8,7 @@ use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest}, re
     paths(
         super::user::endpoints::signup,
         super::user::endpoints::login,
+        super::user::endpoints::get_current_user,
         openapi
     ),
     components(
