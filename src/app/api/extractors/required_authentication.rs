@@ -18,7 +18,7 @@ where
             let header_value = auth_header.to_str().map_err(|_| 
                 AppError::Unauthorized(String::from("Authentication is required to access this resource")))?;
 
-            if !header_value.contains("Token") {
+            if !header_value.contains("Bearer") {
                 tracing::error!("request does not contain valid 'Token' prefix for authorization");
                 return Err(AppError::Unauthorized(String::from("Authentication is required to access this resource")));
             }
