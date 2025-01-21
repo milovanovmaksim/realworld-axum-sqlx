@@ -1,15 +1,15 @@
-use crate::app::domain::user::repository::entities::User;
+use crate::app::domain::user::repository::entities;
 
 type Token = String;
 
-pub struct SignupUserUsecaseResponse {
-    pub user: AuthUser,
+pub struct AuthenticationUserUsecaseResponse {
+    pub user: User,
 }
 
-impl From<(User, Token)> for SignupUserUsecaseResponse {
-    fn from((user, token): (User, String)) -> Self {
-        SignupUserUsecaseResponse {
-            user: AuthUser {
+impl From<(entities::User, Token)> for AuthenticationUserUsecaseResponse {
+    fn from((user, token): (entities::User, String)) -> Self {
+        AuthenticationUserUsecaseResponse {
+            user: User {
                 email: user.email,
                 username: user.username,
                 bio: user.bio,
@@ -20,25 +20,7 @@ impl From<(User, Token)> for SignupUserUsecaseResponse {
     }
 }
 
-pub struct SigninUserUsecaseResponse {
-    pub user: AuthUser,
-}
-
-impl From<(User, Token)> for SigninUserUsecaseResponse {
-    fn from((user, token): (User, String)) -> Self {
-        SigninUserUsecaseResponse {
-            user: AuthUser {
-                email: user.email,
-                username: user.username,
-                bio: user.bio,
-                image: user.image,
-                token,
-            },
-        }
-    }
-}
-
-pub struct AuthUser {
+pub struct User {
     pub email: String,
     pub username: String,
     pub bio: Option<String>,

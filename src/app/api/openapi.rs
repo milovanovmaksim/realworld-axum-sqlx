@@ -1,7 +1,7 @@
 use axum::{routing::get, Json, Router};
 use utoipa::OpenApi;
 
-use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest}, responses::{SignupUserResponse, SigninUserResponse}};
+use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest}, responses::AuthenticationUserResponse};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -11,7 +11,7 @@ use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest}, re
         openapi
     ),
     components(
-        schemas(SignupUserRequest, SignupUserResponse, SigninUserRequest, SigninUserResponse),
+        schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest),
     ),
     tags(
         (name = "User and Authentication", description = "Users endpoints"),

@@ -5,7 +5,7 @@ use uuid::Uuid;
 pub struct Claims {
     exp: i64,
     iat: i64,
-    user_id: Uuid,
+    pub user_id: Uuid,
     sub: String,
 }
 

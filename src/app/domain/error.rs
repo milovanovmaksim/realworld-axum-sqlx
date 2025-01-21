@@ -24,15 +24,15 @@ pub enum AppError {
 
     // 401
     #[error("{0}")]
-    Unauthorized(JsonValue),
+    Unauthorized(String),
 
     // 403
     #[error("User does not have privilege to access this resource")]
     Forbidden,
 
     // 404
-    #[error("{0}")]
-    NotFound(String),
+    #[error("Requested record was not found")]
+    NotFound,
 
     // 409
     #[error("{0}")]
@@ -60,9 +60,7 @@ impl From<sqlx::Error> for AppError {
                 ErrorKind::UniqueViolation => AppError::Conflict(db_err.message().to_string()),
                 _ => AppError::InternalServerError,
             },
-            DbError::RowNotFound => {
-                AppError::NotFound(String::from("Requested record was not found"))
-            }
+            DbError::RowNotFound => AppError::NotFound,
             _ => AppError::InternalServerError,
         }
     }
@@ -77,15 +75,16 @@ impl From<BcryptError> for AppError {
 impl From<JwtError> for AppError {
     fn from(err: JwtError) -> Self {
         match err.kind() {
-            JwtErrorKind::InvalidToken => AppError::Unauthorized(json!({
-                "error": "Token is invalid"
-            })),
-            JwtErrorKind::InvalidIssuer => AppError::Unauthorized(json!({
-                "error": "Issuer is invalid",
-            })),
-            _ => AppError::Unauthorized(json!({
-                "error": "Authentication is required to access this resource",
-            })),
+            JwtErrorKind::InvalidToken => AppError::Unauthorized(String::from("Token is invalid")),
+            JwtErrorKind::InvalidIssuer => {
+                AppError::Unauthorized(String::from("Issuer is invalid"))
+            }
+            JwtErrorKind::ExpiredSignature => {
+                AppError::BadRequest(String::from("Token is expired"))
+            }
+            _ => AppError::Unauthorized(String::from(
+                "Authentication is required to access this resource",
+            )),
         }
     }
 }
@@ -118,12 +117,15 @@ impl AppError {
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            AppError::Unauthorized(v) => (StatusCode::UNAUTHORIZED, Json(v)),
+            AppError::Unauthorized(v) => (StatusCode::UNAUTHORIZED, Json(json!({"error": v}))),
             AppError::Forbidden => (
                 StatusCode::FORBIDDEN,
                 Json(json!({"error": AppError::Forbidden.to_string()})),
             ),
-            AppError::NotFound(e) => (StatusCode::NOT_FOUND, Json(json!({"error": e}))),
+            AppError::NotFound => (
+                StatusCode::NOT_FOUND,
+                Json(json!({"error": AppError::NotFound.to_string()})),
+            ),
             AppError::BadRequest(e) => (StatusCode::BAD_REQUEST, Json(json!({"error": e}))),
             AppError::UnprocessableEntity(v) => (StatusCode::UNPROCESSABLE_ENTITY, Json(v)),
             AppError::ValidationError(e) => Self::unprocessable_entity(e),

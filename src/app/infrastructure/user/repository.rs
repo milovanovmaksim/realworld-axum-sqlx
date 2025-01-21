@@ -13,6 +13,7 @@ use crate::app::{
 use async_trait::async_trait;
 use sqlx::{query_as, query_file_as};
 use tracing::info;
+use uuid::Uuid;
 
 pub struct UsersRepositoryImpl {
     pg_sql: PostgreSQL,
@@ -43,6 +44,24 @@ impl UserRepository for UsersRepositoryImpl {
         .fetch_one(&self.pg_sql.pool())
         .await?;
         Ok(user)
+    }
+
+    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<User>, AppError> {
+        info!("Searching for user by user_id in db {:?}", user_id);
+
+        let user = query_as!(
+            User,
+            r#"
+        select *
+        from users
+        where id = $1
+            "#,
+            user_id,
+        )
+        .fetch_optional(&self.pg_sql.pool())
+        .await?;
+        Ok(user)
+        
     }
 }
 

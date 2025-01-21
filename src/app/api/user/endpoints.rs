@@ -4,15 +4,15 @@ use axum::{Extension, Json};
 use tracing::info;
 
 use crate::app::{
-    api::{extractors::validation_extractor::ValidationExtractor, response::ApiResponse},
+    api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse},
     domain::{
         error::AppError,
-        user::usecase::{requests::{SignupUserUsecaseRequest, SigninUserUsecaseRequest}, usecase::UserUseCase},
+        user::usecase::{requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest}, usecase::UserUseCase},
     },
     infrastructure::user::usecase::UserUseCaseImpl,
 };
 
-use super::{requests::{SigninUserRequest, SignupUserRequest}, responses::{SignupUserResponse, SigninUserResponse}};
+use super::{requests::{SigninUserRequest, SignupUserRequest}, responses::AuthenticationUserResponse};
 
 #[utoipa::path(post,
     path = "/api/v1/users",
@@ -20,7 +20,7 @@ use super::{requests::{SigninUserRequest, SignupUserRequest}, responses::{Signup
     request_body(content = SignupUserRequest, content_type = "application/json"),
     description = "Register a new user",
     responses(
-        (status = StatusCode::OK, description = "New user has been created", body = SignupUserResponse, content_type = "application/json"),
+        (status = StatusCode::OK, description = "New user has been created", body = AuthenticationUserResponse, content_type = "application/json"),
         (status = StatusCode::UNPROCESSABLE_ENTITY, description = "Unprocessable entity", body = HashMap<String, HashMap<String, Vec<String>>>,
             content_type = "application/json",
             example = json!({
@@ -40,12 +40,12 @@ use super::{requests::{SigninUserRequest, SignupUserRequest}, responses::{Signup
 pub async fn signup(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     ValidationExtractor(request): ValidationExtractor<SignupUserRequest>,
-) -> ApiResponse<Json<SignupUserResponse>> {
+) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("recieved request to create new user {:?}/{:?}", request.user.email, request.user.username);
 
     let request = SignupUserUsecaseRequest::from(request);
     let user = user_usecase.signup(request).await?;
-    Ok(Json(SignupUserResponse::from(user)))
+    Ok(Json(AuthenticationUserResponse::from(user)))
 }
 
 
@@ -55,7 +55,7 @@ pub async fn signup(
     request_body(content = SigninUserRequest, content_type = "application/json"),
     description = "Login for existing user",
     responses(
-        (status = StatusCode::OK, description = "User has been logged", body = SigninUserResponse, content_type = "application/json"),
+        (status = StatusCode::OK, description = "User has been logged", body = AuthenticationUserResponse, content_type = "application/json"),
         (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
                     content_type = "application/json",
                     example=json!({"error": "password is incorrect"})),
@@ -76,10 +76,22 @@ pub async fn signup(
 pub async fn login(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     ValidationExtractor(request): ValidationExtractor<SigninUserRequest>,
-) -> ApiResponse<Json<SigninUserResponse>> {
+) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("recieved request to login a user {:?}", request.user.email);
 
     let request = SigninUserUsecaseRequest::from(request);
     let user = user_usecase.login(request).await?;
-    Ok(Json(SigninUserResponse::from(user)))
+    Ok(Json(AuthenticationUserResponse::from(user)))
+}
+
+
+
+pub async fn get_current_user(
+    RequiredAuthentication(user_id): RequiredAuthentication,
+    Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>
+) -> ApiResponse<Json<AuthenticationUserResponse>> {
+    info!("recieved request to retrieve current user");
+
+    let user = user_usecase.get_current_user(user_id).await?;
+    Ok(Json(AuthenticationUserResponse::from(user)))
 }

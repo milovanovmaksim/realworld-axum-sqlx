@@ -3,6 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use chrono::Utc;
 use tracing::{error, info};
+use uuid::Uuid;
 
 use crate::app::{
     domain::{
@@ -12,7 +13,7 @@ use crate::app::{
             repository::{self, repository::UserRepository, requests},
             usecase::{
                 requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest},
-                responses::{SigninUserUsecaseResponse, SignupUserUsecaseResponse},
+                responses::AuthenticationUserUsecaseResponse,
                 usecase::UserUseCase,
             },
         },
@@ -42,7 +43,7 @@ impl UserUseCase for UserUseCaseImpl {
     async fn login(
         &self,
         request: SigninUserUsecaseRequest,
-    ) -> Result<SigninUserUsecaseResponse, AppError> {
+    ) -> Result<AuthenticationUserUsecaseResponse, AppError> {
         let user = self
             .user_repository
             .login(requests::SigninUserRepositoryRequest {
@@ -61,7 +62,7 @@ impl UserUseCase for UserUseCaseImpl {
                     info!("user login successful, generating token");
 
                     let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
-                    Ok(SigninUserUsecaseResponse::from((user, token)))
+                    Ok(AuthenticationUserUsecaseResponse::from((user, token)))
                     
                 } else {
                     error!("invalid login attempt for user {:?}", request.email);
@@ -72,7 +73,7 @@ impl UserUseCase for UserUseCaseImpl {
             None => {
                 error!("user {:?} not found", request.email);
 
-                return Err(AppError::NotFound(String::from(format!("User with email '{}' not found", request.email.clone()))));
+                return Err(AppError::NotFound);
             }          
         }
 
@@ -81,7 +82,7 @@ impl UserUseCase for UserUseCaseImpl {
     async fn signup(
         &self,
         request: SignupUserUsecaseRequest,
-    ) -> Result<SignupUserUsecaseResponse, AppError> {
+    ) -> Result<AuthenticationUserUsecaseResponse, AppError> {
         let hashed_password = hasher::hash_password(&request.naive_password)?;
 
         let user = self
@@ -97,6 +98,27 @@ impl UserUseCase for UserUseCaseImpl {
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
 
-        Ok(SignupUserUsecaseResponse::from((user, token)))
+        Ok(AuthenticationUserUsecaseResponse::from((user, token)))
+    }
+
+
+    async fn get_current_user(&self, user_id: Uuid) -> Result<AuthenticationUserUsecaseResponse, AppError> {
+        info!("retrieving user {:?}", user_id);
+        let user = self.user_repository.get_user_by_id(user_id).await?;
+
+        match user {
+            Some(user) => {
+                info!("user found with email {:?}, generating new token", user.email);
+
+                let one_day: i64 = 60 * 60 * 24;
+                let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second                
+                let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
+                Ok(AuthenticationUserUsecaseResponse::from((user, token)))
+            },
+            None => {
+                return Err(AppError::NotFound);
+            }
+        }
+        
     }
 }
