@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use axum::{Extension, Json};
 use tracing::info;
@@ -57,8 +57,11 @@ pub async fn signup(
     responses(
         (status = StatusCode::OK, description = "User has been logged", body = AuthenticationUserResponse, content_type = "application/json"),
         (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
-                    content_type = "application/json",
-                    example=json!({"error": "password is incorrect"})),
+            content_type = "application/json",
+            example=json!({"error": "password is incorrect"})),
+        (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
+            content_type = "application/json",
+            example = json!({"error": AppError::NotFound.to_string()})),
         (status = StatusCode::UNPROCESSABLE_ENTITY, description = "Unprocessable entity", body = HashMap<String, HashMap<String, Vec<String>>>,
             content_type = "application/json",
             example = json!({
@@ -86,9 +89,28 @@ pub async fn login(
 
 
 
+#[utoipa::path(get,
+    path = "/api/v1/user",
+    tag = "User and Authentication",
+    description = "Get current user",
+    responses(
+        (status = StatusCode::OK, description = "Current user", body = AuthenticationUserResponse, content_type = "application/json"),
+        (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
+            content_type = "application/json",
+            example=json!({"error": "Token is expired"})),
+        (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
+            content_type = "application/json",
+            example = json!({"error": AppError::NotFound.to_string()})
+        ),
+        (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
+            content_type = "application/json",
+            example = json!({"error": AppError::InternalServerError.to_string()}))
+        )
+    
+)]
 pub async fn get_current_user(
+    Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     RequiredAuthentication(user_id): RequiredAuthentication,
-    Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("recieved request to retrieve current user");
 
