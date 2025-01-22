@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::Arc};
+use std::sync::Arc;
 
 use axum::{Extension, Json};
 use tracing::info;
@@ -100,13 +100,14 @@ pub async fn login(
             example=json!({"error": "Token is expired"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})
-        ),
+            example = json!({"error": AppError::NotFound.to_string()})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
+        ),
+        security(
+            ("bearer_auth" = [])
         )
-    
 )]
 pub async fn get_current_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,

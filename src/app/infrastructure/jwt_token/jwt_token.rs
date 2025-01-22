@@ -1,7 +1,7 @@
 use crate::app::domain::{error::AppError, jwt_token::jwt_token::JwtAuthToken};
 
 use super::{claims::Claims, settings::JwtTokenSettings};
-use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation};
 
 #[derive(Clone)]
 pub struct JwtAuthTokenImpl {
@@ -25,9 +25,9 @@ impl JwtAuthToken for JwtAuthTokenImpl {
         Ok(jwt_token)
     }
 
-    fn get_user_id_from_token(&self, token: String) -> Result<uuid::Uuid, AppError> {
+    fn get_user_id_from_token(&self, token: &str) -> Result<uuid::Uuid, AppError> {
         let decoded_token = jsonwebtoken::decode::<Claims>(
-            token.as_str(),
+            token,
             &DecodingKey::from_secret(self.jwt_token_settings.secret_key.as_bytes()),
             &Validation::new(jsonwebtoken::Algorithm::HS256),
         )?;

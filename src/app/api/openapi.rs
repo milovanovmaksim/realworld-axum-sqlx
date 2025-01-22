@@ -1,5 +1,5 @@
 use axum::{routing::get, Json, Router};
-use utoipa::OpenApi;
+use utoipa::{openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme}, Modify, OpenApi};
 
 use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest}, responses::AuthenticationUserResponse};
 
@@ -14,12 +14,35 @@ use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest}, re
     components(
         schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest),
     ),
+    modifiers(&SecurityAddon),
     tags(
         (name = "User and Authentication", description = "Users endpoints"),
         (name = "api-docs", description = "Openapi endpoints")
     ),
 )]
 pub struct ApiDocumentation;
+
+struct SecurityAddon;
+
+
+impl Modify for SecurityAddon {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        if let Some(schema) = openapi.components.as_mut() {
+            schema.add_security_scheme(
+                "bearer_auth",
+                SecurityScheme::Http(
+                    HttpBuilder::new()
+                        .scheme(HttpAuthScheme::Bearer)
+                        .bearer_format("JWT")
+                        .build(),
+                ),
+            );
+        }
+    }
+}
+
+
+
 
 /// Return JSON version of an OpenAPI schema
 #[utoipa::path(
