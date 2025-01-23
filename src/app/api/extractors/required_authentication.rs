@@ -22,7 +22,7 @@ where
             .await
             .map_err(|_| AppError::Unauthorized(String::from("Authentication is required to access this resource")))?;
 
-        info!("attempt of getting JwtAuthTokenImpl from Extension");
+        info!("attempt of getting JwtAuthTokenImpl from Extensions");
         let token_service = req.extensions.get::<Arc<JwtAuthTokenImpl>>()
             .ok_or(AppError::Unauthorized(String::from("Authentication is required to access this resource")))?;
 
@@ -30,7 +30,5 @@ where
         info!("user id has been found");
 
         Ok(RequiredAuthentication(user_id))
-
-        
     }
 }
