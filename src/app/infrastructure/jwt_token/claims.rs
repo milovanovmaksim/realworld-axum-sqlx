@@ -12,8 +12,8 @@ pub struct Claims {
 impl Claims {
     pub fn new(user_id: Uuid, sub: &str, now: i64, offset: i64) -> Self {
         Claims {
-            exp: now,
-            iat: now + offset,
+            exp: now + offset,
+            iat: offset,
             user_id,
             sub: String::from(sub),
         }
