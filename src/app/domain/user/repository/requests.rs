@@ -23,6 +23,7 @@ pub struct UpdateUserRequest {
 
 impl From<user_usacase_requests::UpdateUserRequest> for UpdateUserRequest {
     fn from(value: user_usacase_requests::UpdateUserRequest) -> Self {
+        todo!("Проверить, если пароль передали, то создать хэш и предать в запрос.");
         UpdateUserRequest {
             id: value.id,
             email: value.email,
