@@ -1,7 +1,10 @@
 use crate::app::{
     domain::{
         error::AppError,
-        user::{self, repository::{entities, repository::UserRepository}},
+        user::{
+            self,
+            repository::{entities, UserRepository},
+        },
     },
     infrastructure::pgsql::db::PostgreSQL,
 };
@@ -23,12 +26,21 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn login(&self, request: user::repository::requests::SigninUserRepositoryRequest) -> Result<Option<entities::User>, AppError> {
+    async fn login(
+        &self,
+        request: user::repository::requests::SigninUserRequest,
+    ) -> Result<Option<entities::User>, AppError> {
         self.get_user_by_email(&request.email).await
     }
 
-    async fn signup(&self, request: user::repository::requests::SignupUserRepositoryRequest) -> Result<entities::User, AppError> {
-        info!("Creating new user {:?}/{:?}", request.email, request.username);
+    async fn signup(
+        &self,
+        request: user::repository::requests::SignupUserRequest,
+    ) -> Result<entities::User, AppError> {
+        info!(
+            "Creating new user {:?}/{:?}",
+            request.email, request.username
+        );
 
         let user = query_file_as!(
             entities::User,
@@ -57,10 +69,12 @@ impl UserRepository for UsersRepositoryImpl {
         .fetch_optional(&self.pg_sql.pool())
         .await?;
         Ok(user)
-        
     }
 
-    async fn update_user(&self, request: user::repository::requests::UpdateUserRequest) -> Result<entities::User, AppError> {
+    async fn update_user(
+        &self,
+        request: user::repository::requests::UpdateUserRequest,
+    ) -> Result<entities::User, AppError> {
         info!("Updating user");
 
         let user = query_file_as!(
@@ -72,8 +86,9 @@ impl UserRepository for UsersRepositoryImpl {
             request.bio,
             request.image,
             request.id
-            
-        ).fetch_one(&self.pg_sql.pool()).await?;
+        )
+        .fetch_one(&self.pg_sql.pool())
+        .await?;
         Ok(user)
     }
 }

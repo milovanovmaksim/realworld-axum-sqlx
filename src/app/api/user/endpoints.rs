@@ -7,7 +7,7 @@ use crate::app::{
     api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse},
     domain::{
         error::AppError,
-        user::{self, usecase::usecase::UserUseCase},
+        user::{self, usecase::UserUseCase},
     },
     infrastructure::user::usecase::UserUseCaseImpl,
 };
@@ -44,7 +44,7 @@ pub async fn signup(
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to create new user {:?}/{:?}", request.user.email, request.user.username);
 
-    let user = user_usecase.signup(user::usecase::requests::SignupUserUsecaseRequest::from(request)).await?;
+    let user = user_usecase.signup(user::usecase::requests::SignupUserRequest::from(request)).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }
 
@@ -82,7 +82,7 @@ pub async fn login(
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to login a user {:?}", request.user.email);
 
-    let user = user_usecase.login(user::usecase::requests::SigninUserUsecaseRequest::from(request)).await?;
+    let user = user_usecase.login(user::usecase::requests::SigninUserRequest::from(request)).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }
 

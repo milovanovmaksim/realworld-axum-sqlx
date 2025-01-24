@@ -2,13 +2,13 @@ use uuid::Uuid;
 
 use crate::app::domain::user::usecase::requests as user_usacase_requests;
 
-pub struct SignupUserRepositoryRequest {
+pub struct SignupUserRequest {
     pub username: String,
     pub email: String,
     pub hashed_password: String,
 }
 
-pub struct SigninUserRepositoryRequest {
+pub struct SigninUserRequest {
     pub email: String,
 }
 
