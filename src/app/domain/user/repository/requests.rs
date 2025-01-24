@@ -1,6 +1,6 @@
 use uuid::Uuid;
 
-use crate::app::domain::user::usecase::requests as user_usacase_requests;
+use crate::app::domain::user;
 
 pub struct SignupUserRequest {
     pub username: String,
@@ -21,8 +21,8 @@ pub struct UpdateUserRequest {
     pub image: Option<String>,
 }
 
-impl From<user_usacase_requests::UpdateUserRequest> for UpdateUserRequest {
-    fn from(value: user_usacase_requests::UpdateUserRequest) -> Self {
+impl From<user::usecase::requests::UpdateUserRequest> for UpdateUserRequest {
+    fn from(value: user::usecase::requests::UpdateUserRequest) -> Self {
         todo!("Проверить, если пароль передали, то создать хэш и предать в запрос.");
         UpdateUserRequest {
             id: value.id,
