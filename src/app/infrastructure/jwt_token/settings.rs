@@ -3,14 +3,17 @@ use std::{fs::File, path::Path};
 use serde::Deserialize;
 use serde_yaml::Mapping;
 
+type Seconds = i64;
+
 #[derive(Deserialize, Debug, Clone)]
 pub struct JwtTokenSettings {
     pub secret_key: String,
+    pub offset: Seconds,
 }
 
 impl JwtTokenSettings {
-    pub fn new(secret_key: String) -> Self {
-        Self { secret_key }
+    pub fn new(secret_key: String, offset: i64) -> Self {
+        Self { secret_key, offset }
     }
 
     pub fn from_yaml<T: AsRef<Path>>(path: T) -> Result<Self, String> {

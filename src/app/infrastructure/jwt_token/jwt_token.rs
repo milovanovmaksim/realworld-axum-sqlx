@@ -1,6 +1,9 @@
-use crate::app::domain::{error::AppError, jwt_token::jwt_token::JwtAuthToken};
+use crate::app::domain::{
+    error::AppError, jwt_token::jwt_token::JwtAuthToken, user::repository::entities::User,
+};
 
 use super::{claims::Claims, settings::JwtTokenSettings};
+use chrono::Utc;
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation};
 
 #[derive(Clone)]
@@ -15,7 +18,9 @@ impl JwtAuthTokenImpl {
 }
 
 impl JwtAuthToken for JwtAuthTokenImpl {
-    fn generate_token(&self, claims: Claims) -> Result<String, AppError> {
+    fn generate_token(&self, user: &User) -> Result<String, AppError> {
+        let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
+        let claims = Claims::new(user.id, &user.email, now, self.jwt_token_settings.offset);
         let secret_key = self.jwt_token_settings.secret_key.as_bytes();
         let jwt_token = jsonwebtoken::encode(
             &Header::default(),

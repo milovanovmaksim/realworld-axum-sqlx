@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use chrono::Utc;
 use tracing::{error, info};
 use uuid::Uuid;
 
@@ -9,16 +8,10 @@ use crate::app::{
     domain::{
         error::AppError,
         jwt_token::jwt_token::JwtAuthToken,
-        user::{
-            repository::{self, repository::UserRepository, requests},
-            usecase::{
-                requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest},
-                responses::AuthenticationUserUsecaseResponse,
-                usecase::UserUseCase,
-            },
+        user::{self, repository::repository::UserRepository, usecase::usecase::UserUseCase
         },
     },
-    infrastructure::{jwt_token::claims::Claims, utils::hasher},
+    infrastructure::utils::hasher,
 };
 
 pub struct UserUseCaseImpl {
@@ -42,11 +35,11 @@ impl UserUseCaseImpl {
 impl UserUseCase for UserUseCaseImpl {
     async fn login(
         &self,
-        request: SigninUserUsecaseRequest,
-    ) -> Result<AuthenticationUserUsecaseResponse, AppError> {
+        request: user::usecase::requests::SigninUserUsecaseRequest,
+    ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         let user = self
             .user_repository
-            .login(requests::SigninUserRepositoryRequest {
+            .login(user::repository::requests::SigninUserRepositoryRequest {
                 email: request.email.clone(),
             })
             .await?;
@@ -56,23 +49,19 @@ impl UserUseCase for UserUseCaseImpl {
                 info!("User has been found, verifying password hash for user {:?}", request.email);
 
                 if hasher::verify(&request.naive_password, &user.password)? {
-                    let one_day: i64 = 60 * 60 * 24;
-                    let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-                    
-                    info!("user login successful, generating token");
+                    info!("User login successful, generating token");
 
-                    let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
-                    Ok(AuthenticationUserUsecaseResponse::from((user, token)))
+                    let token = self.jwt_auth_token.generate_token(&user)?;
+                    Ok(user::usecase::responses::UserUsecaseResponse::from((user, token)))
                     
                 } else {
-                    error!("invalid login attempt for user {:?}", request.email);
+                    error!("Invalid login attempt for user {:?}", request.email);
 
                     return Err(AppError::BadRequest(String::from(format!("password is incorrect"))));
                 }
             },
             None => {
-                error!("user {:?} not found", request.email);
-
+                error!("User {:?} not found", request.email);
                 return Err(AppError::NotFound);
             }          
         }
@@ -81,44 +70,60 @@ impl UserUseCase for UserUseCaseImpl {
 
     async fn signup(
         &self,
-        request: SignupUserUsecaseRequest,
-    ) -> Result<AuthenticationUserUsecaseResponse, AppError> {
+        request: user::usecase::requests::SignupUserUsecaseRequest,
+    ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         let hashed_password = hasher::hash_password(&request.naive_password)?;
 
         let user = self
             .user_repository
-            .signup(repository::requests::SignupUserRepositoryRequest {
+            .signup(user::repository::requests::SignupUserRepositoryRequest {
                 username: request.username,
                 email: request.email,
                 hashed_password,
             })
             .await?;
 
-        let one_day: i64 = 60 * 60 * 24;
-        let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
-        let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
+        let token = self.jwt_auth_token.generate_token(&user)?;
 
-        Ok(AuthenticationUserUsecaseResponse::from((user, token)))
+        Ok(user::usecase::responses::UserUsecaseResponse::from((user, token)))
     }
 
 
-    async fn get_current_user(&self, user_id: Uuid) -> Result<AuthenticationUserUsecaseResponse, AppError> {
-        info!("retrieving user {:?}", user_id);
+    async fn get_current_user(&self, user_id: Uuid) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+        info!("Retrieving user by id {:?}", user_id);
         let user = self.user_repository.get_user_by_id(user_id).await?;
 
         match user {
             Some(user) => {
-                info!("user found with email {:?}, generating new token", user.email);
+                info!("User found with email {:?}, generating new token", user.email);
 
-                let one_day: i64 = 60 * 60 * 24;
-                let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second                
-                let token = self.jwt_auth_token.generate_token(Claims::new(user.id, &user.email, now, one_day))?;
-                Ok(AuthenticationUserUsecaseResponse::from((user, token)))
+                let token = self.jwt_auth_token.generate_token(&user)?;
+                Ok(user::usecase::responses::UserUsecaseResponse::from((user, token)))
             },
             None => {
+                error!("User not found");
                 return Err(AppError::NotFound);
             }
         }
         
+    }
+
+    async fn update_user(&self, request: user::usecase::requests::UpdateUserRequest) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+        info!("Retrieving user by id {:?}", request.id);
+        match self.user_repository.get_user_by_id(request.id).await? {
+            Some(user) => {
+                info!("User found with email {:?}, updating user", user.email);               
+                let user = self.user_repository.update_user(user::repository::requests::UpdateUserRequest::from(request)).await?;
+
+                info!("Generating token");
+                let token = self.jwt_auth_token.generate_token(&user)?;
+
+                Ok(user::usecase::responses::UserUsecaseResponse::from((user, token)))
+            },
+            None => {
+                error!("User not found");
+                return Err(AppError::NotFound);
+            }            
+        }        
     }
 }

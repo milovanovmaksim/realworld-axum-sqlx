@@ -1,15 +1,15 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use crate::app::domain::user::usecase::responses::AuthenticationUserUsecaseResponse;
+use crate::app::domain::user::usecase::responses::UserUsecaseResponse;
 
 #[derive(Serialize, Debug, ToSchema)]
 pub struct AuthenticationUserResponse {
     user: User,
 }
 
-impl From<AuthenticationUserUsecaseResponse> for AuthenticationUserResponse {
-    fn from(value: AuthenticationUserUsecaseResponse) -> Self {
+impl From<UserUsecaseResponse> for AuthenticationUserResponse {
+    fn from(value: UserUsecaseResponse) -> Self {
         AuthenticationUserResponse {
             user: User {
                 email: value.user.email,

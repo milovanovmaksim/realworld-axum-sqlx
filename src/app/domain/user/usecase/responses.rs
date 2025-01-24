@@ -2,13 +2,13 @@ use crate::app::domain::user::repository::entities;
 
 type Token = String;
 
-pub struct AuthenticationUserUsecaseResponse {
+pub struct UserUsecaseResponse {
     pub user: User,
 }
 
-impl From<(entities::User, Token)> for AuthenticationUserUsecaseResponse {
+impl From<(entities::User, Token)> for UserUsecaseResponse {
     fn from((user, token): (entities::User, String)) -> Self {
-        AuthenticationUserUsecaseResponse {
+        UserUsecaseResponse {
             user: User {
                 email: user.email,
                 username: user.username,

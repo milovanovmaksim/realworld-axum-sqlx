@@ -12,3 +12,4 @@ database:
   require_ssl: false
 jwt_token:
   secret_key: "465465456321454"
+  offset: 864000

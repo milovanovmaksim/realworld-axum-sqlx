@@ -1,11 +1,7 @@
 use crate::app::{
     domain::{
         error::AppError,
-        user::repository::{
-            entities::User,
-            repository::UserRepository,
-            requests::{SigninUserRepositoryRequest, SignupUserRepositoryRequest},
-        },
+        user::{self, repository::{entities, repository::UserRepository}},
     },
     infrastructure::pgsql::db::PostgreSQL,
 };
@@ -27,15 +23,15 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn login(&self, request: SigninUserRepositoryRequest) -> Result<Option<User>, AppError> {
+    async fn login(&self, request: user::repository::requests::SigninUserRepositoryRequest) -> Result<Option<entities::User>, AppError> {
         self.get_user_by_email(&request.email).await
     }
 
-    async fn signup(&self, request: SignupUserRepositoryRequest) -> Result<User, AppError> {
+    async fn signup(&self, request: user::repository::requests::SignupUserRepositoryRequest) -> Result<entities::User, AppError> {
         info!("Creating new user {:?}/{:?}", request.email, request.username);
 
         let user = query_file_as!(
-            User,
+            entities::User,
             "./src/app/infrastructure/queries/users/insert.sql",
             request.username,
             request.email,
@@ -46,11 +42,11 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
-    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<User>, AppError> {
+    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by user_id in db {:?}", user_id);
 
         let user = query_as!(
-            User,
+            entities::User,
             r#"
         select *
         from users
@@ -63,14 +59,31 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
         
     }
+
+    async fn update_user(&self, request: user::repository::requests::UpdateUserRequest) -> Result<entities::User, AppError> {
+        info!("Updating user");
+
+        let user = query_file_as!(
+            entities::User,
+            "./src/app/infrastructure/queries/users/update.sql",
+            request.username,
+            request.email,
+            request.password,
+            request.bio,
+            request.image,
+            request.id
+            
+        ).fetch_one(&self.pg_sql.pool()).await?;
+        Ok(user)
+    }
 }
 
 impl UsersRepositoryImpl {
-    async fn get_user_by_email(&self, email: &str) -> Result<Option<User>, AppError> {
+    async fn get_user_by_email(&self, email: &str) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by email in db {:?}", email);
 
         let user = query_as!(
-            User,
+            entities::User,
             r#"
         select *
         from users
