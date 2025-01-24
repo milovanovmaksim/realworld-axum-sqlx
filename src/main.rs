@@ -4,7 +4,6 @@ use app::{
 };
 
 mod app;
-mod tests;
 
 #[tokio::main]
 async fn main() {
