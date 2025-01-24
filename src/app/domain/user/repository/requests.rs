@@ -1,6 +1,9 @@
 use uuid::Uuid;
 
-use crate::app::domain::user;
+use crate::app::{
+    domain::{error::AppError, user},
+    infrastructure::utils,
+};
 
 pub struct SignupUserRequest {
     pub username: String,
@@ -21,16 +24,24 @@ pub struct UpdateUserRequest {
     pub image: Option<String>,
 }
 
-impl From<user::usecase::requests::UpdateUserRequest> for UpdateUserRequest {
-    fn from(value: user::usecase::requests::UpdateUserRequest) -> Self {
-        todo!("Проверить, если пароль передали, то создать хэш и предать в запрос.");
-        UpdateUserRequest {
+impl TryFrom<user::usecase::requests::UpdateUserRequest> for UpdateUserRequest {
+    type Error = AppError;
+
+    fn try_from(value: user::usecase::requests::UpdateUserRequest) -> Result<Self, Self::Error> {
+        let password = match value.password {
+            Some(naive_password) => {
+                let password = utils::hasher::hash_password(&naive_password)?;
+                Some(password)
+            }
+            None => value.password,
+        };
+        Ok(UpdateUserRequest {
             id: value.id,
             email: value.email,
             username: value.username,
-            password: value.password,
+            password,
             bio: value.bio,
             image: value.image,
-        }
+        })
     }
 }

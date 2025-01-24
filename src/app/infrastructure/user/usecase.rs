@@ -130,7 +130,9 @@ impl UserUseCase for UserUseCaseImpl {
                 info!("User found with email {:?}, updating user", user.email);
                 let user = self
                     .user_repository
-                    .update_user(user::repository::requests::UpdateUserRequest::from(request))
+                    .update_user(user::repository::requests::UpdateUserRequest::try_from(
+                        request,
+                    )?)
                     .await?;
 
                 info!("Generating token");
