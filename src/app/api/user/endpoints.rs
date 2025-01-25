@@ -119,10 +119,31 @@ pub async fn get_current_user(
 }
 
 
+#[utoipa::path(put,
+    path = "/api/v1/user",
+    tag = "User and Authentication",
+    request_body(content = UpdateUserRequest, content_type = "application/json"),
+    description = "Get current user",
+    responses(
+        (status = StatusCode::OK, description = "Current user", body = AuthenticationUserResponse, content_type = "application/json"),
+        (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
+            content_type = "application/json",
+            example=json!({"error": "Token is expired"})),
+        (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
+            content_type = "application/json",
+            example = json!({"error": AppError::NotFound.to_string()})),
+        (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
+            content_type = "application/json",
+            example = json!({"error": AppError::InternalServerError.to_string()}))
+        ),
+        security(
+            ("bearer_auth" = [])
+        )
+)]
 pub async fn update_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
-    ValidationExtractor(request): ValidationExtractor<UpdateUserRequest>,
     RequiredAuthentication(user_id): RequiredAuthentication,
+    ValidationExtractor(request): ValidationExtractor<UpdateUserRequest>,
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to update current user");
 
