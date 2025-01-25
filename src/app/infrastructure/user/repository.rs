@@ -12,7 +12,6 @@ use crate::app::{
 use async_trait::async_trait;
 use sqlx::{query_as, query_file_as};
 use tracing::info;
-use uuid::Uuid;
 
 pub struct UsersRepositoryImpl {
     pg_sql: PostgreSQL,
