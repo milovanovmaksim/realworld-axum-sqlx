@@ -43,8 +43,6 @@ impl Modify for SecurityAddon {
 }
 
 
-
-
 /// Return JSON version of an OpenAPI schema
 #[utoipa::path(
     get,
