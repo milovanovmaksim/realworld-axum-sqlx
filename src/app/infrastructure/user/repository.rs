@@ -3,7 +3,7 @@ use crate::app::{
         error::AppError,
         user::{
             self,
-            repository::{entities, UserRepository},
+            repository::{entities, Email, UserRepository},
         },
     },
     infrastructure::pgsql::db::PostgreSQL,
@@ -30,7 +30,7 @@ impl UserRepository for UsersRepositoryImpl {
         &self,
         request: user::repository::requests::SigninUserRequest,
     ) -> Result<Option<entities::User>, AppError> {
-        self.get_user_by_email(&request.email).await
+        self.get_user_by_email(request.email).await
     }
 
     async fn signup(
@@ -54,17 +54,17 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
-    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<entities::User>, AppError> {
-        info!("Searching for user by user_id in db {:?}", user_id);
+    async fn get_user_by_email(&self, email: Email) -> Result<Option<entities::User>, AppError> {
+        info!("Searching for user by email in db {:?}", email);
 
         let user = query_as!(
             entities::User,
             r#"
         select *
         from users
-        where id = $1
+        where email = $1
             "#,
-            user_id,
+            email,
         )
         .fetch_optional(&self.pg_sql.pool())
         .await?;
@@ -88,25 +88,6 @@ impl UserRepository for UsersRepositoryImpl {
             request.id
         )
         .fetch_one(&self.pg_sql.pool())
-        .await?;
-        Ok(user)
-    }
-}
-
-impl UsersRepositoryImpl {
-    async fn get_user_by_email(&self, email: &str) -> Result<Option<entities::User>, AppError> {
-        info!("Searching for user by email in db {:?}", email);
-
-        let user = query_as!(
-            entities::User,
-            r#"
-        select *
-        from users
-        where email = $1
-            "#,
-            email,
-        )
-        .fetch_optional(&self.pg_sql.pool())
         .await?;
         Ok(user)
     }

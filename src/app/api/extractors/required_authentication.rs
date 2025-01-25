@@ -6,7 +6,6 @@ use axum_extra::{
     TypedHeader,
 };
 use tracing::info;
-use uuid::Uuid;
 
 use crate::app::{
     domain::{error::AppError, jwt_token::jwt_token::JwtAuthToken},
@@ -14,7 +13,7 @@ use crate::app::{
 };
 
 // Extracts the JWT from the Authorization token header.
-pub struct RequiredAuthentication(pub Uuid);
+pub struct RequiredAuthentication(pub String);
 
 impl<S> FromRequestParts<S> for RequiredAuthentication
 where
@@ -40,9 +39,9 @@ where
                     "Authentication is required to access this resource",
                 )))?;
 
-        let user_id = token_service.get_user_id_from_token(bearer.token())?;
+        let email = token_service.get_user_email_from_token(bearer.token())?;
         info!("User id has been found");
 
-        Ok(RequiredAuthentication(user_id))
+        Ok(RequiredAuthentication(email))
     }
 }

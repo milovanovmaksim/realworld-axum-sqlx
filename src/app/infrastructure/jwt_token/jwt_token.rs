@@ -30,13 +30,13 @@ impl JwtAuthToken for JwtAuthTokenImpl {
         Ok(jwt_token)
     }
 
-    fn get_user_id_from_token(&self, token: &str) -> Result<uuid::Uuid, AppError> {
+    fn get_user_email_from_token(&self, token: &str) -> Result<String, AppError> {
         let decoded_token = jsonwebtoken::decode::<Claims>(
             token,
             &DecodingKey::from_secret(self.jwt_token_settings.secret_key.as_bytes()),
             &Validation::new(jsonwebtoken::Algorithm::HS256),
         )?;
 
-        Ok(decoded_token.claims.user_id)
+        Ok(decoded_token.claims.email)
     }
 }

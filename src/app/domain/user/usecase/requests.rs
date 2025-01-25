@@ -1,5 +1,3 @@
-use uuid::Uuid;
-
 use crate::app::api::user::requests as user_api_requests;
 
 pub struct SignupUserRequest {
@@ -14,7 +12,6 @@ pub struct SigninUserRequest {
 }
 
 pub struct UpdateUserRequest {
-    pub id: Uuid,
     pub email: Option<String>,
     pub username: Option<String>,
     pub password: Option<String>,
@@ -22,10 +19,9 @@ pub struct UpdateUserRequest {
     pub image: Option<String>,
 }
 
-impl From<(Uuid, user_api_requests::UpdateUserRequest)> for UpdateUserRequest {
-    fn from((id, value): (Uuid, user_api_requests::UpdateUserRequest)) -> Self {
+impl From<user_api_requests::UpdateUserRequest> for UpdateUserRequest {
+    fn from(value: user_api_requests::UpdateUserRequest) -> Self {
         UpdateUserRequest {
-            id,
             email: value.user.email,
             username: value.user.username,
             password: value.user.password,

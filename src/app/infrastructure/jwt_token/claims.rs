@@ -6,16 +6,16 @@ pub struct Claims {
     exp: i64,
     iat: i64,
     pub user_id: Uuid,
-    sub: String,
+    pub email: String,
 }
 
 impl Claims {
-    pub fn new(user_id: Uuid, sub: &str, now: i64, offset: i64) -> Self {
+    pub fn new(user_id: Uuid, email: &str, now: i64, offset: i64) -> Self {
         Claims {
             exp: now + offset,
             iat: offset,
             user_id,
-            sub: String::from(sub),
+            email: String::from(email),
         }
     }
 }

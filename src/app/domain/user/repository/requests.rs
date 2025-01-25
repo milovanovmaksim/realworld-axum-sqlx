@@ -5,6 +5,8 @@ use crate::app::{
     infrastructure::utils,
 };
 
+use super::entities::User;
+
 pub struct SignupUserRequest {
     pub username: String,
     pub email: String,
@@ -17,31 +19,38 @@ pub struct SigninUserRequest {
 
 pub struct UpdateUserRequest {
     pub id: Uuid,
-    pub email: Option<String>,
-    pub username: Option<String>,
-    pub password: Option<String>,
+    pub email: String,
+    pub username: String,
+    pub password: String,
     pub bio: Option<String>,
     pub image: Option<String>,
 }
 
-impl TryFrom<user::usecase::requests::UpdateUserRequest> for UpdateUserRequest {
+impl TryFrom<(User, user::usecase::requests::UpdateUserRequest)> for UpdateUserRequest {
     type Error = AppError;
 
-    fn try_from(value: user::usecase::requests::UpdateUserRequest) -> Result<Self, Self::Error> {
-        let password = match value.password {
+    fn try_from(
+        (user, request): (User, user::usecase::requests::UpdateUserRequest),
+    ) -> Result<Self, Self::Error> {
+        let password = match request.password {
             Some(naive_password) => {
                 let password = utils::hasher::hash_password(&naive_password)?;
-                Some(password)
+                password
             }
-            None => value.password,
+            None => user.password,
         };
+        let email = request.email.map_or(user.email, |email| email);
+        let username = request.username.map_or(user.username, |username| username);
+        let bio = request.bio.map_or(user.bio, |bio| Some(bio));
+        let image = request.image.map_or(user.image, |image| Some(image));
+
         Ok(UpdateUserRequest {
-            id: value.id,
-            email: value.email,
-            username: value.username,
+            id: user.id,
+            email,
+            username,
             password,
-            bio: value.bio,
-            image: value.image,
+            bio,
+            image,
         })
     }
 }

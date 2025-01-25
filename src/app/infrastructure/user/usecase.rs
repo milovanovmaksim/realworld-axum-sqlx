@@ -2,13 +2,16 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use tracing::{error, info};
-use uuid::Uuid;
 
 use crate::app::{
     domain::{
         error::AppError,
         jwt_token::jwt_token::JwtAuthToken,
-        user::{self, repository::UserRepository, usecase::UserUseCase},
+        user::{
+            self,
+            repository::{Email, UserRepository},
+            usecase::UserUseCase,
+        },
     },
     infrastructure::utils::hasher,
 };
@@ -96,10 +99,10 @@ impl UserUseCase for UserUseCaseImpl {
 
     async fn get_current_user(
         &self,
-        user_id: Uuid,
+        email: Email,
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
-        info!("Retrieving user by id {:?}", user_id);
-        let user = self.user_repository.get_user_by_id(user_id).await?;
+        info!("Retrieving user by email {:?}", email);
+        let user = self.user_repository.get_user_by_email(email).await?;
 
         match user {
             Some(user) => {
@@ -122,17 +125,18 @@ impl UserUseCase for UserUseCaseImpl {
 
     async fn update_user(
         &self,
-        request: user::usecase::requests::UpdateUserRequest,
+        (email, request): (Email, user::usecase::requests::UpdateUserRequest),
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
-        info!("Retrieving user by id {:?}", request.id);
-        match self.user_repository.get_user_by_id(request.id).await? {
+        info!("Retrieving user by email {:?}", email);
+
+        match self.user_repository.get_user_by_email(email).await? {
             Some(user) => {
                 info!("User found with email {:?}, updating user", user.email);
                 let user = self
                     .user_repository
-                    .update_user(user::repository::requests::UpdateUserRequest::try_from(
-                        request,
-                    )?)
+                    .update_user(user::repository::requests::UpdateUserRequest::try_from((
+                        user, request,
+                    ))?)
                     .await?;
 
                 info!("Generating token");
