@@ -1,4 +1,4 @@
-use crate::app::api::user::requests as user_api_requests;
+use crate::app::api;
 
 pub struct SignupUserRequest {
     pub username: String,
@@ -19,8 +19,8 @@ pub struct UpdateUserRequest {
     pub image: Option<String>,
 }
 
-impl From<user_api_requests::UpdateUserRequest> for UpdateUserRequest {
-    fn from(value: user_api_requests::UpdateUserRequest) -> Self {
+impl From<api::user::requests::UpdateUserRequest> for UpdateUserRequest {
+    fn from(value: api::user::requests::UpdateUserRequest) -> Self {
         UpdateUserRequest {
             email: value.user.email,
             username: value.user.username,
@@ -31,8 +31,8 @@ impl From<user_api_requests::UpdateUserRequest> for UpdateUserRequest {
     }
 }
 
-impl From<user_api_requests::SignupUserRequest> for SignupUserRequest {
-    fn from(value: user_api_requests::SignupUserRequest) -> Self {
+impl From<api::user::requests::SignupUserRequest> for SignupUserRequest {
+    fn from(value: api::user::requests::SignupUserRequest) -> Self {
         SignupUserRequest {
             username: value.user.username.unwrap(),
             email: value.user.email.unwrap(),
@@ -41,8 +41,8 @@ impl From<user_api_requests::SignupUserRequest> for SignupUserRequest {
     }
 }
 
-impl From<user_api_requests::SigninUserRequest> for SigninUserRequest {
-    fn from(value: user_api_requests::SigninUserRequest) -> Self {
+impl From<api::user::requests::SigninUserRequest> for SigninUserRequest {
+    fn from(value: api::user::requests::SigninUserRequest) -> Self {
         SigninUserRequest {
             email: value.user.email.unwrap(),
             naive_password: value.user.password.unwrap(),
