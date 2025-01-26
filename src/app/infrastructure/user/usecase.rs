@@ -5,7 +5,6 @@ use tracing::{error, info};
 
 use crate::app::{
     domain::{
-        error::AppError,
         jwt_token::jwt_token::JwtAuthToken,
         user::{
             self,
@@ -13,6 +12,7 @@ use crate::app::{
             usecase::UserUseCase,
         },
     },
+    error::AppError,
     infrastructure::utils::hasher,
 };
 

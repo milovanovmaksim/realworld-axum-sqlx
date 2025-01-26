@@ -1,9 +1,6 @@
 use uuid::Uuid;
 
-use crate::app::{
-    domain::{error::AppError, user},
-    infrastructure::utils,
-};
+use crate::app::{domain::user, error::AppError, infrastructure::utils};
 
 use super::entities::User;
 

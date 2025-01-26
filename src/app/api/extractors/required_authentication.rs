@@ -8,7 +8,7 @@ use axum_extra::{
 use tracing::info;
 
 use crate::app::{
-    domain::{error::AppError, jwt_token::jwt_token::JwtAuthToken},
+    domain::jwt_token::jwt_token::JwtAuthToken, error::AppError,
     infrastructure::jwt_token::jwt_token::JwtAuthTokenImpl,
 };
 

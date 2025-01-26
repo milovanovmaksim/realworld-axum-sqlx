@@ -1,5 +1,6 @@
-use crate::app::domain::{
-    error::AppError, jwt_token::jwt_token::JwtAuthToken, user::repository::entities::User,
+use crate::app::{
+    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::entities::User},
+    error::AppError,
 };
 
 use super::{claims::Claims, settings::JwtTokenSettings};

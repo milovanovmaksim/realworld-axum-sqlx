@@ -1,6 +1,6 @@
 pub mod responses;
 
-use crate::app::domain::{error::AppError, user::repository::Email};
+use crate::app::{domain::user::repository::Email, error::AppError};
 use async_trait::async_trait;
 use responses::ProfileResponse;
 

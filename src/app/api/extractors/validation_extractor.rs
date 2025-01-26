@@ -5,7 +5,7 @@ use axum::{
 use serde::de::DeserializeOwned;
 use validator::Validate;
 
-use crate::app::domain::error::AppError;
+use crate::app::error::AppError;
 
 pub struct ValidationExtractor<T>(pub T);
 

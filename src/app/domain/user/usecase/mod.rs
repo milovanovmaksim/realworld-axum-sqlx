@@ -1,10 +1,11 @@
 pub mod requests;
 pub mod responses;
 
-use crate::app::domain::error::AppError;
 use async_trait::async_trait;
 use requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest};
 use responses::UserUsecaseResponse;
+
+use crate::app::error::AppError;
 
 #[async_trait]
 pub trait UserUseCase: Send + Sync + 'static {

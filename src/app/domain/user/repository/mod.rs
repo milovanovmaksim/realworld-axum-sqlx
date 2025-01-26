@@ -1,10 +1,11 @@
 pub mod entities;
 pub mod requests;
 
-use crate::app::domain::error::AppError;
 use async_trait::async_trait;
 use entities::User;
 use requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest};
+
+use crate::app::error::AppError;
 
 pub type Email = String;
 

@@ -2,11 +2,13 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use crate::app::domain::{
-    self,
+use crate::app::{
+    domain::{
+        self,
+        profile::{repository::ProfileRepository, usecase::ProfileUseCase},
+        user::repository::{Email, UserRepository},
+    },
     error::AppError,
-    profile::{repository::ProfileRepository, usecase::ProfileUseCase},
-    user::repository::{Email, UserRepository},
 };
 
 pub struct ProfileUseCaseImpl {

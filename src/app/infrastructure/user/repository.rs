@@ -1,11 +1,9 @@
 use crate::app::{
-    domain::{
-        error::AppError,
-        user::{
-            self,
-            repository::{entities, Email, UserRepository},
-        },
+    domain::user::{
+        self,
+        repository::{entities, Email, UserRepository},
     },
+    error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
 

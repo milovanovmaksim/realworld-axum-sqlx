@@ -4,12 +4,7 @@ use axum::{Extension, Json};
 use tracing::info;
 
 use crate::app::{
-    api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse},
-    domain::{
-        error::AppError,
-        user::{self, usecase::UserUseCase},
-    },
-    infrastructure::user::usecase::UserUseCaseImpl,
+    api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse}, domain::user::{self, usecase::UserUseCase}, error::AppError, infrastructure::user::usecase::UserUseCaseImpl
 };
 
 use super::{requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest}, responses::AuthenticationUserResponse};
