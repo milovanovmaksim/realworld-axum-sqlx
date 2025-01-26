@@ -1,13 +1,14 @@
 pub mod responses;
 
+use crate::app::domain::{error::AppError, user::repository::Email};
+use async_trait::async_trait;
 use responses::ProfileResponse;
 
-use crate::app::domain::{error::AppError, user::repository::Email};
-
-trait ProfileUseCase {
+#[async_trait]
+pub trait ProfileUseCase: Sync + Send + 'static {
     async fn get_profile(
         &self,
         current_user: Email,
-        username: &str,
+        username: String,
     ) -> Result<ProfileResponse, AppError>;
 }
