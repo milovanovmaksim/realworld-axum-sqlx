@@ -12,9 +12,8 @@ pub trait ProfileRepository: Send + Sync + 'static {
     ///
     /// Возвращает true, если пользователь с following_user_id подписан
     /// на пользователя с current_user_id.
-    /// current_user_id - текущий пользователь залогининый в системе;
-    /// following_user_id - пользователь, которого
-    /// хотим проверить подписан ли он на текущего пользователя.
+    /// current_user_id - id текущего пользователя, прошедшего аутентификацию в системе;
+    /// following_user_id - пользователь, которого хотим проверить подписан ли он на текущего пользователя.
     async fn user_following(
         &self,
         current_user_id: Uuid,
