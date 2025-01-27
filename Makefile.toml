@@ -34,3 +34,10 @@ args = [
     "-f", "./deploy/docker-compose.postgres.yml",
     "start"
 ]
+
+
+[tasks.migrate] ## ensure Postgres is running, the container has a bit of warmup time causing migrations to fail
+install_crate = "sqlx"
+command = "sqlx"
+args = ["migrate", "run"]
+dependencies = ["postgres"]
