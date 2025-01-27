@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::app::{
     domain::user::{
         self,
@@ -12,11 +14,11 @@ use sqlx::{query_as, query_file_as};
 use tracing::info;
 
 pub struct UsersRepositoryImpl {
-    pg_sql: PostgreSQL,
+    pg_sql: Arc<PostgreSQL>,
 }
 
 impl UsersRepositoryImpl {
-    pub fn new(pg_sql: PostgreSQL) -> UsersRepositoryImpl {
+    pub fn new(pg_sql: Arc<PostgreSQL>) -> UsersRepositoryImpl {
         UsersRepositoryImpl { pg_sql }
     }
 }
