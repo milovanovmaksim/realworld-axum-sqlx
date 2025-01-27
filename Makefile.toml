@@ -6,12 +6,11 @@ default_to_workspace = false
 
 ## To start the API outside the Docker context
 [tasks.dev]
-install_crate="cargo-watch"
 command = "cargo"
 args = ["run"]
 dependencies = ["postgres"]
 
-## Build Docker containers.
+## Build all Docker containers.
 [tasks.docker]
 command = "docker-compose"
 args = [
@@ -20,7 +19,7 @@ args = [
     "--build"
 ]
 
-## Start Docker containers.
+## Start all Docker containers.
 [tasks.docker-start]
 command = "docker-compose"
 args = [
