@@ -28,11 +28,12 @@ impl DiContainer {
                 format!("DiContainer::new || error: failed to create jwt auth token service {e}")
             })?,
         ));
-        let pg_sql =
+        let pg_sql = Arc::new(
             PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref()).map_err(
                 |e| format!("DiContainer::new || error: failed to create postgresql client {e}"),
             )?)
-            .await;
+            .await,
+        );
 
         // User
         let user_repository = Arc::new(UsersRepositoryImpl::new(pg_sql.clone()));
