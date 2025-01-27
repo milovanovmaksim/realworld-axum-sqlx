@@ -4,7 +4,15 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 [config] ## we want most/all of our tasks to run in the context of a workspace
 default_to_workspace = false
 
-[tasks.docker-build]
+## To start the API outside the Docker context
+[tasks.dev]
+install_crate="cargo-watch"
+command = "cargo"
+args = ["run"]
+dependencies = ["postgres"]
+
+## Build Docker containers.
+[tasks.docker]
 command = "docker-compose"
 args = [
     "-f", "./deploy/docker-compose.postgres.yaml",
@@ -12,9 +20,18 @@ args = [
     "--build"
 ]
 
+## Start Docker containers.
 [tasks.docker-start]
 command = "docker-compose"
 args = [
     "-f", "./deploy/docker-compose.postgres.yaml",
+    "start"
+]
+
+## Start only Postgres Docker container.
+[tasks.postgres]
+command = "docker-compose"
+args = [
+    "-f", "./deploy/docker-compose.postgres.yml",
     "start"
 ]
