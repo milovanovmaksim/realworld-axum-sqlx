@@ -69,7 +69,7 @@ impl UserUseCase for UserUseCaseImpl {
             }
             None => {
                 error!("User {:?} not found", request.email);
-                return Err(AppError::NotFound);
+                return Err(AppError::NotFound(format!("User with email '{}' not found", request.email)));
             }
         }
     }
@@ -101,7 +101,7 @@ impl UserUseCase for UserUseCaseImpl {
         email: Email,
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         info!("Retrieving user by email {:?}", email);
-        let user = self.user_repository.get_user_by_email(email).await?;
+        let user = self.user_repository.get_user_by_email(email.clone()).await?;
 
         match user {
             Some(user) => {
@@ -117,7 +117,7 @@ impl UserUseCase for UserUseCaseImpl {
             }
             None => {
                 error!("User not found");
-                return Err(AppError::NotFound);
+                return Err(AppError::NotFound(format!("User with email '{}' not found", email)));
             }
         }
     }
@@ -128,7 +128,7 @@ impl UserUseCase for UserUseCaseImpl {
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         info!("Retrieving user by email {:?}", email);
 
-        match self.user_repository.get_user_by_email(email).await? {
+        match self.user_repository.get_user_by_email(email.clone()).await? {
             Some(user) => {
                 info!("User found with email {:?}, updating user", user.email);
                 let user = self
@@ -147,7 +147,7 @@ impl UserUseCase for UserUseCaseImpl {
             }
             None => {
                 error!("User not found");
-                return Err(AppError::NotFound);
+                return Err(AppError::NotFound(format!("User with email '{}' not found", email)));
             }
         }
     }

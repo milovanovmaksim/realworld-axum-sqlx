@@ -56,7 +56,7 @@ pub async fn signup(
             example=json!({"error": "password is incorrect"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})),
+            example = json!({"error": "User with email 'example@gmail.com' not found."})),
         (status = StatusCode::UNPROCESSABLE_ENTITY, description = "Unprocessable entity", body = HashMap<String, HashMap<String, Vec<String>>>,
             content_type = "application/json",
             example = json!({
@@ -94,7 +94,7 @@ pub async fn login(
             example=json!({"error": "Token is expired"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})),
+            example = json!({"error": "User with email 'example@gmail.com' not found."})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
@@ -126,7 +126,7 @@ pub async fn get_current_user(
             example=json!({"error": "Token is expired"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})),
+            example = json!({"error": "User with email 'example@gmail.com' not found."})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
