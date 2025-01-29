@@ -13,7 +13,7 @@ use crate::app::{
 
 pub struct ProfileUseCaseImpl {
     pub user_repository: Arc<dyn UserRepository>,
-    pub profile_repository: dyn ProfileRepository,
+    pub profile_repository: Arc<dyn ProfileRepository>,
 }
 
 #[async_trait]
