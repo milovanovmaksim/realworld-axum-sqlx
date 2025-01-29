@@ -38,7 +38,7 @@ where
                 .ok_or(AppError::InternalServerError)?;
 
         let email = token_service.get_user_email_from_token(bearer.token())?;
-        info!("User id has been found");
+        info!("User email has been found");
 
         Ok(RequiredAuthentication(email))
     }
