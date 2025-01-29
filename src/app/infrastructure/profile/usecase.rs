@@ -23,6 +23,11 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         current_user: Email,
         username: String,
     ) -> Result<domain::profile::usecase::responses::ProfileResponse, AppError> {
-        todo!()
+        match self.user_repository.get_user_by_email(current_email.clone()).await? {
+            Some(user) => {}
+            None => {
+                return Err(AppError::NotFound(format!("Current user with email '{}' not found.", current_user)));
+            }
+        }
     }
 }
