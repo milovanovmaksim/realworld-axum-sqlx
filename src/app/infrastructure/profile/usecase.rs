@@ -20,13 +20,13 @@ pub struct ProfileUseCaseImpl {
 impl ProfileUseCase for ProfileUseCaseImpl {
     async fn get_profile(
         &self,
-        current_user: Email,
+        current_user_email: Email,
         username: String,
     ) -> Result<domain::profile::usecase::responses::ProfileResponse, AppError> {
-        match self.user_repository.get_user_by_email(current_email.clone()).await? {
+        match self.user_repository.get_user_by_email(current_user_email.clone()).await? {
             Some(user) => {}
             None => {
-                return Err(AppError::NotFound(format!("Current user with email '{}' not found.", current_user)));
+                return Err(AppError::NotFound(format!("Current user with email '{}' not found.", current_user_email)));
             }
         }
     }

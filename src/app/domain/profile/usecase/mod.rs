@@ -14,7 +14,7 @@ pub trait ProfileUseCase: Sync + Send + 'static {
     /// username - username запрашиваемого профиля.
     async fn get_profile(
         &self,
-        current_user: Email,
+        current_user_email: Email,
         username: String,
     ) -> Result<ProfileResponse, AppError>;
 }
