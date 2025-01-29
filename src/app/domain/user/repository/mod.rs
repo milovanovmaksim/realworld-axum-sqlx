@@ -14,5 +14,6 @@ pub trait UserRepository: Send + Sync + 'static {
     async fn signup(&self, request: SignupUserRequest) -> Result<User, AppError>;
     async fn login(&self, request: SigninUserRequest) -> Result<Option<User>, AppError>;
     async fn get_user_by_email(&self, email: Email) -> Result<Option<User>, AppError>;
+    async fn get_user_by_username(&self, username: String) -> Result<Option<User>, AppError>;
     async fn update_user(&self, request: UpdateUserRequest) -> Result<User, AppError>;
 }

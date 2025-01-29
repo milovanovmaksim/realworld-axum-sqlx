@@ -10,7 +10,7 @@ use responses::ProfileResponse;
 pub trait ProfileUseCase: Sync + Send + 'static {
     ///
     /// Возвращает профиль по username.
-    /// current_user - email текущего пользователя, прошедшего аутентификацию;
+    /// current_user_email - email текущего пользователя;
     /// username - username запрашиваемого профиля.
     async fn get_profile(
         &self,

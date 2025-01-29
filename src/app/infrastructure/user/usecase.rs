@@ -68,7 +68,7 @@ impl UserUseCase for UserUseCaseImpl {
                 }
             }
             None => {
-                error!("User {:?} not found", request.email);
+                error!("User with email '{}' not found", request.email);
                 return Err(AppError::NotFound(format!("User with email '{}' not found", request.email)));
             }
         }

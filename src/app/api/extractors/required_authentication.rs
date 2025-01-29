@@ -35,9 +35,7 @@ where
         let token_service =
             req.extensions
                 .get::<Arc<JwtAuthTokenImpl>>()
-                .ok_or(AppError::Unauthorized(String::from(
-                    "Authentication is required to access this resource",
-                )))?;
+                .ok_or(AppError::InternalServerError)?;
 
         let email = token_service.get_user_email_from_token(bearer.token())?;
         info!("User id has been found");
