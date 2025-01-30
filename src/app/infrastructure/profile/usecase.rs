@@ -23,14 +23,10 @@ pub struct ProfileUseCaseImpl {
 impl ProfileUseCase for ProfileUseCaseImpl {
     async fn get_profile(
         &self,
-        user_id: Uuid,
-        username: String,
+        user_id: Option<Uuid>,
+        username: &str,
     ) -> Result<ProfileResponse, AppError> {
-        match self
-            .user_repository
-            .get_user_by_username(username.clone())
-            .await?
-        {
+        match self.user_repository.get_user_by_username(username).await? {
             Some(profile) => {
                 tracing::info!("Profile with username '{}' found", username);
 
@@ -41,7 +37,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                 Ok(ProfileResponse::from((following, profile)))
             }
             None => {
-                tracing::error!("Profile with username '{}' not found.", username.clone());
+                tracing::error!("Profile with username '{}' not found.", username);
                 Err(AppError::NotFound(format!(
                     "Profile with username '{}' not found.",
                     username
