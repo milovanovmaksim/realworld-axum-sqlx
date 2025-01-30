@@ -40,7 +40,6 @@ where
             .ok_or(AppError::InternalServerError)?;
 
         let email = token_service.get_user_email_from_token(bearer.token())?;
-        info!("User email has been found");
 
         info!("Attempt of getting UserRepositoryImpl from Extensions");
         let user_usecase = req
