@@ -29,12 +29,17 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         match self.user_repository.get_user_by_username(username).await? {
             Some(profile) => {
                 tracing::info!("Profile with username '{}' found", username);
-
-                let following = self
-                    .profile_repository
-                    .user_following(user_id, profile.id)
-                    .await?;
-                Ok(ProfileResponse::from((following, profile)))
+                match user_id {
+                    // in the case a token is passed and validly extracted.
+                    Some(user_id) => {
+                        let following = self
+                            .profile_repository
+                            .user_following(user_id, profile.id)
+                            .await?;
+                        Ok(ProfileResponse::from((following, profile)))
+                    }
+                    None => Ok(ProfileResponse::from((false, profile))),
+                }
             }
             None => {
                 tracing::error!("Profile with username '{}' not found.", username);
