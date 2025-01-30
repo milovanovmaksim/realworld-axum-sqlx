@@ -78,10 +78,12 @@ impl UserRepository for UsersRepositoryImpl {
         .fetch_optional(&self.pg_sql.pool())
         .await?;
         Ok(user)
-        
-        }
+    }
 
-    async fn get_user_by_username(&self, username: String) -> Result<Option<entities::User>, AppError> {
+    async fn get_user_by_username(
+        &self,
+        username: &str,
+    ) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by username in db {:?}", username);
 
         let user = query_as!(
@@ -92,7 +94,6 @@ impl UserRepository for UsersRepositoryImpl {
         .fetch_optional(&self.pg_sql.pool())
         .await?;
         Ok(user)
-        
     }
 
     async fn update_user(
