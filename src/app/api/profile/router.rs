@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use axum::{routing::get, Extension, Router};
 
+use super::endpoints::get_profile;
 use crate::app::infrastructure::di::DiContainer;
-use super::endpoints::get_profile
 
 pub fn profile_router(di: Arc<DiContainer>) -> Router {
     Router::new()
