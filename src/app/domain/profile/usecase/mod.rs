@@ -11,7 +11,7 @@ use uuid::Uuid;
 pub trait ProfileUseCase: Sync + Send + 'static {
     ///
     /// Возвращает профиль по username.
-    /// current_user_email - email текущего пользователя;
+    /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
     /// username - username запрашиваемого профиля.
     async fn get_profile(
         &self,

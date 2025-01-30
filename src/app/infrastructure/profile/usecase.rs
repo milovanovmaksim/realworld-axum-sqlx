@@ -5,7 +5,10 @@ use uuid::Uuid;
 
 use crate::app::{
     domain::{
-        profile::{repository::ProfileRepository, usecase::{responses::ProfileResponse, ProfileUseCase}},
+        profile::{
+            repository::ProfileRepository,
+            usecase::{responses::ProfileResponse, ProfileUseCase},
+        },
         user::repository::UserRepository,
     },
     error::AppError,
@@ -23,17 +26,26 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         user_id: Uuid,
         username: String,
     ) -> Result<ProfileResponse, AppError> {
-
-        match self.user_repository.get_user_by_username(username.clone()).await? {
+        match self
+            .user_repository
+            .get_user_by_username(username.clone())
+            .await?
+        {
             Some(profile) => {
                 tracing::info!("Profile with username '{}' found", username);
 
-                let following = self.profile_repository.user_following(user_id, profile.id).await?;
+                let following = self
+                    .profile_repository
+                    .user_following(user_id, profile.id)
+                    .await?;
                 Ok(ProfileResponse::from((following, profile)))
-            },
+            }
             None => {
                 tracing::error!("Profile with username '{}' not found.", username.clone());
-                Err(AppError::NotFound(format!("Profile with username '{}' not found.", username)))
+                Err(AppError::NotFound(format!(
+                    "Profile with username '{}' not found.",
+                    username
+                )))
             }
         }
     }

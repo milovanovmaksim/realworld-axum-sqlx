@@ -9,8 +9,9 @@ use tracing::info;
 use uuid::Uuid;
 
 use crate::app::{
-    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::UserRepository}, error::AppError,
-    infrastructure::{jwt_token::jwt_token::JwtAuthTokenImpl, user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl}},
+    domain::jwt_token::jwt_token::JwtAuthToken,
+    error::AppError,
+    infrastructure::{jwt_token::jwt_token::JwtAuthTokenImpl, user::usecase::UserUseCaseImpl},
 };
 
 // Extracts the JWT from the Authorization token header.
@@ -33,21 +34,29 @@ where
                 })?;
 
         info!("Attempt of getting JwtAuthTokenImpl from Extensions");
-        let token_service =
-            req.extensions
-                .get::<Arc<JwtAuthTokenImpl>>()
-                .ok_or(AppError::InternalServerError)?;
+        let token_service = req
+            .extensions
+            .get::<Arc<JwtAuthTokenImpl>>()
+            .ok_or(AppError::InternalServerError)?;
 
         let email = token_service.get_user_email_from_token(bearer.token())?;
         info!("User email has been found");
 
         info!("Attempt of getting UserRepositoryImpl from Extensions");
-        let user_usecase = req.extensions.get::<Arc<UserUseCaseImpl>>().ok_or(AppError::InternalServerError)?;
+        let user_usecase = req
+            .extensions
+            .get::<Arc<UserUseCaseImpl>>()
+            .ok_or(AppError::InternalServerError)?;
 
-        match user_usecase.user_repository.get_user_by_email(email).await? {
-            Some(user) => { Ok(RequiredAuthentication(user.id)) },
-            None => {Err(AppError::Unauthorized(String::from("Authentication is required to access this resource")))}
+        match user_usecase
+            .user_repository
+            .get_user_by_email(email)
+            .await?
+        {
+            Some(user) => Ok(RequiredAuthentication(user.id)),
+            None => Err(AppError::Unauthorized(String::from(
+                "Authentication is required to access this resource",
+            ))),
         }
-
     }
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "update users set \n    username=$1::text,\n    email=$2::text,\n    password=$3::text, \n    bio=$4::text, \n    image=$5::text, \n    updated_at = current_timestamp\nwhere id=$6\nreturning *\n",
+  "query": "update users set \n    username=COALESCE($1, username),\n    email=COALESCE($2, email),\n    password=COALESCE($3, password), \n    bio=COALESCE($4, bio), \n    image=COALESCE($5, image), \n    updated_at = current_timestamp\nwhere id=$6\nreturning *\n",
   "describe": {
     "columns": [
       {
@@ -65,5 +65,5 @@
       true
     ]
   },
-  "hash": "7140e0ecfa0646dd1880495e05ae6c2cac2ed09f6079e4051dba59388e0b235b"
+  "hash": "789904af7e932006aa0886215a6f6fd6379ec7f1be9a9ec7c1df08faf738b9ce"
 }
