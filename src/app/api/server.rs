@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::{config::ApiConfig, openapi, user::router::user_router};
 use crate::app::infrastructure::di::DiContainer;
 use axum::{http::HeaderValue, Router};
@@ -8,11 +10,11 @@ use utoipa_swagger_ui::SwaggerUi;
 
 pub struct Server {
     api_config: ApiConfig,
-    di_container: DiContainer,
+    di_container: Arc<DiContainer>,
 }
 
 impl Server {
-    pub fn new(di_container: DiContainer, api_config: ApiConfig) -> Self {
+    pub fn new(di_container: Arc<DiContainer>, api_config: ApiConfig) -> Self {
         Self {
             di_container,
             api_config,

@@ -6,7 +6,6 @@ use super::{
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
-#[derive(Clone)]
 pub struct DiContainer {
     /**
      * User
