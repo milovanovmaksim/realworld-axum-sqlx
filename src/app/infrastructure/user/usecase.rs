@@ -1,16 +1,12 @@
 use async_trait::async_trait;
-use uuid::Uuid;
 use std::sync::Arc;
 use tracing::{error, info};
+use uuid::Uuid;
 
 use crate::app::{
     domain::{
         jwt_token::jwt_token::JwtAuthToken,
-        user::{
-            self,
-            repository::UserRepository,
-            usecase::UserUseCase,
-        },
+        user::{self, repository::UserRepository, usecase::UserUseCase},
     },
     error::AppError,
     infrastructure::utils::hasher,
@@ -57,7 +53,9 @@ impl UserUseCase for UserUseCaseImpl {
                     info!("User login successful, generating token");
 
                     let token = self.jwt_auth_token.generate_token(&user)?;
-                    Ok(user::usecase::responses::UserUsecaseResponse::from((user, token,)))
+                    Ok(user::usecase::responses::UserUsecaseResponse::from((
+                        user, token,
+                    )))
                 } else {
                     error!("Invalid login attempt for user {:?}", request.email);
 
@@ -66,7 +64,10 @@ impl UserUseCase for UserUseCaseImpl {
             }
             None => {
                 error!("User with email '{}' not found", request.email);
-                Err(AppError::NotFound(format!("User with email '{}' not found", request.email)))
+                Err(AppError::NotFound(format!(
+                    "User with email '{}' not found",
+                    request.email
+                )))
             }
         }
     }
@@ -99,10 +100,11 @@ impl UserUseCase for UserUseCaseImpl {
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         info!("Retrieving user by id {:?}", user_id);
 
-        let user = self.user_repository.get_user_by_id(user_id.clone()).await?.unwrap();
+        let user = self.user_repository.get_user_by_id(user_id).await?.unwrap();
         let token = self.jwt_auth_token.generate_token(&user)?;
-        Ok(user::usecase::responses::UserUsecaseResponse::from((user, token,)))
-
+        Ok(user::usecase::responses::UserUsecaseResponse::from((
+            user, token,
+        )))
     }
 
     async fn update_user(
@@ -110,6 +112,7 @@ impl UserUseCase for UserUseCaseImpl {
         (user_id, request): (Uuid, user::usecase::requests::UpdateUserRequest),
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         info!("Update user");
+
         let user = self
             .user_repository
             .update_user(user::repository::requests::UpdateUserRequest::try_from((
@@ -120,7 +123,8 @@ impl UserUseCase for UserUseCaseImpl {
         info!("Generating token");
         let token = self.jwt_auth_token.generate_token(&user)?;
 
-        Ok(user::usecase::responses::UserUsecaseResponse::from((user, token)))
-
+        Ok(user::usecase::responses::UserUsecaseResponse::from((
+            user, token,
+        )))
     }
 }
