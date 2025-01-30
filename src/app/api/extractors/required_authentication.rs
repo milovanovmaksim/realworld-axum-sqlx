@@ -6,14 +6,15 @@ use axum_extra::{
     TypedHeader,
 };
 use tracing::info;
+use uuid::Uuid;
 
 use crate::app::{
-    domain::jwt_token::jwt_token::JwtAuthToken, error::AppError,
-    infrastructure::jwt_token::jwt_token::JwtAuthTokenImpl,
+    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::UserRepository}, error::AppError,
+    infrastructure::{jwt_token::jwt_token::JwtAuthTokenImpl, user::repository::UsersRepositoryImpl},
 };
 
 // Extracts the JWT from the Authorization token header.
-pub struct RequiredAuthentication(pub String);
+pub struct RequiredAuthentication(pub Uuid);
 
 impl<S> FromRequestParts<S> for RequiredAuthentication
 where
@@ -40,6 +41,13 @@ where
         let email = token_service.get_user_email_from_token(bearer.token())?;
         info!("User email has been found");
 
-        Ok(RequiredAuthentication(email))
+        info!("Attempt of getting UserRepositoryImpl from Extensions");
+        let user_repository = req.extensions.get::<Arc<UsersRepositoryImpl>>().ok_or(AppError::InternalServerError)?;
+
+        match user_repository.get_user_by_email(email).await? {
+            Some(user) => { Ok(RequiredAuthentication(user.id)) },
+            None => {Err(AppError::Unauthorized(String::from("Authentication is required to access this resource")))}
+        }
+
     }
 }

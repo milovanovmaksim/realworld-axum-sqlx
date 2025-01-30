@@ -1,8 +1,9 @@
 pub mod responses;
 
-use crate::app::{domain::user::repository::Email, error::AppError};
+use crate::app::error::AppError;
 use async_trait::async_trait;
 use responses::ProfileResponse;
+use uuid::Uuid;
 
 ///
 /// ProfileUseCase интерфейс, определяющий бизнес логику профиля.
@@ -14,7 +15,7 @@ pub trait ProfileUseCase: Sync + Send + 'static {
     /// username - username запрашиваемого профиля.
     async fn get_profile(
         &self,
-        current_user_email: Email,
+        user_id: Uuid,
         username: String,
     ) -> Result<ProfileResponse, AppError>;
 }

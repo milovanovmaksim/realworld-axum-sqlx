@@ -12,6 +12,7 @@ use crate::app::{
 use async_trait::async_trait;
 use sqlx::{query_as, query_file_as};
 use tracing::info;
+use uuid::Uuid;
 
 pub struct UsersRepositoryImpl {
     pg_sql: Arc<PostgreSQL>,
@@ -58,11 +59,7 @@ impl UserRepository for UsersRepositoryImpl {
 
         let user = query_as!(
             entities::User,
-            r#"
-        select *
-        from users
-        where email = $1
-            "#,
+            r#"select * from users where email = $1"#,
             email,
         )
         .fetch_optional(&self.pg_sql.pool())
@@ -70,17 +67,26 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
+    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<entities::User>, AppError> {
+        info!("Searching for user by id in db {:?}", user_id);
 
-    async fn get_user_by_username(&self, username: String) -> Result<Option<User>, AppError> {
+        let user = query_as!(
+            entities::User,
+            r#"select * from users where id = $1"#,
+            user_id,
+        )
+        .fetch_optional(&self.pg_sql.pool())
+        .await?;
+        Ok(user)
+        
+        }
+
+    async fn get_user_by_username(&self, username: String) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by username in db {:?}", username);
 
         let user = query_as!(
             entities::User,
-            r#"
-        select *
-        from users
-        where username = $1
-            "#,
+            r#"select * from users where username = $1"#,
             username,
         )
         .fetch_optional(&self.pg_sql.pool())
@@ -100,7 +106,7 @@ impl UserRepository for UsersRepositoryImpl {
             "./src/app/infrastructure/queries/users/update.sql",
             request.username,
             request.email,
-            request.password,
+            request.hashed_password,
             request.bio,
             request.image,
             request.id

@@ -137,11 +137,11 @@ pub async fn get_current_user(
 )]
 pub async fn update_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
-    RequiredAuthentication(email): RequiredAuthentication,
+    RequiredAuthentication(user_id): RequiredAuthentication,
     ValidationExtractor(request): ValidationExtractor<UpdateUserRequest>,
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to update current user");
 
-    let user = user_usecase.update_user((email, user::usecase::requests::UpdateUserRequest::from( request))).await?;
+    let user = user_usecase.update_user((user_id, user::usecase::requests::UpdateUserRequest::from(request))).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }

@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use uuid::Uuid;
 use std::sync::Arc;
 use tracing::{error, info};
 
@@ -7,7 +8,7 @@ use crate::app::{
         jwt_token::jwt_token::JwtAuthToken,
         user::{
             self,
-            repository::{Email, UserRepository},
+            repository::UserRepository,
             usecase::UserUseCase,
         },
     },
@@ -56,20 +57,16 @@ impl UserUseCase for UserUseCaseImpl {
                     info!("User login successful, generating token");
 
                     let token = self.jwt_auth_token.generate_token(&user)?;
-                    Ok(user::usecase::responses::UserUsecaseResponse::from((
-                        user, token,
-                    )))
+                    Ok(user::usecase::responses::UserUsecaseResponse::from((user, token,)))
                 } else {
                     error!("Invalid login attempt for user {:?}", request.email);
 
-                    return Err(AppError::BadRequest(String::from(format!(
-                        "password is incorrect"
-                    ))));
+                    Err(AppError::BadRequest(format!("password is incorrect")))
                 }
             }
             None => {
                 error!("User with email '{}' not found", request.email);
-                return Err(AppError::NotFound(format!("User with email '{}' not found", request.email)));
+                Err(AppError::NotFound(format!("User with email '{}' not found", request.email)))
             }
         }
     }
@@ -98,57 +95,32 @@ impl UserUseCase for UserUseCaseImpl {
 
     async fn get_current_user(
         &self,
-        email: Email,
+        user_id: Uuid,
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
-        info!("Retrieving user by email {:?}", email);
-        let user = self.user_repository.get_user_by_email(email.clone()).await?;
+        info!("Retrieving user by id {:?}", user_id);
 
-        match user {
-            Some(user) => {
-                info!(
-                    "User found with email {:?}, generating new token",
-                    user.email
-                );
+        let user = self.user_repository.get_user_by_id(user_id.clone()).await?.unwrap();
+        let token = self.jwt_auth_token.generate_token(&user)?;
+        Ok(user::usecase::responses::UserUsecaseResponse::from((user, token,)))
 
-                let token = self.jwt_auth_token.generate_token(&user)?;
-                Ok(user::usecase::responses::UserUsecaseResponse::from((
-                    user, token,
-                )))
-            }
-            None => {
-                error!("User not found");
-                return Err(AppError::NotFound(format!("User with email '{}' not found", email)));
-            }
-        }
     }
 
     async fn update_user(
         &self,
-        (email, request): (Email, user::usecase::requests::UpdateUserRequest),
+        (user_id, request): (Uuid, user::usecase::requests::UpdateUserRequest),
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
-        info!("Retrieving user by email {:?}", email);
+        info!("Update user");
+        let user = self
+            .user_repository
+            .update_user(user::repository::requests::UpdateUserRequest::try_from((
+                user_id, request,
+            ))?)
+            .await?;
 
-        match self.user_repository.get_user_by_email(email.clone()).await? {
-            Some(user) => {
-                info!("User found with email {:?}, updating user", user.email);
-                let user = self
-                    .user_repository
-                    .update_user(user::repository::requests::UpdateUserRequest::try_from((
-                        user, request,
-                    ))?)
-                    .await?;
+        info!("Generating token");
+        let token = self.jwt_auth_token.generate_token(&user)?;
 
-                info!("Generating token");
-                let token = self.jwt_auth_token.generate_token(&user)?;
+        Ok(user::usecase::responses::UserUsecaseResponse::from((user, token)))
 
-                Ok(user::usecase::responses::UserUsecaseResponse::from((
-                    user, token,
-                )))
-            }
-            None => {
-                error!("User not found");
-                return Err(AppError::NotFound(format!("User with email '{}' not found", email)));
-            }
-        }
     }
 }
