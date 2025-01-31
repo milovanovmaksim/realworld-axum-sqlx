@@ -51,13 +51,15 @@ impl UserUseCase for UserUseCaseImpl {
 
                 if hasher::verify(&request.naive_password, &user.password)? {
                     info!("User login successful, generating token.");
-
                     let token = self.jwt_auth_token.generate_token(&user)?;
                     Ok(user::usecase::responses::UserUsecaseResponse::from((
                         user, token,
                     )))
                 } else {
-                    error!("Invalid login attempt for user {:?}.", request.email);
+                    error!(
+                        "Invalid login attempt for user {:?}, password is incorrect.",
+                        request.email
+                    );
 
                     Err(AppError::BadRequest(format!("password is incorrect")))
                 }
@@ -76,8 +78,16 @@ impl UserUseCase for UserUseCaseImpl {
         &self,
         request: user::usecase::requests::SignupUserRequest,
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+        info!(
+            "Creating password hash for user {:?}",
+            request.email.clone()
+        );
         let hashed_password = hasher::hash_password(&request.naive_password)?;
 
+        info!(
+            "Password hashed successfully, creating user {:?}",
+            request.email
+        );
         let user = self
             .user_repository
             .signup(user::repository::requests::SignupUserRequest {
@@ -87,6 +97,7 @@ impl UserUseCase for UserUseCaseImpl {
             })
             .await?;
 
+        info!("User successfully created, generating token");
         let token = self.jwt_auth_token.generate_token(&user)?;
 
         Ok(user::usecase::responses::UserUsecaseResponse::from((
@@ -101,8 +112,13 @@ impl UserUseCase for UserUseCaseImpl {
         info!("Retrieving user by id {:?}", user_id);
 
         // a token is passed and validly extracted, user with user_id exists.
+        info!("retrieving user {:?}", user_id);
         let user = self.user_repository.get_user_by_id(user_id).await?.unwrap();
 
+        info!(
+            "User found with email {:?}, generating new token.",
+            user.email
+        );
         let token = self.jwt_auth_token.generate_token(&user)?;
 
         Ok(user::usecase::responses::UserUsecaseResponse::from((
@@ -114,8 +130,7 @@ impl UserUseCase for UserUseCaseImpl {
         &self,
         (user_id, request): (Uuid, user::usecase::requests::UpdateUserRequest),
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
-        info!("Update user");
-
+        info!("Update user {:?}", user_id);
         let user = self
             .user_repository
             .update_user(user::repository::requests::UpdateUserRequest::try_from((
@@ -123,7 +138,7 @@ impl UserUseCase for UserUseCaseImpl {
             ))?)
             .await?;
 
-        info!("Generating token");
+        info!("User {:?} updated, generating a new token", user_id);
         let token = self.jwt_auth_token.generate_token(&user)?;
 
         Ok(user::usecase::responses::UserUsecaseResponse::from((
