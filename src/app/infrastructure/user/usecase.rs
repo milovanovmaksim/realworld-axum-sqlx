@@ -45,27 +45,27 @@ impl UserUseCase for UserUseCaseImpl {
         match user {
             Some(user) => {
                 info!(
-                    "User has been found, verifying password hash for user {:?}",
+                    "User has been found, verifying password hash for user {:?}.",
                     request.email
                 );
 
                 if hasher::verify(&request.naive_password, &user.password)? {
-                    info!("User login successful, generating token");
+                    info!("User login successful, generating token.");
 
                     let token = self.jwt_auth_token.generate_token(&user)?;
                     Ok(user::usecase::responses::UserUsecaseResponse::from((
                         user, token,
                     )))
                 } else {
-                    error!("Invalid login attempt for user {:?}", request.email);
+                    error!("Invalid login attempt for user {:?}.", request.email);
 
                     Err(AppError::BadRequest(format!("password is incorrect")))
                 }
             }
             None => {
-                error!("User with email '{}' not found", request.email);
+                error!("User with email '{}' not found.", request.email);
                 Err(AppError::NotFound(format!(
-                    "User with email '{}' not found",
+                    "User with email '{}' not found.",
                     request.email
                 )))
             }

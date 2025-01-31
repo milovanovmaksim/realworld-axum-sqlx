@@ -28,7 +28,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
     ) -> Result<ProfileResponse, AppError> {
         match self.user_repository.get_user_by_username(username).await? {
             Some(profile) => {
-                tracing::info!("Profile with username '{}' found", username);
+                tracing::info!("Profile with username '{}' found.", username);
                 match user_id {
                     // in the case a token is passed and validly extracted.
                     Some(user_id) => {
