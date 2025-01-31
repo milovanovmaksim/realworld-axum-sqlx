@@ -100,8 +100,11 @@ impl UserUseCase for UserUseCaseImpl {
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         info!("Retrieving user by id {:?}", user_id);
 
+        // a token is passed and validly extracted, user with user_id exists.
         let user = self.user_repository.get_user_by_id(user_id).await?.unwrap();
+
         let token = self.jwt_auth_token.generate_token(&user)?;
+
         Ok(user::usecase::responses::UserUsecaseResponse::from((
             user, token,
         )))
