@@ -16,6 +16,6 @@ pub trait ProfileUseCase: Sync + Send + 'static {
     async fn get_profile(
         &self,
         user_id: Option<Uuid>,
-        username: &str,
+        username: String,
     ) -> Result<ProfileResponse, AppError>;
 }
