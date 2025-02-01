@@ -29,6 +29,10 @@ pub trait ProfileUseCase: Sync + Send + 'static {
         username: String,
     ) -> Result<ProfileResponse, AppError>;
 
+    ///
+    /// Удаляем подписку для текущего прользователя по username.
+    /// username - username пользователя от кого хотим отписаться;
+    /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
     async fn remove_user_follow(
         &self,
         username: String,

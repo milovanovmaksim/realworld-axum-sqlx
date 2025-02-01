@@ -96,4 +96,32 @@ impl ProfileUseCase for ProfileUseCaseImpl {
             ))),
         }
     }
+    async fn remove_user_follow(
+        &self,
+        username: String,
+        current_user_id: Uuid,
+    ) -> Result<ProfileResponse, AppError> {
+        match self
+            .user_repository
+            .get_user_by_username(username.clone())
+            .await?
+        {
+            Some(followee) => {
+                if self
+                    .profile_repository
+                    .is_follower(current_user_id, followee.id)
+                    .await?
+                {
+                    self.profile_repository
+                        .remove_user_follow(current_user_id, followee.id)
+                        .await?;
+                }
+                Ok(ProfileResponse::from((false, followee)))
+            }
+            None => Err(AppError::NotFound(format!(
+                "Profile to follow with username '{}' not found.",
+                username
+            ))),
+        }
+    }
 }
