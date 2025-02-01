@@ -18,4 +18,14 @@ pub trait ProfileUseCase: Sync + Send + 'static {
         user_id: Option<Uuid>,
         username: String,
     ) -> Result<ProfileResponse, AppError>;
+
+    ///
+    /// Текущего пользователя делает подписчиком для followee_id.
+    /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
+    /// username - username пользователя на которого подписываем текущего пользователя.
+    async fn add_user_follow(
+        &self,
+        current_user_id: Uuid,
+        username: String,
+    ) -> Result<ProfileResponse, AppError>;
 }

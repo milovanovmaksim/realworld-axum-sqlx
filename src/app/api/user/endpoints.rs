@@ -98,10 +98,10 @@ pub async fn login(
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
-        ),
-        security(
-            ("bearer_auth" = [])
-        )
+    ),
+    security(
+        ("bearer_auth" = [])
+    )
 )]
 pub async fn get_current_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
@@ -118,7 +118,7 @@ pub async fn get_current_user(
     path = "/api/v1/user",
     tag = "User and Authentication",
     request_body(content = UpdateUserRequest, content_type = "application/json"),
-    description = "Get current user",
+    description = "Update current user",
     responses(
         (status = StatusCode::OK, description = "Current user", body = AuthenticationUserResponse, content_type = "application/json"),
         (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
@@ -130,10 +130,10 @@ pub async fn get_current_user(
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
-        ),
-        security(
-            ("bearer_auth" = [])
-        )
+    ),
+    security(
+        ("bearer_auth" = [])
+    )
 )]
 pub async fn update_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,

@@ -20,6 +20,7 @@ use crate::app::api::{
         super::user::endpoints::get_current_user,
         super::user::endpoints::update_user,
         super::profile::endpoints::get_profile,
+        super::profile::endpoints::follow_user,
         openapi,
     ),
     components(

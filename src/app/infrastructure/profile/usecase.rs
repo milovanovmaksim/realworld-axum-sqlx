@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use uuid::Uuid;
 
 use crate::app::{
+    api,
     domain::{
         profile::{
             repository::ProfileRepository,
@@ -64,6 +65,35 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                     username
                 )))
             }
+        }
+    }
+
+    async fn add_user_follow(
+        &self,
+        current_user_id: Uuid,
+        username: String,
+    ) -> Result<ProfileResponse, AppError> {
+        match self
+            .user_repository
+            .get_user_by_username(username.clone())
+            .await?
+        {
+            Some(followee) => {
+                if !self
+                    .profile_repository
+                    .is_follower(current_user_id, followee.id)
+                    .await?
+                {
+                    self.profile_repository
+                        .add_user_follow(current_user_id, followee.id)
+                        .await?;
+                }
+                Ok(ProfileResponse::from((true, followee)))
+            }
+            None => Err(AppError::NotFound(format!(
+                "Profile to follow with username '{}' not found.",
+                username
+            ))),
         }
     }
 }
