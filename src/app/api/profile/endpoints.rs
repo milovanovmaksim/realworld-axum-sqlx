@@ -22,7 +22,7 @@ use crate::app::{
             (status = StatusCode::OK, description = "Profile", body = ProfileResponse, content_type = "application/json"),
             (status = StausCode::NOT_FOUND, description = "Profile not found.", body = HashMap<String, String>,
                 content_type = "application/json",
-                example = json!({"error": "User with username 'DonaldTrump' not found."})),
+                example = json!({"error": "Profile with username 'DonaldTrump' not found."})),
             (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
                 content_type = "application/json",
                 example = json!({"error": AppError::InternalServerError.to_string()}))
