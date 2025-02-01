@@ -3,20 +3,21 @@ use std::{path::Path, sync::Arc};
 use super::{
     jwt_token::{jwt_token::JwtAuthTokenImpl, settings::JwtTokenSettings},
     pgsql::{db::PostgreSQL, settings::DatabaseSettings},
+    profile::{repository::ProfileRepositoryImpl, usecase::ProfileUseCaseImpl},
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
 #[derive(Clone)]
 pub struct DiContainer {
-    /**
-     * User
-     */
+    // User
     pub user_repository: Arc<UsersRepositoryImpl>,
     pub user_usecase: Arc<UserUseCaseImpl>,
 
-    /**
-     *Utility services
-     */
+    // Profile
+    pub profile_repository: Arc<ProfileRepositoryImpl>,
+    pub profile_usecase: Arc<ProfileUseCaseImpl>,
+
+    // Utility services
     pub jwt_auth_token: Arc<JwtAuthTokenImpl>,
 }
 
@@ -42,9 +43,18 @@ impl DiContainer {
             jwt_auth_token.clone(),
         ));
 
+        // Profile
+        let profile_repository = Arc::new(ProfileRepositoryImpl::new(pg_sql.clone()));
+        let profile_usecase = Arc::new(ProfileUseCaseImpl::new(
+            user_repository.clone(),
+            profile_repository.clone(),
+        ));
+
         Ok(Self {
             user_repository,
             user_usecase,
+            profile_repository,
+            profile_usecase,
             jwt_auth_token,
         })
     }
