@@ -23,27 +23,9 @@ impl ProfileRepositoryImpl {
 
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
-    async fn is_follower(
-        &self,
-        current_user_id: uuid::Uuid,
-        followee_id: uuid::Uuid,
-    ) -> Result<bool, AppError> {
-        info!("Searching following user");
-        let record = query!(
-            r#"
-            select 1 as "id?" from user_follows where follower_id = $1 and followee_id = $2
-            "#,
-            current_user_id,
-            followee_id
-        )
-        .fetch_optional(&self.pg_sql.pool())
-        .await?;
-        Ok(record.is_some())
-    }
-
     async fn add_user_follow(
         &self,
-        current_user_id: Uuid,
+        follower_id: Uuid,
         followee_id: Uuid,
     ) -> Result<UserFollow, AppError> {
         info!("Query of creating user follow.");
@@ -53,11 +35,47 @@ impl ProfileRepository for ProfileRepositoryImpl {
             insert into user_follows (follower_id, followee_id)
             values ($1, $2) returning *;
             "#,
-            current_user_id,
+            follower_id,
             followee_id
         )
         .fetch_one(&self.pg_sql.pool())
         .await?;
         Ok(user_follow)
+    }
+
+    async fn is_follower(
+        &self,
+        user_id: uuid::Uuid,
+        followee_id: uuid::Uuid,
+    ) -> Result<bool, AppError> {
+        info!("Query 'is follower?'");
+        let record = query!(
+            r#"
+            select 1 as "id?" from user_follows where follower_id = $1 and followee_id = $2
+            "#,
+            user_id,
+            followee_id
+        )
+        .fetch_optional(&self.pg_sql.pool())
+        .await?;
+        Ok(record.is_some())
+    }
+
+    async fn remove_user_follow(
+        &self,
+        follower_id: Uuid,
+        followee_id: Uuid,
+    ) -> Result<(), AppError> {
+        info!("Query to remove user follow.");
+        query!(
+            r#"
+            delete from user_follows where (follower_id, followee_id) = ($1, $2);
+            "#,
+            follower_id,
+            followee_id
+        )
+        .execute(&self.pg_sql.pool())
+        .await?;
+        Ok(())
     }
 }
