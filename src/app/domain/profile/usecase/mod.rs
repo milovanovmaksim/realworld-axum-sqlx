@@ -28,4 +28,10 @@ pub trait ProfileUseCase: Sync + Send + 'static {
         current_user_id: Uuid,
         username: String,
     ) -> Result<ProfileResponse, AppError>;
+
+    async fn remove_user_follow(
+        &self,
+        username: String,
+        current_user_id: Uuid,
+    ) -> Result<ProfileResponse, AppError>;
 }
