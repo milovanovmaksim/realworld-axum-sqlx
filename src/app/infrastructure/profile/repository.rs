@@ -21,10 +21,10 @@ impl ProfileRepositoryImpl {
 
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
-    async fn user_following(
+    async fn is_follower(
         &self,
         current_user_id: uuid::Uuid,
-        following_user_id: uuid::Uuid,
+        followee_user_id: uuid::Uuid,
     ) -> Result<bool, AppError> {
         info!("Searching following user");
         let record = query!(
@@ -32,7 +32,7 @@ impl ProfileRepository for ProfileRepositoryImpl {
             select 1 as "id?" from user_follows where follower_id = $1 and followee_id = $2
             "#,
             current_user_id,
-            following_user_id
+            followee_user_id
         )
         .fetch_optional(&self.pg_sql.pool())
         .await?;

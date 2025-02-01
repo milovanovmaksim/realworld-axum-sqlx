@@ -10,13 +10,12 @@ use crate::app::error::AppError;
 #[async_trait]
 pub trait ProfileRepository: Send + Sync + 'static {
     ///
-    /// Возвращает true, если пользователь с following_user_id подписан
-    /// на пользователя с current_user_id.
+    /// Возвращает true, если текущий пользователь(curretn_user_id) является подписчиком пользователя с followee_user_id.
     /// current_user_id - id текущего пользователя, прошедшего аутентификацию в системе;
-    /// following_user_id - пользователь, которого хотим проверить подписан ли он на текущего пользователя.
-    async fn user_following(
+    /// followee_user_id - id пользователя на которого возможно подписан текущий пользователь.
+    async fn is_follower(
         &self,
         current_user_id: Uuid,
-        following_user_id: Uuid,
+        followee_user_id: Uuid,
     ) -> Result<bool, AppError>;
 }

@@ -50,7 +50,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                     Some(user_id) => {
                         let following = self
                             .profile_repository
-                            .user_following(user_id, profile.id)
+                            .is_follower(user_id, profile.id)
                             .await?;
                         Ok(ProfileResponse::from((following, profile)))
                     }
