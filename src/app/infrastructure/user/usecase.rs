@@ -78,10 +78,7 @@ impl UserUseCase for UserUseCaseImpl {
         &self,
         request: user::usecase::requests::SignupUserRequest,
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
-        info!(
-            "Creating password hash for user {:?}",
-            request.email.clone()
-        );
+        info!("Creating password hash for user {:?}", request.email);
         let hashed_password = hasher::hash_password(&request.naive_password)?;
 
         info!(
@@ -112,7 +109,6 @@ impl UserUseCase for UserUseCaseImpl {
         info!("Retrieving user by id {:?}", user_id);
 
         // a token is passed and validly extracted, user with user_id exists.
-        info!("retrieving user {:?}", user_id);
         let user = self.user_repository.get_user_by_id(user_id).await?.unwrap();
 
         info!(
