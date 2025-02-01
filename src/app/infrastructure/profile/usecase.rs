@@ -4,7 +4,6 @@ use async_trait::async_trait;
 use uuid::Uuid;
 
 use crate::app::{
-    api,
     domain::{
         profile::{
             repository::ProfileRepository,

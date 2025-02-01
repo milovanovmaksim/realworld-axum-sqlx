@@ -21,6 +21,7 @@ use crate::app::api::{
         super::user::endpoints::update_user,
         super::profile::endpoints::get_profile,
         super::profile::endpoints::follow_user,
+        super::profile::endpoints::unfollow_user,
         openapi,
     ),
     components(
