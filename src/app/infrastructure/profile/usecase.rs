@@ -38,7 +38,11 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         user_id: Option<Uuid>,
         username: String,
     ) -> Result<ProfileResponse, AppError> {
-        match self.user_repository.get_user_by_username(&username).await? {
+        match self
+            .user_repository
+            .get_user_by_username(username.clone())
+            .await?
+        {
             Some(profile) => {
                 tracing::info!("Profile with username '{}' found.", username);
                 match user_id {

@@ -82,7 +82,7 @@ impl UserRepository for UsersRepositoryImpl {
 
     async fn get_user_by_username(
         &self,
-        username: &str,
+        username: String,
     ) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by username in db {:?}", username);
 
