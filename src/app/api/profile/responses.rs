@@ -1,13 +1,14 @@
 use serde::Serialize;
+use utoipa::ToSchema;
 
 use crate::app::domain;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct ProfileResponse {
     profile: ProfileInner,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct ProfileInner {
     pub username: String,
     pub bio: Option<String>,
