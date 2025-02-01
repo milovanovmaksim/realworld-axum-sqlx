@@ -19,14 +19,26 @@ pub struct ProfileUseCaseImpl {
     pub profile_repository: Arc<dyn ProfileRepository>,
 }
 
+impl ProfileUseCaseImpl {
+    pub fn new(
+        user_repository: Arc<dyn UserRepository>,
+        profile_repository: Arc<dyn ProfileRepository>,
+    ) -> Self {
+        Self {
+            user_repository,
+            profile_repository,
+        }
+    }
+}
+
 #[async_trait]
 impl ProfileUseCase for ProfileUseCaseImpl {
     async fn get_profile(
         &self,
         user_id: Option<Uuid>,
-        username: &str,
+        username: String,
     ) -> Result<ProfileResponse, AppError> {
-        match self.user_repository.get_user_by_username(username).await? {
+        match self.user_repository.get_user_by_username(&username).await? {
             Some(profile) => {
                 tracing::info!("Profile with username '{}' found.", username);
                 match user_id {
