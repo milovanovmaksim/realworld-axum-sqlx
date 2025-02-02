@@ -3,6 +3,9 @@ use std::{fs::File, path::Path};
 use serde::Deserialize;
 use serde_yaml::Mapping;
 
+
+///
+/// Содержит настройки api сервера.
 #[derive(Deserialize)]
 pub struct ApiConfig {
     pub host: String,
