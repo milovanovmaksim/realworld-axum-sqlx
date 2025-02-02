@@ -14,11 +14,17 @@ use sqlx::{query_as, query_file_as};
 use tracing::info;
 use uuid::Uuid;
 
+
+///
+/// Реализует интерфейс UserRepository для работы с таблицей 'users' базы данных PostgreSQL.
 pub struct UsersRepositoryImpl {
     pg_sql: Arc<PostgreSQL>,
 }
 
 impl UsersRepositoryImpl {
+    
+    ///
+    /// Основной конструктор.
     pub fn new(pg_sql: Arc<PostgreSQL>) -> UsersRepositoryImpl {
         UsersRepositoryImpl { pg_sql }
     }
@@ -26,6 +32,9 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
+    
+    ///
+    /// Создает нового пользователя.
     async fn create_user(
         &self,
         request: user::repository::requests::CreateUserRequest,
@@ -46,7 +55,10 @@ impl UserRepository for UsersRepositoryImpl {
         .await?;
         Ok(user)
     }
-
+    
+    
+    ///
+    /// Возвращает пользователя по email.
     async fn get_user_by_email(&self, email: Email) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by email in db {:?}", email);
 
@@ -60,6 +72,8 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
+    ///
+    /// Возвращает пользователя по id.
     async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by id in db {:?}", user_id);
 
@@ -73,6 +87,8 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
+    ///
+    /// Возвращает пользователя по username.
     async fn get_user_by_username(
         &self,
         username: String,
@@ -89,6 +105,8 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
+    ///
+    /// Обновляет информацию о пользователе.
     async fn update_user(
         &self,
         request: user::repository::requests::UpdateUserRequest,
