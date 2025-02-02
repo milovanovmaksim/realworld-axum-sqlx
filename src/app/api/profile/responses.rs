@@ -3,6 +3,9 @@ use utoipa::ToSchema;
 
 use crate::app::domain;
 
+///
+/// Ответ api сервера.
+/// Содержит информацию о профиле.
 #[derive(Debug, Serialize, ToSchema)]
 pub struct ProfileResponse {
     profile: ProfileInner,
