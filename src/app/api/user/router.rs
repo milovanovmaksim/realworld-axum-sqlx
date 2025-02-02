@@ -8,6 +8,8 @@ use axum::{
 
 use super::endpoints::{get_current_user, login, signup, update_user};
 
+///
+/// Возвращает маршрутизатор для пользователя.
 pub fn user_router(di: Arc<DiContainer>) -> Router {
     Router::new()
         .route("/users", post(signup))

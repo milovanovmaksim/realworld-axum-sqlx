@@ -2,6 +2,9 @@ use serde::Deserialize;
 use utoipa::ToSchema;
 use validator::Validate;
 
+
+///
+/// Запрос на регистрацию нового пользователя.
 #[derive(Deserialize, Debug, Validate, ToSchema)]
 pub struct SignupUserRequest {
     #[validate]
@@ -26,6 +29,9 @@ pub struct SignupUser {
     pub password: Option<String>,
 }
 
+
+///
+/// Запрос на авторизацию пользователя.
 #[derive(Deserialize, Debug, Validate, ToSchema)]
 pub struct SigninUser {
     #[validate(required, length(min = 1), email(message = "email is invalid"))]
@@ -44,6 +50,9 @@ pub struct SigninUserRequest {
     pub user: SigninUser,
 }
 
+
+///
+/// Запрос на обновление информации о текущем пользователе.
 #[derive(Deserialize, Debug, Validate, ToSchema)]
 pub struct UpdateUserRequest {
     #[validate]

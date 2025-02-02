@@ -3,6 +3,9 @@ use utoipa::ToSchema;
 
 use crate::app::domain::user::usecase::responses::UserUsecaseResponse;
 
+
+///
+/// Ответ api сервера.
 #[derive(Serialize, Debug, ToSchema)]
 pub struct AuthenticationUserResponse {
     user: User,
