@@ -19,8 +19,7 @@ use crate::app::{
 
 
 ///
-/// Обработчик пути "/api/v1/profiles/{username}".
-/// Возвращает информацию о профиле.
+/// Возвращает информацию о профиле по 'username'.
 #[utoipa::path(
     get,
     path = "/api/v1/profiles/{username}",
@@ -51,7 +50,6 @@ pub async fn get_profile(
 
 
 ///
-/// Обработчик пути "/api/v1/profiles/{username}/follow".
 /// Делает текущего пользователя подписчиком по 'username'.
 /// Возвращает информацию о профиле на которого подписался текущий пользователь.
 #[utoipa::path(
@@ -87,7 +85,6 @@ pub async fn follow_user(
 
 
 ///
-/// Обработчик пути "/api/v1/profiles/{username}/follow".
 /// Отменяет подписку текущего пользователя по 'username'.
 /// Возвращает информацию о профиле от которого отписался текущий пользователь.
 #[utoipa::path(

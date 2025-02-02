@@ -10,7 +10,6 @@ use crate::app::{
 use super::{requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest}, responses::AuthenticationUserResponse};
 
 ///
-/// Обработчик пути "/api/v1/users".
 /// Регистрирует нового пользователя.
 /// Возвращает информацию о вновь созданном пользователе.
 #[utoipa::path(post,
@@ -50,7 +49,6 @@ pub async fn signup(
 
 
 ///
-/// Обработчик пути "/api/v1/users/login".
 /// Авторизация пользователя.
 /// Возвращает информайию о пользователе, прошедшего авторизацию.
 #[utoipa::path(post,
@@ -92,7 +90,6 @@ pub async fn login(
 
 
 ///
-/// Обработчик пути "/api/v1/user"
 /// Возвращает текущего пользователя, прошедшего аутентификацию.
 #[utoipa::path(get,
     path = "/api/v1/user",
