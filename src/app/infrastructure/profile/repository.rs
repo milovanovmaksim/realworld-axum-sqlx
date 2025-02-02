@@ -27,9 +27,7 @@ impl ProfileRepositoryImpl {
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
     ///
-    /// Создает новую запись в таблицу user_follows.
-    /// follower_id - id пользователя;
-    /// followee_id - id пользователя на которого подписываем follower_id.
+    /// Создает новую запись в БД.
     async fn add_user_follow(
         &self,
         follower_id: Uuid,
@@ -51,9 +49,7 @@ impl ProfileRepository for ProfileRepositoryImpl {
     }
 
     ///
-    /// Возвращает true, если пользователь user_id является подписчиком пользователя followee_id.
-    /// user_id - id пользователя;
-    /// followee_id - id пользователя на которого возможно подписан текущий пользователь.
+    /// Возвращает true, если запись существует в БД.
     async fn is_follower(
         &self,
         user_id: uuid::Uuid,
@@ -73,9 +69,7 @@ impl ProfileRepository for ProfileRepositoryImpl {
     }
 
     ///
-    /// Удаляет запись из таблицы user_follows, если такая запись существует.
-    /// follower_id - id пользователя(подписчика);
-    /// followee_id - id пользователя от которого хотим отписаться.
+    /// Удаляет запись из БД, если такая запись существует.
     async fn remove_user_follow(
         &self,
         follower_id: Uuid,
