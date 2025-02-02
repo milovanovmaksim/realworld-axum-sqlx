@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::app::error::AppError;
 
 ///
-/// ProfileRepository интерфейс, определяющий набор методов для работы с БД таблицы 'user_follows'.
+/// ProfileRepository интерфейс, определяющий набор методов для работы с БД.
 #[async_trait]
 pub trait ProfileRepository: Send + Sync + 'static {
     ///

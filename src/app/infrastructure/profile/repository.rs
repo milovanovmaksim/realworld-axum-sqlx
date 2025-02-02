@@ -11,6 +11,9 @@ use crate::app::{
     infrastructure::pgsql::db::PostgreSQL,
 };
 
+///
+/// ProfileRepositoryImpl реализует интерфейс ProfileRepository для работы с таблицей 'user_follows' базы данных PostgreSQL.
+/// pg_sql - клиент для работы с PostgreSQL.
 pub struct ProfileRepositoryImpl {
     pg_sql: Arc<PostgreSQL>,
 }
@@ -23,6 +26,10 @@ impl ProfileRepositoryImpl {
 
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
+    ///
+    /// Создает новую запись в таблицу user_follows.
+    /// follower_id - id пользователя;
+    /// followee_id - id пользователя на которого подписываем follower_id.
     async fn add_user_follow(
         &self,
         follower_id: Uuid,
@@ -43,6 +50,10 @@ impl ProfileRepository for ProfileRepositoryImpl {
         Ok(user_follow)
     }
 
+    ///
+    /// Возвращает true, если пользователь user_id является подписчиком пользователя followee_id.
+    /// user_id - id пользователя;
+    /// followee_id - id пользователя на которого возможно подписан текущий пользователь.
     async fn is_follower(
         &self,
         user_id: uuid::Uuid,
@@ -61,6 +72,10 @@ impl ProfileRepository for ProfileRepositoryImpl {
         Ok(record.is_some())
     }
 
+    ///
+    /// Удаляет запись из таблицы user_follows, если такая запись существует.
+    /// follower_id - id пользователя(подписчика);
+    /// followee_id - id пользователя от которого хотим отписаться.
     async fn remove_user_follow(
         &self,
         follower_id: Uuid,
