@@ -7,15 +7,24 @@ use super::settings::DatabaseSettings;
 
 pub type DbPool = Pool<Postgres>;
 
+
+///
+/// Клиент для работы с PostgreSQL.
 #[derive(Clone)]
 pub struct PostgreSQL {
     pool: DbPool,
 }
 
 impl PostgreSQL {
+    
+    ///
+    /// Основной конструктор.
     fn new(pool: DbPool) -> Self {
         Self { pool }
     }
+    
+    ///
+    /// Создает объект из DatabaseSettings.
     pub async fn configure_database(config: DatabaseSettings) -> Self {
         let ssl_mode = if config.require_ssl {
             PgSslMode::Require
@@ -55,11 +64,15 @@ impl PostgreSQL {
             .await
             .expect("Failed to migrate the database");
     }
-
+    
+    ///
+    /// Возвращает пул соединений.
     pub fn pool(&self) -> DbPool {
         self.pool.clone()
     }
 
+    ///
+    /// Завершить работу пула соединений.
     pub async fn close(&self) {
         self.pool.close().await;
     }
