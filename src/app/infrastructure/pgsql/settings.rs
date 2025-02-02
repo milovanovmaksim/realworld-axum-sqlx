@@ -20,7 +20,7 @@ pub struct DatabaseSettings {
 impl DatabaseSettings {
     
     ///
-    /// =Основной конструктор.
+    /// Основной конструктор.
     pub fn new(
         username: String,
         password: String,
@@ -40,8 +40,7 @@ impl DatabaseSettings {
             max_connections,
         }
     }
-    
-    
+      
     ///
     /// Создает новый объект из yaml файла.
     pub fn from_yaml<T: AsRef<Path>>(path: T) -> Result<Self, String> {
