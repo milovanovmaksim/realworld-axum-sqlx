@@ -7,10 +7,8 @@ use super::{
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
-
 ///
 /// Контейнер внедрения зависимостей.
-#[derive(Clone)]
 pub struct DiContainer {
     // User
     pub user_repository: Arc<UsersRepositoryImpl>,
@@ -25,7 +23,6 @@ pub struct DiContainer {
 }
 
 impl DiContainer {
-    
     ///
     /// Основной конструктор.
     pub async fn new<T: AsRef<Path>>(path: T) -> Result<Self, String> {
