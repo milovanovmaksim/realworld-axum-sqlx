@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 
 use sqlx::{
     postgres::{PgConnectOptions, PgPoolOptions, PgSslMode},
@@ -12,7 +12,6 @@ pub type DbPool = Pool<Postgres>;
 
 ///
 /// Клиент для работы с PostgreSQL.
-#[derive(Clone)]
 pub struct PostgreSQL {
     pool: DbPool,
 }
@@ -72,14 +71,20 @@ impl PostgreSQL {
     pub fn pool(&self) -> DbPool {
         self.pool.clone()
     }
-
-    ///
-    /// Завершить работу пула соединений.
-    pub async fn close(&self) {
-        self.pool.close().await;
-    }
 }
 
 
+impl Deref for PostgreSQL {
+    type Target = Pool<Postgres>;
 
-impl Deref for PostgreSQL{}
+    fn deref(&self) -> &Self::Target {
+        &self.pool
+    }
+}
+
+impl DerefMut for PostgreSQL {
+
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.pool
+    }
+}
