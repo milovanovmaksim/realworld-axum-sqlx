@@ -6,7 +6,7 @@ use responses::ProfileResponse;
 use uuid::Uuid;
 
 ///
-/// ProfileUseCase интерфейс, определяющий бизнес логику профиля.
+/// ProfileUseCase интерфейс, определяющий набор методов бизнес логики профиля.
 #[async_trait]
 pub trait ProfileUseCase: Sync + Send + 'static {
     ///
