@@ -22,7 +22,7 @@ pub trait ProfileUseCase: Sync + Send + 'static {
     ///
     /// Текущего пользователя делает подписчиком для пользователя с 'username'.
     /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
-    /// username - username пользователя на которого подписываем текущего пользователя.
+    /// username - username пользователя на которого подписывается текущий пользователь.
     async fn add_user_follow(
         &self,
         current_user_id: Uuid,
@@ -31,7 +31,7 @@ pub trait ProfileUseCase: Sync + Send + 'static {
 
     ///
     /// Удаляем подписку для текущего прользователя по username.
-    /// username - username пользователя от которого хотим отписаться;
+    /// username - username пользователя от которого отписывается текущий пользователь;
     /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
     async fn remove_user_follow(
         &self,
