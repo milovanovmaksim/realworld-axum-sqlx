@@ -26,14 +26,7 @@ impl UsersRepositoryImpl {
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn login(
-        &self,
-        request: user::repository::requests::SigninUserRequest,
-    ) -> Result<Option<entities::User>, AppError> {
-        self.get_user_by_email(request.email).await
-    }
-
-    async fn signup(
+    async fn create_user(
         &self,
         request: user::repository::requests::SignupUserRequest,
     ) -> Result<entities::User, AppError> {

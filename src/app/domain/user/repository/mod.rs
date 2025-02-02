@@ -3,7 +3,7 @@ pub mod requests;
 
 use async_trait::async_trait;
 use entities::User;
-use requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest};
+use requests::{SignupUserRequest, UpdateUserRequest};
 use uuid::Uuid;
 
 use crate::app::error::AppError;
@@ -17,8 +17,7 @@ pub trait UserRepository: Send + Sync + 'static {
     ///
     /// Создает нового пользователя в БД.
     /// request - запрос на создание нового пользователя в БД.
-    async fn signup(&self, request: SignupUserRequest) -> Result<User, AppError>;
-    async fn login(&self, request: SigninUserRequest) -> Result<Option<User>, AppError>;
+    async fn create_user(&self, request: SignupUserRequest) -> Result<User, AppError>;
 
     ///
     /// Возвращает пользователя по email.

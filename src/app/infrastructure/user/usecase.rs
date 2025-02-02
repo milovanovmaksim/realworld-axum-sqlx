@@ -37,9 +37,7 @@ impl UserUseCase for UserUseCaseImpl {
     ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
         let user = self
             .user_repository
-            .login(user::repository::requests::SigninUserRequest {
-                email: request.email.clone(),
-            })
+            .get_user_by_email(request.email.clone())
             .await?;
 
         match user {
@@ -87,7 +85,7 @@ impl UserUseCase for UserUseCaseImpl {
         );
         let user = self
             .user_repository
-            .signup(user::repository::requests::SignupUserRequest {
+            .create_user(user::repository::requests::SignupUserRequest {
                 username: request.username,
                 email: request.email,
                 hashed_password,
