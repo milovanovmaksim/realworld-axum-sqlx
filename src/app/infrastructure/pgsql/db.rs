@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use sqlx::{
     postgres::{PgConnectOptions, PgPoolOptions, PgSslMode},
     Executor, Pool, Postgres,
@@ -77,3 +79,7 @@ impl PostgreSQL {
         self.pool.close().await;
     }
 }
+
+
+
+impl Deref for PostgreSQL{}
