@@ -13,13 +13,17 @@ use crate::app::{
     },
     error::AppError,
 };
-
+///
+/// Реализует интерфейс ProfileUseCase.
+/// Реализует набор методов уровня бизнес-логики профиля.
 pub struct ProfileUseCaseImpl {
     pub user_repository: Arc<dyn UserRepository>,
     pub profile_repository: Arc<dyn ProfileRepository>,
 }
 
 impl ProfileUseCaseImpl {
+    ///
+    /// Основной конструктор.
     pub fn new(
         user_repository: Arc<dyn UserRepository>,
         profile_repository: Arc<dyn ProfileRepository>,
@@ -33,6 +37,10 @@ impl ProfileUseCaseImpl {
 
 #[async_trait]
 impl ProfileUseCase for ProfileUseCaseImpl {
+    ///
+    /// Возвращает информацию о профиле по username.
+    /// user_id - id текущего прользователя;
+    /// username - username профиля.
     async fn get_profile(
         &self,
         user_id: Option<Uuid>,
@@ -67,6 +75,10 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         }
     }
 
+    ///
+    /// Подписывает текущего пользователя.
+    /// current_user_id - id текущего пользователя;
+    /// username - username пользователя на которого хотим подписаться.
     async fn add_user_follow(
         &self,
         current_user_id: Uuid,
@@ -95,6 +107,11 @@ impl ProfileUseCase for ProfileUseCaseImpl {
             ))),
         }
     }
+
+    ///
+    /// Отписывает текущего пользователя.
+    /// current_user_id - id текущего пользователя;
+    /// username - username пользователя от которого хотим отписаться.
     async fn remove_user_follow(
         &self,
         username: String,
