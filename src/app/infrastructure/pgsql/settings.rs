@@ -3,6 +3,9 @@ use std::{fs::File, path::Path};
 use serde::Deserialize;
 use serde_yaml::Mapping;
 
+
+///
+/// Содержит настройки соединения к PostgreSQL.
 #[derive(Deserialize, Debug)]
 pub struct DatabaseSettings {
     pub username: String,
@@ -15,6 +18,9 @@ pub struct DatabaseSettings {
 }
 
 impl DatabaseSettings {
+    
+    ///
+    /// =Основной конструктор.
     pub fn new(
         username: String,
         password: String,
@@ -34,7 +40,10 @@ impl DatabaseSettings {
             max_connections,
         }
     }
-
+    
+    
+    ///
+    /// Создает новый объект из yaml файла.
     pub fn from_yaml<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         let file = File::open(path.as_ref()).map_err(|e| {
             format!("DatabaseSettings::form_yaml || error: failed to open file {e}")

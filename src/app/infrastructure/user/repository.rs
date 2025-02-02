@@ -1,40 +1,43 @@
+use std::sync::Arc;
+
 use crate::app::{
-    domain::{
-        error::AppError,
-        user::{
-            self,
-            repository::{entities, Email, UserRepository},
-        },
+    domain::user::{
+        self,
+        repository::{entities, Email, UserRepository},
     },
+    error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
 
 use async_trait::async_trait;
 use sqlx::{query_as, query_file_as};
 use tracing::info;
+use uuid::Uuid;
 
+
+///
+/// Реализует интерфейс UserRepository для работы с таблицей 'users' базы данных PostgreSQL.
 pub struct UsersRepositoryImpl {
-    pg_sql: PostgreSQL,
+    pg_sql: Arc<PostgreSQL>,
 }
 
 impl UsersRepositoryImpl {
-    pub fn new(pg_sql: PostgreSQL) -> UsersRepositoryImpl {
+    
+    ///
+    /// Основной конструктор.
+    pub fn new(pg_sql: Arc<PostgreSQL>) -> UsersRepositoryImpl {
         UsersRepositoryImpl { pg_sql }
     }
 }
 
 #[async_trait]
 impl UserRepository for UsersRepositoryImpl {
-    async fn login(
+    
+    ///
+    /// Создает нового пользователя.
+    async fn create_user(
         &self,
-        request: user::repository::requests::SigninUserRequest,
-    ) -> Result<Option<entities::User>, AppError> {
-        self.get_user_by_email(request.email).await
-    }
-
-    async fn signup(
-        &self,
-        request: user::repository::requests::SignupUserRequest,
+        request: user::repository::requests::CreateUserRequest,
     ) -> Result<entities::User, AppError> {
         info!(
             "Creating new user {:?}/{:?}",
@@ -52,17 +55,16 @@ impl UserRepository for UsersRepositoryImpl {
         .await?;
         Ok(user)
     }
-
+    
+    
+    ///
+    /// Возвращает пользователя по email.
     async fn get_user_by_email(&self, email: Email) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by email in db {:?}", email);
 
         let user = query_as!(
             entities::User,
-            r#"
-        select *
-        from users
-        where email = $1
-            "#,
+            r#"select * from users where email = $1"#,
             email,
         )
         .fetch_optional(&self.pg_sql.pool())
@@ -70,6 +72,41 @@ impl UserRepository for UsersRepositoryImpl {
         Ok(user)
     }
 
+    ///
+    /// Возвращает пользователя по id.
+    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<entities::User>, AppError> {
+        info!("Searching for user by id in db {:?}", user_id);
+
+        let user = query_as!(
+            entities::User,
+            r#"select * from users where id = $1"#,
+            user_id,
+        )
+        .fetch_optional(&self.pg_sql.pool())
+        .await?;
+        Ok(user)
+    }
+
+    ///
+    /// Возвращает пользователя по username.
+    async fn get_user_by_username(
+        &self,
+        username: String,
+    ) -> Result<Option<entities::User>, AppError> {
+        info!("Searching for user by username in db {:?}", username);
+
+        let user = query_as!(
+            entities::User,
+            r#"select * from users where username = $1"#,
+            username,
+        )
+        .fetch_optional(&self.pg_sql.pool())
+        .await?;
+        Ok(user)
+    }
+
+    ///
+    /// Обновляет информацию о пользователе.
     async fn update_user(
         &self,
         request: user::repository::requests::UpdateUserRequest,
@@ -81,7 +118,7 @@ impl UserRepository for UsersRepositoryImpl {
             "./src/app/infrastructure/queries/users/update.sql",
             request.username,
             request.email,
-            request.password,
+            request.hashed_password,
             request.bio,
             request.image,
             request.id

@@ -4,12 +4,7 @@ use axum::{Extension, Json};
 use tracing::info;
 
 use crate::app::{
-    api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse},
-    domain::{
-        error::AppError,
-        user::{self, usecase::UserUseCase},
-    },
-    infrastructure::user::usecase::UserUseCaseImpl,
+    api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse}, domain::user::{self, usecase::UserUseCase}, error::AppError, infrastructure::user::usecase::UserUseCaseImpl
 };
 
 use super::{requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest}, responses::AuthenticationUserResponse};
@@ -61,7 +56,7 @@ pub async fn signup(
             example=json!({"error": "password is incorrect"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})),
+            example = json!({"error": "User with email 'example@gmail.com' not found."})),
         (status = StatusCode::UNPROCESSABLE_ENTITY, description = "Unprocessable entity", body = HashMap<String, HashMap<String, Vec<String>>>,
             content_type = "application/json",
             example = json!({
@@ -99,14 +94,14 @@ pub async fn login(
             example=json!({"error": "Token is expired"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})),
+            example = json!({"error": "User with email 'example@gmail.com' not found."})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
-        ),
-        security(
-            ("bearer_auth" = [])
-        )
+    ),
+    security(
+        ("bearer_auth" = [])
+    )
 )]
 pub async fn get_current_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
@@ -123,7 +118,7 @@ pub async fn get_current_user(
     path = "/api/v1/user",
     tag = "User and Authentication",
     request_body(content = UpdateUserRequest, content_type = "application/json"),
-    description = "Get current user",
+    description = "Update current user",
     responses(
         (status = StatusCode::OK, description = "Current user", body = AuthenticationUserResponse, content_type = "application/json"),
         (status = StatusCode::BAD_REQUEST, description = "Bad request", body = HashMap<String, String>,
@@ -131,22 +126,22 @@ pub async fn get_current_user(
             example=json!({"error": "Token is expired"})),
         (status = StausCode::NOT_FOUND, description = "Current user not found", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": AppError::NotFound.to_string()})),
+            example = json!({"error": "User with email 'example@gmail.com' not found."})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
-        ),
-        security(
-            ("bearer_auth" = [])
-        )
+    ),
+    security(
+        ("bearer_auth" = [])
+    )
 )]
 pub async fn update_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
-    RequiredAuthentication(email): RequiredAuthentication,
+    RequiredAuthentication(user_id): RequiredAuthentication,
     ValidationExtractor(request): ValidationExtractor<UpdateUserRequest>,
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to update current user");
 
-    let user = user_usecase.update_user((email, user::usecase::requests::UpdateUserRequest::from( request))).await?;
+    let user = user_usecase.update_user((user_id, user::usecase::requests::UpdateUserRequest::from(request))).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }

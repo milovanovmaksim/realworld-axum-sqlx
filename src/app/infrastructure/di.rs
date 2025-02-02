@@ -3,23 +3,31 @@ use std::{path::Path, sync::Arc};
 use super::{
     jwt_token::{jwt_token::JwtAuthTokenImpl, settings::JwtTokenSettings},
     pgsql::{db::PostgreSQL, settings::DatabaseSettings},
+    profile::{repository::ProfileRepositoryImpl, usecase::ProfileUseCaseImpl},
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
+
+///
+/// Контейнер внедрения зависимостей.
+#[derive(Clone)]
 pub struct DiContainer {
-    /**
-     * User
-     */
+    // User
     pub user_repository: Arc<UsersRepositoryImpl>,
     pub user_usecase: Arc<UserUseCaseImpl>,
 
-    /**
-     *Utility services
-     */
+    // Profile
+    pub profile_repository: Arc<ProfileRepositoryImpl>,
+    pub profile_usecase: Arc<ProfileUseCaseImpl>,
+
+    // Utility services
     pub jwt_auth_token: Arc<JwtAuthTokenImpl>,
 }
 
 impl DiContainer {
+    
+    ///
+    /// Основной конструктор.
     pub async fn new<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         // Utility services
         let jwt_auth_token = Arc::new(JwtAuthTokenImpl::new(
@@ -27,11 +35,12 @@ impl DiContainer {
                 format!("DiContainer::new || error: failed to create jwt auth token service {e}")
             })?,
         ));
-        let pg_sql =
+        let pg_sql = Arc::new(
             PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref()).map_err(
                 |e| format!("DiContainer::new || error: failed to create postgresql client {e}"),
             )?)
-            .await;
+            .await,
+        );
 
         // User
         let user_repository = Arc::new(UsersRepositoryImpl::new(pg_sql.clone()));
@@ -40,9 +49,18 @@ impl DiContainer {
             jwt_auth_token.clone(),
         ));
 
+        // Profile
+        let profile_repository = Arc::new(ProfileRepositoryImpl::new(pg_sql.clone()));
+        let profile_usecase = Arc::new(ProfileUseCaseImpl::new(
+            user_repository.clone(),
+            profile_repository.clone(),
+        ));
+
         Ok(Self {
             user_repository,
             user_usecase,
+            profile_repository,
+            profile_usecase,
             jwt_auth_token,
         })
     }

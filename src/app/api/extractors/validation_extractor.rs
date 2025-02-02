@@ -5,8 +5,10 @@ use axum::{
 use serde::de::DeserializeOwned;
 use validator::Validate;
 
-use crate::app::domain::error::AppError;
+use crate::app::error::AppError;
 
+///
+/// Извлекает и валидирует входные данные из входящего запроса.
 pub struct ValidationExtractor<T>(pub T);
 
 impl<S, T> FromRequest<S> for ValidationExtractor<T>

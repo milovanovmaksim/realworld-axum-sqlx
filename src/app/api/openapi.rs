@@ -1,7 +1,16 @@
 use axum::{routing::get, Json, Router};
-use utoipa::{openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme}, Modify, OpenApi};
+use utoipa::{
+    openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
+    Modify, OpenApi,
+};
 
-use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest, UpdateUserRequest}, responses::AuthenticationUserResponse};
+use crate::app::api::{
+    profile::responses::ProfileResponse,
+    user::{
+        requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest},
+        responses::AuthenticationUserResponse,
+    },
+};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -10,21 +19,24 @@ use crate::app::api::user::{requests::{SignupUserRequest, SigninUserRequest, Upd
         super::user::endpoints::login,
         super::user::endpoints::get_current_user,
         super::user::endpoints::update_user,
-        openapi
+        super::profile::endpoints::get_profile,
+        super::profile::endpoints::follow_user,
+        super::profile::endpoints::unfollow_user,
+        openapi,
     ),
     components(
-        schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest, UpdateUserRequest),
+        schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest, UpdateUserRequest, ProfileResponse),
     ),
     modifiers(&SecurityAddon),
     tags(
-        (name = "User and Authentication", description = "Users endpoints"),
+        (name = "User and Authentication", description = "User endpoints"),
+        (name = "Profile", description = "Profile endpoints"),
         (name = "api-docs", description = "Openapi endpoints")
     ),
 )]
 pub struct ApiDocumentation;
 
 struct SecurityAddon;
-
 
 impl Modify for SecurityAddon {
     fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
@@ -41,7 +53,6 @@ impl Modify for SecurityAddon {
         }
     }
 }
-
 
 /// Return JSON version of an OpenAPI schema
 #[utoipa::path(

@@ -2,6 +2,9 @@ use crate::app::domain::user::repository::entities;
 
 type Token = String;
 
+///
+/// Ответ, возвращаемый слоем бизнес логики пользователя.
+/// Содержит информацию о пользователе.
 pub struct UserUsecaseResponse {
     pub user: User,
 }

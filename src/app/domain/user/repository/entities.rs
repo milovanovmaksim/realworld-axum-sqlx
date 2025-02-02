@@ -2,6 +2,8 @@ use chrono::DateTime;
 use chrono::Utc;
 use uuid::Uuid;
 
+///
+/// User представляет отдельную запись в БД.
 pub struct User {
     pub id: Uuid,
     pub email: String,

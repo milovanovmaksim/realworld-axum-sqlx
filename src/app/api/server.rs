@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use super::{config::ApiConfig, openapi, user::router::user_router};
+
+use super::{
+    config::ApiConfig, openapi, profile::router::profile_router, user::router::user_router,
+};
 use crate::app::infrastructure::di::DiContainer;
 use axum::{http::HeaderValue, Router};
 use tower::ServiceBuilder;
@@ -8,18 +11,27 @@ use tower_http::{cors::Any, cors::CorsLayer, trace::TraceLayer};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
+
+///
+/// API сервер.
 pub struct Server {
     api_config: ApiConfig,
     di_container: Arc<DiContainer>,
 }
 
 impl Server {
+   
+    ///
+    /// Основной конструктор.
     pub fn new(di_container: Arc<DiContainer>, api_config: ApiConfig) -> Self {
         Self {
             di_container,
             api_config,
         }
     }
+    
+    ///
+    /// Запуск сервера.
     pub async fn start(&self) -> Result<(), String> {
         let router = Router::new()
             .merge(SwaggerUi::new("/swagger").url(
@@ -27,6 +39,7 @@ impl Server {
                 openapi::ApiDocumentation::openapi(),
             ))
             .nest("/api/v1", user_router(self.di_container.clone()))
+            .nest("/api/v1", profile_router(self.di_container.clone()))
             .layer(
                 ServiceBuilder::new()
                     // High level logging of requests and responses

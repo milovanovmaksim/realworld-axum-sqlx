@@ -5,6 +5,8 @@ use serde_yaml::Mapping;
 
 type Seconds = i64;
 
+///
+/// Содержит настройки JWT токена.
 #[derive(Deserialize, Debug, Clone)]
 pub struct JwtTokenSettings {
     pub secret_key: String,
@@ -12,10 +14,15 @@ pub struct JwtTokenSettings {
 }
 
 impl JwtTokenSettings {
+    
+    ///
+    /// Основной конструктор.
     pub fn new(secret_key: String, offset: i64) -> Self {
         Self { secret_key, offset }
     }
-
+    
+    ///
+    /// Создает объект из yaml файла.
     pub fn from_yaml<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         let file = File::open(path).map_err(|e| {
             format!("DatabaseSettings::form_yaml || error: failed to open file {e}")
