@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+
 use super::{
     config::ApiConfig, openapi, profile::router::profile_router, user::router::user_router,
 };
@@ -19,7 +20,7 @@ pub struct Server {
 }
 
 impl Server {
-    
+   
     ///
     /// Основной конструктор.
     pub fn new(di_container: Arc<DiContainer>, api_config: ApiConfig) -> Self {
