@@ -1,16 +1,21 @@
 use crate::app::api;
 
+/// Запрос на регистрвцию нового пользовталя.
 pub struct SignupUserRequest {
     pub username: String,
     pub email: String,
     pub naive_password: String,
 }
 
+///
+/// Запрос на авторизацию пользователя.
 pub struct SigninUserRequest {
     pub email: String,
     pub naive_password: String,
 }
 
+///
+/// Запрос для обновления информации о пользователе.
 pub struct UpdateUserRequest {
     pub email: Option<String>,
     pub username: Option<String>,
