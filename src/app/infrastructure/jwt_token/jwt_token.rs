@@ -17,6 +17,9 @@ pub struct JwtAuthTokenImpl {
 }
 
 impl JwtAuthTokenImpl {
+    
+    ///
+    /// Основной конструктор.
     pub fn new(jwt_token_settings: JwtTokenSettings) -> Self {
         Self { jwt_token_settings }
     }
