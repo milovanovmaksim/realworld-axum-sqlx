@@ -40,7 +40,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
     ///
     /// Возвращает информацию о профиле по username.
     /// user_id - id текущего прользователя;
-    /// username - username профиля.
+    /// username - username запрашиваемого профиля.
     async fn get_profile(
         &self,
         user_id: Option<Uuid>,
@@ -76,9 +76,9 @@ impl ProfileUseCase for ProfileUseCaseImpl {
     }
 
     ///
-    /// Подписывает текущего пользователя.
+    /// Делает текущего пользователя подписчиком.
     /// current_user_id - id текущего пользователя;
-    /// username - 'username' пользователя на которого хотим подписаться.
+    /// username - username пользователя на которого хотим подписаться.
     async fn add_user_follow(
         &self,
         current_user_id: Uuid,
@@ -111,7 +111,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
     ///
     /// Отписывает текущего пользователя.
     /// current_user_id - id текущего пользователя;
-    /// username - 'username' пользователя от которого хотим отписаться.
+    /// username - username пользователя от которого хотим отписаться.
     async fn remove_user_follow(
         &self,
         username: String,
@@ -135,7 +135,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                 Ok(ProfileResponse::from((false, followee)))
             }
             None => Err(AppError::NotFound(format!(
-                "Profile to follow with username '{}' not found.",
+                "Profile to unfollow with username '{}' not found.",
                 username
             ))),
         }

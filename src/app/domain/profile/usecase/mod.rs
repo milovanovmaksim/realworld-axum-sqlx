@@ -10,7 +10,7 @@ use uuid::Uuid;
 #[async_trait]
 pub trait ProfileUseCase: Sync + Send + 'static {
     ///
-    /// Возвращает профиль по username.
+    /// Возвращает информацию о профиле по username.
     /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
     /// username - username запрашиваемого профиля.
     async fn get_profile(
@@ -20,9 +20,9 @@ pub trait ProfileUseCase: Sync + Send + 'static {
     ) -> Result<ProfileResponse, AppError>;
 
     ///
-    /// Текущего пользователя делает подписчиком для пользователя с 'username'.
-    /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
-    /// username - username пользователя на которого подписывается текущий пользователь.
+    /// Делает текущего пользователя подписчиком.
+    /// current_user_id - id текущего пользователя;
+    /// username - username пользователя на которого хотим подписаться.
     async fn add_user_follow(
         &self,
         current_user_id: Uuid,
@@ -30,9 +30,9 @@ pub trait ProfileUseCase: Sync + Send + 'static {
     ) -> Result<ProfileResponse, AppError>;
 
     ///
-    /// Удаляем подписку для текущего прользователя по username.
-    /// username - username пользователя от которого отписывается текущий пользователь;
-    /// current_user_id - id текущего пользователя, прошедшего аутентификацию;
+    /// Отписывает текущего пользователя.
+    /// current_user_id - id текущего пользователя;
+    /// username - username пользователя от которого хотим отписаться.
     async fn remove_user_follow(
         &self,
         username: String,

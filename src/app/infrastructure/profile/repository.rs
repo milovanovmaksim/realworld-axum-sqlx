@@ -19,6 +19,9 @@ pub struct ProfileRepositoryImpl {
 }
 
 impl ProfileRepositoryImpl {
+    
+    ///
+    /// Основной конструктор.
     pub fn new(pg_sql: Arc<PostgreSQL>) -> Self {
         Self { pg_sql }
     }
@@ -26,6 +29,7 @@ impl ProfileRepositoryImpl {
 
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
+
     ///
     /// Создает новую запись в БД.
     async fn add_user_follow(

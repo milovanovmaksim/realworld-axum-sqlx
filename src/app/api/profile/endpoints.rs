@@ -19,7 +19,7 @@ use crate::app::{
 
 
 ///
-/// Возвращает информацию о профиле по 'username'.
+/// Возвращает информацию о профиле по username.
 #[utoipa::path(
     get,
     path = "/api/v1/profiles/{username}",
@@ -50,7 +50,7 @@ pub async fn get_profile(
 
 
 ///
-/// Делает текущего пользователя подписчиком по 'username'.
+/// Делает текущего пользователя подписчиком по username.
 /// Возвращает информацию о профиле на которого подписался текущий пользователь.
 #[utoipa::path(
     post,
@@ -61,7 +61,7 @@ pub async fn get_profile(
         (status = StatusCode::OK, description = "User followed.", body = ProfileResponse, content_type = "application/json"),
         (status = StausCode::NOT_FOUND, description = "Profile not found.", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": "Profile with username 'DonaldTrump' not found."})),
+            example = json!({"error": "Profile to follow with username 'DonaldDuck' not found."})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
@@ -85,7 +85,7 @@ pub async fn follow_user(
 
 
 ///
-/// Отменяет подписку текущего пользователя по 'username'.
+/// Отменяет подписку текущего пользователя по username.
 /// Возвращает информацию о профиле от которого отписался текущий пользователь.
 #[utoipa::path(
     delete,
@@ -96,7 +96,7 @@ pub async fn follow_user(
         (status = StatusCode::OK, description = "User unfollowed.", body = ProfileResponse, content_type = "application/json"),
         (status = StausCode::NOT_FOUND, description = "Profile not found.", body = HashMap<String, String>,
             content_type = "application/json",
-            example = json!({"error": "Profile with username 'DonaldTrump' not found."})),
+            example = json!({"error": "Profile to unfollow with username 'DonaldDuck' not found."})),
         (status = StatusCode::INTERNAL_SERVER_ERROR, description = "Internal server error", body = HashMap<String, String>,
             content_type = "application/json",
             example = json!({"error": AppError::InternalServerError.to_string()}))
