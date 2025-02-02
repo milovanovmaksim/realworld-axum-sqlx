@@ -7,6 +7,8 @@ use super::{
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
+///
+/// Контейнер внедрения зависимостей.
 #[derive(Clone)]
 pub struct DiContainer {
     // User
@@ -22,6 +24,9 @@ pub struct DiContainer {
 }
 
 impl DiContainer {
+    
+    ///
+    /// Основной конструктор.
     pub async fn new<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         // Utility services
         let jwt_auth_token = Arc::new(JwtAuthTokenImpl::new(
