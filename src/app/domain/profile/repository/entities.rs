@@ -13,8 +13,6 @@ pub struct Profile {
 
 ///
 /// Представляет отдельную запись в БД.
-/// followee_id - id пользователя на которого подписан пользователь с follower_id;
-/// follower_id - id  подписчика.
 #[derive(Debug)]
 pub struct UserFollow {
     pub id: Uuid,
