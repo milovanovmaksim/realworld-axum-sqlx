@@ -12,6 +12,8 @@ use crate::app::{
     infrastructure::utils::hasher,
 };
 
+///
+/// Реализует набор методов уровня бизнес-логики пользователя.
 pub struct UserUseCaseImpl {
     pub jwt_auth_token: Arc<dyn JwtAuthToken>,
     pub user_repository: Arc<dyn UserRepository>,
@@ -31,6 +33,8 @@ impl UserUseCaseImpl {
 
 #[async_trait]
 impl UserUseCase for UserUseCaseImpl {
+    ///
+    /// Авторизация пользователя.
     async fn login(
         &self,
         request: user::usecase::requests::SigninUserRequest,
@@ -72,6 +76,8 @@ impl UserUseCase for UserUseCaseImpl {
         }
     }
 
+    ///
+    /// Регистрация нового пользователя.
     async fn signup(
         &self,
         request: user::usecase::requests::SignupUserRequest,
@@ -100,6 +106,8 @@ impl UserUseCase for UserUseCaseImpl {
         )))
     }
 
+    ///
+    /// Возвращает текущего пользователя по id.
     async fn get_current_user(
         &self,
         user_id: Uuid,
@@ -120,6 +128,8 @@ impl UserUseCase for UserUseCaseImpl {
         )))
     }
 
+    ///
+    /// Обновляет информацию о пользователе.
     async fn update_user(
         &self,
         (user_id, request): (Uuid, user::usecase::requests::UpdateUserRequest),
