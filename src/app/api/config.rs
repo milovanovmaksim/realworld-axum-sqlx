@@ -14,6 +14,9 @@ pub struct ApiConfig {
 }
 
 impl ApiConfig {
+
+    ///
+    /// Создает новый объект из yaml файла.
     pub fn from_yaml<T: AsRef<Path>>(path: T) -> Result<Self, String> {
         let file = File::open(path).map_err(|e| {
             format!("DatabaseSettings::form_yaml || error: failed to open file {e}")
