@@ -78,7 +78,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
     ///
     /// Подписывает текущего пользователя.
     /// current_user_id - id текущего пользователя;
-    /// username - username пользователя на которого хотим подписаться.
+    /// username - 'username' пользователя на которого хотим подписаться.
     async fn add_user_follow(
         &self,
         current_user_id: Uuid,
@@ -111,7 +111,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
     ///
     /// Отписывает текущего пользователя.
     /// current_user_id - id текущего пользователя;
-    /// username - username пользователя от которого хотим отписаться.
+    /// username - 'username' пользователя от которого хотим отписаться.
     async fn remove_user_follow(
         &self,
         username: String,
