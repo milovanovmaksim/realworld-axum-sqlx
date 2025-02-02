@@ -8,6 +8,8 @@ use axum::{
 use super::endpoints::{follow_user, get_profile, unfollow_user};
 use crate::app::infrastructure::di::DiContainer;
 
+///
+/// Возвращает маршрутизатор для профиля.
 pub fn profile_router(di: Arc<DiContainer>) -> Router {
     Router::new()
         .route("/profiles/{username}", get(get_profile))
