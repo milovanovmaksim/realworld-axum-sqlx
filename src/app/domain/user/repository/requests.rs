@@ -2,16 +2,16 @@ use uuid::Uuid;
 
 use crate::app::{domain::user, error::AppError, infrastructure::utils};
 
-pub struct SignupUserRequest {
+///
+/// Запрос на создание нового пользователя в БД.
+pub struct CreateUserRequest {
     pub username: String,
     pub email: String,
     pub hashed_password: String,
 }
 
-pub struct SigninUserRequest {
-    pub email: String,
-}
-
+///
+/// Запрос на обновление информации о пользователе.
 pub struct UpdateUserRequest {
     pub id: Uuid,
     pub email: Option<String>,

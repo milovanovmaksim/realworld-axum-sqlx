@@ -28,7 +28,7 @@ impl UsersRepositoryImpl {
 impl UserRepository for UsersRepositoryImpl {
     async fn create_user(
         &self,
-        request: user::repository::requests::SignupUserRequest,
+        request: user::repository::requests::CreateUserRequest,
     ) -> Result<entities::User, AppError> {
         info!(
             "Creating new user {:?}/{:?}",

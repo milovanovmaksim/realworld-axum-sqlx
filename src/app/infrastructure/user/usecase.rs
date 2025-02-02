@@ -85,7 +85,7 @@ impl UserUseCase for UserUseCaseImpl {
         );
         let user = self
             .user_repository
-            .create_user(user::repository::requests::SignupUserRequest {
+            .create_user(user::repository::requests::CreateUserRequest {
                 username: request.username,
                 email: request.email,
                 hashed_password,
