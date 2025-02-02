@@ -1,5 +1,8 @@
 use crate::app::domain::user::repository::entities::User;
 
+///
+/// Ответ, возвращаемый слоем бизнес логики профиля.
+/// Содержит информацию о профиле.
 #[derive(Debug)]
 pub struct ProfileResponse {
     pub username: String,

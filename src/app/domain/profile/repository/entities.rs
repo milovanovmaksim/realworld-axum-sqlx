@@ -1,6 +1,8 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+///
+/// Содержит информацию о профиле.
 #[derive(Debug)]
 pub struct Profile {
     pub username: String,
@@ -9,6 +11,10 @@ pub struct Profile {
     pub following: bool,
 }
 
+///
+/// Представляет отдельную запись в БД.
+/// followee_id - id пользователя на которого подписан пользователь с follower_id;
+/// follower_id - id  подписчика.
 #[derive(Debug)]
 pub struct UserFollow {
     pub id: Uuid,
