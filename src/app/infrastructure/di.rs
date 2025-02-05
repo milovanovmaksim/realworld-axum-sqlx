@@ -2,7 +2,7 @@ use std::{path::Path, sync::Arc};
 
 use super::{
     jwt_token::{jwt_token::JwtAuthTokenImpl, settings::JwtTokenSettings},
-    pgsql::{db::PostgreSQL, settings::DatabaseSettings},
+    pgsql::{db::PostgreSQL, settings::DatabaseSettings, transaction::Transaction},
     profile::{repository::ProfileRepositoryImpl, usecase::ProfileUseCaseImpl},
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
@@ -32,12 +32,11 @@ impl DiContainer {
                 format!("DiContainer::new || error: failed to create jwt auth token service {e}")
             })?,
         ));
-        let pg_sql = Arc::new(
+        let pg_sql =
             PostgreSQL::configure_database(DatabaseSettings::from_yaml(path.as_ref()).map_err(
                 |e| format!("DiContainer::new || error: failed to create postgresql client {e}"),
             )?)
-            .await,
-        );
+            .await;
 
         // User
         let user_repository = Arc::new(UsersRepositoryImpl::new(pg_sql.clone()));
