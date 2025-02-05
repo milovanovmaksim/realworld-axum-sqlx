@@ -18,14 +18,14 @@ use uuid::Uuid;
 ///
 /// Реализует интерфейс UserRepository для работы с таблицей 'users' базы данных PostgreSQL.
 pub struct UsersRepositoryImpl {
-    pg_sql: Arc<PostgreSQL>,
+    pg_sql: PostgreSQL,
 }
 
 impl UsersRepositoryImpl {
     
     ///
     /// Основной конструктор.
-    pub fn new(pg_sql: Arc<PostgreSQL>) -> UsersRepositoryImpl {
+    pub fn new(pg_sql: PostgreSQL) -> UsersRepositoryImpl {
         UsersRepositoryImpl { pg_sql }
     }
 }

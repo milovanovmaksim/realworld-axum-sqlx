@@ -15,14 +15,14 @@ use crate::app::{
 /// ProfileRepositoryImpl реализует интерфейс ProfileRepository для работы с таблицей 'user_follows' базы данных PostgreSQL.
 /// pg_sql - клиент для работы с PostgreSQL.
 pub struct ProfileRepositoryImpl {
-    pg_sql: Arc<PostgreSQL>,
+    pg_sql: PostgreSQL
 }
 
 impl ProfileRepositoryImpl {
     
     ///
     /// Основной конструктор.
-    pub fn new(pg_sql: Arc<PostgreSQL>) -> Self {
+    pub fn new(pg_sql: PostgreSQL) -> Self {
         Self { pg_sql }
     }
 }

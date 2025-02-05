@@ -1,4 +1,4 @@
-use std::ops::{Deref, DerefMut};
+use std::ops::Deref;
 
 use sqlx::{
     postgres::{PgConnectOptions, PgPoolOptions, PgSslMode},
@@ -9,7 +9,6 @@ use super::settings::DatabaseSettings;
 
 pub type DbPool = Pool<Postgres>;
 
-
 ///
 /// Клиент для работы с PostgreSQL.
 pub struct PostgreSQL {
@@ -17,13 +16,12 @@ pub struct PostgreSQL {
 }
 
 impl PostgreSQL {
-    
     ///
     /// Основной конструктор.
     fn new(pool: DbPool) -> Self {
         Self { pool }
     }
-    
+
     ///
     /// Создает объект из DatabaseSettings.
     pub async fn configure_database(config: DatabaseSettings) -> Self {
@@ -65,14 +63,13 @@ impl PostgreSQL {
             .await
             .expect("Failed to migrate the database");
     }
-    
+
     ///
     /// Возвращает пул соединений.
     pub fn pool(&self) -> DbPool {
         self.pool.clone()
     }
 }
-
 
 impl Deref for PostgreSQL {
     type Target = Pool<Postgres>;
@@ -82,9 +79,9 @@ impl Deref for PostgreSQL {
     }
 }
 
-impl DerefMut for PostgreSQL {
-
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.pool
+impl Clone for PostgreSQL {
+    /// Returns a new [PostgreSQL] tied to the same shared connection pool.
+    fn clone(&self) -> Self {
+        PostgreSQL::new(self.pool.clone())
     }
 }
