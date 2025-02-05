@@ -23,7 +23,7 @@ impl PostgreSQL {
     }
 
     ///
-    /// Создает объект из DatabaseSettings.
+    /// Создает объект [PostgreSQL] из DatabaseSettings.
     pub async fn configure_database(config: DatabaseSettings) -> Self {
         let ssl_mode = if config.require_ssl {
             PgSslMode::Require
