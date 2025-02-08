@@ -41,4 +41,24 @@ impl TagsRepository for TagsRepositoryImpl {
             .await
             .map_err(|err| AppError::from(err))
     }
+
+    async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError> {
+        let mut query_builder = QueryBuilder::new("insert into tags (tag) ");
+
+        query_builder.push_values(tags, |mut builder, tag| {
+            builder.push_bind(tag);
+        });
+
+        query_builder
+            .push("returning *")
+            .build()
+            .map(|row: PgRow| TagEntity {
+                id: row.get(0),
+                tag: row.get(1),
+                created_at: row.get(2),
+            })
+            .fetch_all(&self.pg_sql.pool())
+            .await
+            .map_err(|err| AppError::from(err))
+    }
 }
