@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use async_trait::async_trait;
 use sqlx::{query, query_as};
 use tracing::info;
@@ -15,11 +13,10 @@ use crate::app::{
 /// ProfileRepositoryImpl реализует интерфейс ProfileRepository для работы с таблицей 'user_follows' базы данных PostgreSQL.
 /// pg_sql - клиент для работы с PostgreSQL.
 pub struct ProfileRepositoryImpl {
-    pg_sql: PostgreSQL
+    pg_sql: PostgreSQL,
 }
 
 impl ProfileRepositoryImpl {
-    
     ///
     /// Основной конструктор.
     pub fn new(pg_sql: PostgreSQL) -> Self {
@@ -29,7 +26,6 @@ impl ProfileRepositoryImpl {
 
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
-
     ///
     /// Создает новую запись в БД.
     async fn add_user_follow(
