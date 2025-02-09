@@ -14,7 +14,7 @@ pub struct Profile {
 ///
 /// Представляет отдельную запись в БД.
 #[derive(Debug)]
-pub struct UserFollow {
+pub struct UserFollowEntity {
     pub id: Uuid,
     pub followee_id: Uuid,
     pub follower_id: Uuid,

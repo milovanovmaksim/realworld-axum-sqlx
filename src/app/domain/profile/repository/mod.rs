@@ -1,7 +1,7 @@
 pub mod entities;
 
 use async_trait::async_trait;
-use entities::UserFollow;
+use entities::UserFollowEntity;
 use uuid::Uuid;
 
 use crate::app::error::AppError;
@@ -20,7 +20,7 @@ pub trait ProfileRepository: Send + Sync + 'static {
         &self,
         follower_id: Uuid,
         followee_id: Uuid,
-    ) -> Result<UserFollow, AppError>;
+    ) -> Result<UserFollowEntity, AppError>;
 
     ///
     /// Удаляет запись из БД.

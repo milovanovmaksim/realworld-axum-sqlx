@@ -4,7 +4,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use crate::app::{
-    domain::profile::repository::{entities::UserFollow, ProfileRepository},
+    domain::profile::repository::{entities::UserFollowEntity, ProfileRepository},
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
@@ -32,10 +32,10 @@ impl ProfileRepository for ProfileRepositoryImpl {
         &self,
         follower_id: Uuid,
         followee_id: Uuid,
-    ) -> Result<UserFollow, AppError> {
+    ) -> Result<UserFollowEntity, AppError> {
         info!("Query of creating user follow.");
         let user_follow = query_as!(
-            UserFollow,
+            UserFollowEntity,
             r#"
             insert into user_follows (follower_id, followee_id)
             values ($1, $2) returning *;
