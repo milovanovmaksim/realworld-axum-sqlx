@@ -7,6 +7,8 @@ use crate::app::{
     infrastructure::pgsql::db::PostgreSQL,
 };
 
+///
+/// Реализует интерфейс TagsRepository для работы с таблицей 'tags' базы данных PostgreSQL.
 pub struct TagsRepositoryImpl {
     pg_sql: PostgreSQL,
 }
@@ -19,6 +21,8 @@ impl TagsRepositoryImpl {
 
 #[async_trait]
 impl TagsRepository for TagsRepositoryImpl {
+    ///
+    /// Возвращает список тэгов по имени.
     async fn get_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError> {
         let mut query_builder = QueryBuilder::new("select id, tag, created_at from tags ");
 
@@ -42,6 +46,8 @@ impl TagsRepository for TagsRepositoryImpl {
             .map_err(|err| AppError::from(err))
     }
 
+    ///
+    /// Добавляет новые тэги в БД.
     async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError> {
         let mut query_builder = QueryBuilder::new("insert into tags (tag) ");
 
