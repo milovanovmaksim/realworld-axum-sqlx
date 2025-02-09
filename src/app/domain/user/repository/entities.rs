@@ -3,8 +3,9 @@ use chrono::Utc;
 use uuid::Uuid;
 
 ///
-/// User представляет отдельную запись в БД.
-pub struct UserEntity {
+/// Содержит информацию о пользовтеле.
+/// Представляет отдельную запись в БД.
+pub struct User {
     pub id: Uuid,
     pub email: String,
     pub username: String,

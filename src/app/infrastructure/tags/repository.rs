@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use sqlx::{postgres::PgRow, QueryBuilder, Row};
 
 use crate::app::{
-    domain::tags::repository::{entities::TagEntity, TagsRepository},
+    domain::tags::repository::{responses::Tag, TagsRepository},
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
@@ -23,7 +23,7 @@ impl TagsRepositoryImpl {
 impl TagsRepository for TagsRepositoryImpl {
     ///
     /// Возвращает список тэгов по имени.
-    async fn get_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError> {
+    async fn get_tags(&self, tags: Vec<String>) -> Result<Vec<Tag>, AppError> {
         let mut query_builder = QueryBuilder::new("select id, tag, created_at from tags ");
 
         if !tags.is_empty() {
@@ -36,7 +36,7 @@ impl TagsRepository for TagsRepositoryImpl {
         query_builder
             .push("order by tag")
             .build()
-            .map(|row: PgRow| TagEntity {
+            .map(|row: PgRow| Tag {
                 id: row.get(0),
                 tag: row.get(1),
                 created_at: row.get(2),
@@ -48,7 +48,7 @@ impl TagsRepository for TagsRepositoryImpl {
 
     ///
     /// Добавляет новые тэги в БД.
-    async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError> {
+    async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<Tag>, AppError> {
         let mut query_builder = QueryBuilder::new("insert into tags (tag) ");
 
         query_builder.push_values(tags, |mut builder, tag| {
@@ -58,7 +58,7 @@ impl TagsRepository for TagsRepositoryImpl {
         query_builder
             .push("returning *")
             .build()
-            .map(|row: PgRow| TagEntity {
+            .map(|row: PgRow| Tag {
                 id: row.get(0),
                 tag: row.get(1),
                 created_at: row.get(2),
