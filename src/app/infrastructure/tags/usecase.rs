@@ -7,7 +7,7 @@ use crate::app::domain::tags::{repository::TagsRepository, usecase::TagsUseCase}
 use super::repository::TagsRepositoryImpl;
 
 ///
-/// Реализует набор методов уровня бизнес-логики тэга.
+/// Реализует набор методов уровня бизнес-логики для работы с тэгами.
 pub struct TagsUsacaseImpl {
     tags_repository: Arc<TagsRepositoryImpl>,
 }
