@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use sqlx::{postgres::PgRow, QueryBuilder, Row};
 
 use crate::app::{
-    domain::tags::repository::{entities::TagEntity, TagsRepository},
+    domain::tags::repository::{responses::TagEntity, TagsRepository},
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
