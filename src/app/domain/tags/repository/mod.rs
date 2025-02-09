@@ -6,7 +6,7 @@ use crate::app::error::AppError;
 pub mod responses;
 
 ///
-/// TagsRepository интерфейс, определяющий набор методов для работы с сущностью TagEntity в БД.
+/// TagsRepository интерфейс, определяющий набор методов для работы с БД.
 #[async_trait]
 pub trait TagsRepository {
     ///
@@ -15,6 +15,6 @@ pub trait TagsRepository {
     async fn get_tags(&self, tags: Vec<String>) -> Result<Vec<Tag>, AppError>;
 
     ///
-    /// Создает новые тэги.
+    /// Добавляет тэги в БД.
     async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<Tag>, AppError>;
 }

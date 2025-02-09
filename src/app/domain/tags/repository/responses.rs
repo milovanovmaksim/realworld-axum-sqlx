@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 ///
-/// Тэг статьи.
+/// Тэг статьи. Содержит информацию о тэге.
 #[derive(Debug)]
 pub struct Tag {
     pub id: Uuid,
