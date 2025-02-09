@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 ///
-/// Представляет отдельную сущность в БД.
+/// Представляет отдельную запись в БД.
 #[derive(Debug)]
 pub struct UserFollow {
     pub id: Uuid,

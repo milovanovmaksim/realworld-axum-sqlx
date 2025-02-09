@@ -4,6 +4,7 @@ use uuid::Uuid;
 
 ///
 /// Содержит информацию о пользовтеле.
+/// Представляет отдельную запись в БД.
 pub struct User {
     pub id: Uuid,
     pub email: String,
