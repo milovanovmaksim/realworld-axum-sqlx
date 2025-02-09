@@ -1,5 +1,8 @@
 use uuid::Uuid;
 
+
+///
+/// Запрос на создание новой статьи.
 pub struct CreateArticleRequest {
     pub user_id: Uuid,
     pub tiyle: String,
