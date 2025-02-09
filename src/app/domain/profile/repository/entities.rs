@@ -11,7 +11,8 @@ pub struct Profile {
     pub following: bool,
 }
 
-
+///
+/// Представляет отдельную сущность в БД.
 #[derive(Debug)]
 pub struct UserFollow {
     pub id: Uuid,
