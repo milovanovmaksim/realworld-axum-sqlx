@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 ///
 /// Содержит информацию о пользовтеле.
-pub struct UserEntity {
+pub struct User {
     pub id: Uuid,
     pub email: String,
     pub username: String,
