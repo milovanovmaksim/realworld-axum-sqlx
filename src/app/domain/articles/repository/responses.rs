@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 ///
 /// Article содержит информацию о статье.
-pub struct Article {
+pub struct ArticleEntity {
     pub id: Uuid,
     pub title: String,
     pub body: String,
