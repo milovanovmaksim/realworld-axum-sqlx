@@ -4,7 +4,6 @@ use uuid::Uuid;
 
 ///
 /// Article содержит информацию о статье.
-/// Представляет сущность в БД.
 pub struct Article {
     pub id: Uuid,
     pub title: String,
