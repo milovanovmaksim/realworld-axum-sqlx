@@ -10,6 +10,8 @@ use crate::app::{
 
 use super::responses::TagsResponse;
 
+///
+/// Возвращает список тэгов.
 #[utoipa::path(get,
     path = "/api/v1/tags",
     tag = "Tags",
