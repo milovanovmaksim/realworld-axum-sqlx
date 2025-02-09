@@ -1,12 +1,10 @@
-use std::sync::Arc;
-
 use async_trait::async_trait;
 use sqlx::{query, query_as};
 use tracing::info;
 use uuid::Uuid;
 
 use crate::app::{
-    domain::profile::repository::{entities::UserFollow, ProfileRepository},
+    domain::profile::repository::{entities::UserFollowEntity, ProfileRepository},
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
@@ -15,11 +13,10 @@ use crate::app::{
 /// ProfileRepositoryImpl реализует интерфейс ProfileRepository для работы с таблицей 'user_follows' базы данных PostgreSQL.
 /// pg_sql - клиент для работы с PostgreSQL.
 pub struct ProfileRepositoryImpl {
-    pg_sql: PostgreSQL
+    pg_sql: PostgreSQL,
 }
 
 impl ProfileRepositoryImpl {
-    
     ///
     /// Основной конструктор.
     pub fn new(pg_sql: PostgreSQL) -> Self {
@@ -29,17 +26,16 @@ impl ProfileRepositoryImpl {
 
 #[async_trait]
 impl ProfileRepository for ProfileRepositoryImpl {
-
     ///
     /// Создает новую запись в БД.
     async fn add_user_follow(
         &self,
         follower_id: Uuid,
         followee_id: Uuid,
-    ) -> Result<UserFollow, AppError> {
+    ) -> Result<UserFollowEntity, AppError> {
         info!("Query of creating user follow.");
         let user_follow = query_as!(
-            UserFollow,
+            UserFollowEntity,
             r#"
             insert into user_follows (follower_id, followee_id)
             values ($1, $2) returning *;
