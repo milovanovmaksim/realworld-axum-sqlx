@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 ///
 /// User представляет отдельную запись в БД.
-pub struct User {
+pub struct UserEntity {
     pub id: Uuid,
     pub email: String,
     pub username: String,

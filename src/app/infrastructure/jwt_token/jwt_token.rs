@@ -1,5 +1,5 @@
 use crate::app::{
-    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::entities::User},
+    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::entities::UserEntity},
     error::AppError,
 };
 
@@ -17,7 +17,6 @@ pub struct JwtAuthTokenImpl {
 }
 
 impl JwtAuthTokenImpl {
-    
     ///
     /// Основной конструктор.
     pub fn new(jwt_token_settings: JwtTokenSettings) -> Self {
@@ -29,7 +28,7 @@ impl JwtAuthToken for JwtAuthTokenImpl {
     ///
     /// Генерирует JWT токен для пользователя.
     /// user -  пользователь для которго необходимо создать JWT токен.
-    fn generate_token(&self, user: &User) -> Result<String, AppError> {
+    fn generate_token(&self, user: &UserEntity) -> Result<String, AppError> {
         let now = Utc::now().timestamp_nanos_opt().unwrap() / 1_000_000_000; // nanosecond -> second
         let claims = Claims::new(user.id, &user.email, now, self.jwt_token_settings.offset);
         let secret_key = self.jwt_token_settings.secret_key.as_bytes();

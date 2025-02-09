@@ -1,4 +1,4 @@
-use crate::app::{domain::user::repository::entities::User, error::AppError};
+use crate::app::{domain::user::repository::entities::UserEntity, error::AppError};
 
 ///
 /// JwtAuthToken - интерфейс для работы с JWT токеном.
@@ -6,7 +6,7 @@ pub trait JwtAuthToken: Send + Sync + 'static {
     ///
     /// Генерирует JWT токен для пользователя.
     /// user -  пользователь для которго необходимо создать JWT токен.
-    fn generate_token(&self, user: &User) -> Result<String, AppError>;
+    fn generate_token(&self, user: &UserEntity) -> Result<String, AppError>;
 
     ///
     /// Возвращает email пользователя из JWT токена.
