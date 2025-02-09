@@ -6,6 +6,7 @@ use utoipa::{
 
 use crate::app::api::{
     profile::responses::ProfileResponse,
+    tags::responses::TagsResponse,
     user::{
         requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest},
         responses::AuthenticationUserResponse,
@@ -22,15 +23,17 @@ use crate::app::api::{
         super::profile::endpoints::get_profile,
         super::profile::endpoints::follow_user,
         super::profile::endpoints::unfollow_user,
+        super::tags::endpoints::get_tags,
         openapi,
     ),
     components(
-        schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest, UpdateUserRequest, ProfileResponse),
+        schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest, UpdateUserRequest, ProfileResponse, TagsResponse),
     ),
     modifiers(&SecurityAddon),
     tags(
         (name = "User and Authentication", description = "User endpoints"),
         (name = "Profile", description = "Profile endpoints"),
+        (name = "Tags", description = "Tags endpoints"),
         (name = "api-docs", description = "Openapi endpoints")
     ),
 )]
