@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use responses::TagEntity;
+use responses::Tag;
 
 use crate::app::error::AppError;
 
@@ -12,9 +12,9 @@ pub trait TagsRepository {
     ///
     /// Возвращает тэги по имени.
     /// tags - вектор, сордержащий имена тэгов.
-    async fn get_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError>;
+    async fn get_tags(&self, tags: Vec<String>) -> Result<Vec<Tag>, AppError>;
 
     ///
     /// Создает новые тэги.
-    async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<TagEntity>, AppError>;
+    async fn create_tags(&self, tags: Vec<String>) -> Result<Vec<Tag>, AppError>;
 }
