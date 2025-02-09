@@ -1,6 +1,8 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+///
+/// Представляет сущность в БД.
 #[derive(Debug)]
 pub struct TagEntity {
     pub id: Uuid,
