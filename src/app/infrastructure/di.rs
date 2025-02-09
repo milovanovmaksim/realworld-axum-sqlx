@@ -4,6 +4,7 @@ use super::{
     jwt_token::{jwt_token::JwtAuthTokenImpl, settings::JwtTokenSettings},
     pgsql::{db::PostgreSQL, settings::DatabaseSettings, transaction::Transaction},
     profile::{repository::ProfileRepositoryImpl, usecase::ProfileUseCaseImpl},
+    tags::{repository::TagsRepositoryImpl, usecase::TagsUsacaseImpl},
     user::{repository::UsersRepositoryImpl, usecase::UserUseCaseImpl},
 };
 
@@ -17,6 +18,10 @@ pub struct DiContainer {
     // Profile
     pub profile_repository: Arc<ProfileRepositoryImpl>,
     pub profile_usecase: Arc<ProfileUseCaseImpl>,
+
+    // Tags
+    pub tags_repository: Arc<TagsRepositoryImpl>,
+    pub tags_usecase: Arc<TagsUsacaseImpl>,
 
     // Utility services
     pub jwt_auth_token: Arc<JwtAuthTokenImpl>,
@@ -52,11 +57,17 @@ impl DiContainer {
             profile_repository.clone(),
         ));
 
+        // Tags
+        let tags_repository = Arc::new(TagsRepositoryImpl::new(pg_sql.clone()));
+        let tags_usecase = Arc::new(TagsUsacaseImpl::new(tags_repository.clone()));
+
         Ok(Self {
             user_repository,
             user_usecase,
             profile_repository,
             profile_usecase,
+            tags_repository,
+            tags_usecase,
             jwt_auth_token,
         })
     }
