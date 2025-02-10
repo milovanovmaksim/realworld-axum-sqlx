@@ -1,9 +1,9 @@
 use async_trait::async_trait;
-use responses::Tag;
+use entities::Tag;
 
 use crate::app::error::AppError;
 
-pub mod responses;
+pub mod entities;
 
 ///
 /// TagsRepository интерфейс, определяющий набор методов для работы с БД.
