@@ -1,10 +1,8 @@
 use async_trait::async_trait;
-use requests::CreateArticleRequest;
-use entities::ArticleEntity;
+use entities::{ArticleEntity, CreateArticleRequest};
 
 use crate::app::error::AppError;
 
-pub mod requests;
 pub mod entities;
 
 ///
