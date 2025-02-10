@@ -1,7 +1,8 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-
+///
+/// Подписка пользователя.
 #[derive(Debug)]
 pub struct UserFollowEntity {
     pub id: Uuid,
