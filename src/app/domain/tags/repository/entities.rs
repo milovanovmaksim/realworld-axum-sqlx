@@ -3,7 +3,6 @@ use uuid::Uuid;
 
 ///
 /// Тэг статьи. Содержит информацию о тэге.
-/// Представляет отдельную запись в БД.
 #[derive(Debug)]
 pub struct TagEntity {
     pub id: Uuid,
