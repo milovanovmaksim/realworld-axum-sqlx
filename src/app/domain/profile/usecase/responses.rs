@@ -1,4 +1,4 @@
-use crate::app::domain::user::repository::entities::User;
+use crate::app::domain::user::repository::entities::UserEntity;
 
 ///
 /// Ответ, возвращаемый слоем бизнес-логики профиля.
@@ -11,8 +11,8 @@ pub struct ProfileResponse {
     pub following: bool,
 }
 
-impl From<(bool, User)> for ProfileResponse {
-    fn from((following, profile): (bool, User)) -> Self {
+impl From<(bool, UserEntity)> for ProfileResponse {
+    fn from((following, profile): (bool, UserEntity)) -> Self {
         ProfileResponse {
             username: profile.username,
             bio: profile.bio,
