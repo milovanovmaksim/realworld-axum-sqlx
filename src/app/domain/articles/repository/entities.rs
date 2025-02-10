@@ -5,7 +5,7 @@ use uuid::Uuid;
 ///
 /// Article содержит информацию о статье.
 /// Представляет отдельную запись в БД.
-pub struct Article {
+pub struct ArticleEntity {
     pub id: Uuid,
     pub title: String,
     pub body: String,
