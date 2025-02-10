@@ -1,4 +1,4 @@
-use crate::app::domain::user::repository::entities::UserEntity;
+use crate::app::domain::user::repository::responses::UserEntity;
 
 ///
 /// Ответ, возвращаемый слоем бизнес-логики профиля.

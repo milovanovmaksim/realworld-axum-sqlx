@@ -1,4 +1,4 @@
-use crate::app::domain::user::repository::entities;
+use crate::app::domain::user::repository::responses;
 
 type Token = String;
 
@@ -9,8 +9,8 @@ pub struct UserUsecaseResponse {
     pub user: User,
 }
 
-impl From<(entities::UserEntity, Token)> for UserUsecaseResponse {
-    fn from((user, token): (entities::UserEntity, String)) -> Self {
+impl From<(responses::UserEntity, Token)> for UserUsecaseResponse {
+    fn from((user, token): (responses::UserEntity, String)) -> Self {
         UserUsecaseResponse {
             user: User {
                 email: user.email,

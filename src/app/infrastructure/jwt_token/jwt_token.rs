@@ -1,5 +1,5 @@
 use crate::app::{
-    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::entities::UserEntity},
+    domain::{jwt_token::jwt_token::JwtAuthToken, user::repository::responses::UserEntity},
     error::AppError,
 };
 

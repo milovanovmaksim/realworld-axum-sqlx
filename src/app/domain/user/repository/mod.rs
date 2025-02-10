@@ -1,8 +1,8 @@
-pub mod entities;
+pub mod responses;
 pub mod requests;
 
 use async_trait::async_trait;
-use entities::UserEntity;
+use responses::UserEntity;
 use requests::{CreateUserRequest, UpdateUserRequest};
 use uuid::Uuid;
 

@@ -1,4 +1,4 @@
-use crate::app::{domain::user::repository::entities::UserEntity, error::AppError};
+use crate::app::{domain::user::repository::responses::UserEntity, error::AppError};
 
 ///
 /// JwtAuthToken - интерфейс для работы с JWT токеном.

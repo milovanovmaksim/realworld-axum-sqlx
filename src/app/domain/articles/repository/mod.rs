@@ -1,9 +1,11 @@
 use async_trait::async_trait;
-use entities::{ArticleEntity, CreateArticleRequest};
+use requests::CreateArticleRequest;
+use responses::ArticleEntity;
 
 use crate::app::error::AppError;
 
-pub mod entities;
+pub mod responses;
+pub mod requests;
 
 ///
 /// Интерфейс, определяющий набор методов для работы с БД.

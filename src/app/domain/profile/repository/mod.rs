@@ -1,7 +1,7 @@
-pub mod entities;
+pub mod responses;
 
 use async_trait::async_trait;
-use entities::UserFollowEntity;
+use responses::UserFollowEntity;
 use uuid::Uuid;
 
 use crate::app::error::AppError;

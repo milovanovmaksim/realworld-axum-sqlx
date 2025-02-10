@@ -4,7 +4,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use crate::app::{
-    domain::profile::repository::{entities::UserFollowEntity, ProfileRepository},
+    domain::profile::repository::{responses::UserFollowEntity, ProfileRepository},
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
 };
