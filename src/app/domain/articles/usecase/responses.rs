@@ -1,6 +1,9 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+
+///
+/// Содержит информацию о статье.
 pub struct ArticleResponse {
     pub id: Uuid,
     pub slug: String,
@@ -15,6 +18,9 @@ pub struct ArticleResponse {
     pub author: Author,
 }
 
+
+///
+/// Автор статьи.
 pub struct Author {
     pub username: String,
     pub bio: Option<String>,
