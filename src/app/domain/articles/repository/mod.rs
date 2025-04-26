@@ -1,11 +1,11 @@
 use async_trait::async_trait;
 use requests::CreateArticleRequest;
-use responses::ArticleEntity;
+use responses::Article;
 
 use crate::app::error::AppError;
 
-pub mod responses;
 pub mod requests;
+pub mod responses;
 
 ///
 /// Интерфейс, определяющий набор методов для работы с БД.
@@ -13,5 +13,5 @@ pub mod requests;
 pub trait ArticlesRepository {
     ///
     /// Добавляет новую статью в БД.
-    async fn create_article(&self, article: CreateArticleRequest) -> Result<ArticleEntity, AppError>;
+    async fn create_article(&self, article: CreateArticleRequest) -> Result<Article, AppError>;
 }
