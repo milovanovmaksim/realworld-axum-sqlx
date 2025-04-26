@@ -1,10 +1,9 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-
 ///
 /// Article содержит информацию о статье.
-pub struct ArticleEntity {
+pub struct Article {
     pub id: Uuid,
     pub title: String,
     pub body: String,
