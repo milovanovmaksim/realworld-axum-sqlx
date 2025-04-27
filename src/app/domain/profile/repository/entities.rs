@@ -4,7 +4,7 @@ use uuid::Uuid;
 ///
 /// Подписка пользователя.
 #[derive(Debug)]
-pub struct UserFollowEntity {
+pub struct UserFollow {
     pub id: Uuid,
     pub followee_id: Uuid,
     pub follower_id: Uuid,

@@ -1,17 +1,17 @@
-use crate::app::domain::user::repository::responses;
+use crate::app::domain::user::repository::entities;
 
 type Token = String;
 
 ///
 /// Ответ, возвращаемый слоем бизнес логики пользователя.
 /// Содержит информацию о пользователе.
-pub struct UserUsecaseResponse {
+pub struct UserUsecase {
     pub user: User,
 }
 
-impl From<(responses::UserEntity, Token)> for UserUsecaseResponse {
-    fn from((user, token): (responses::UserEntity, String)) -> Self {
-        UserUsecaseResponse {
+impl From<(entities::User, Token)> for UserUsecase {
+    fn from((user, token): (entities::User, String)) -> Self {
+        UserUsecase {
             user: User {
                 email: user.email,
                 username: user.username,

@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 ///
 /// Содержит информацию о статье.
-pub struct ArticleResponse {
+pub struct ArticleUsecase {
     pub id: Uuid,
     pub slug: String,
     pub title: String,

@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 ///
 /// Запрос на создание новой статьи.
-pub struct CreateArticleRequest {
+pub struct CreateArticleRepoRequest {
     pub user_id: Uuid,
     pub title: String,
     pub slug: String,

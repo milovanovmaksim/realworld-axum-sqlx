@@ -7,7 +7,7 @@ use crate::app::{
     domain::{
         profile::{
             repository::ProfileRepository,
-            usecase::{responses::ProfileResponse, ProfileUseCase},
+            usecase::{responses::ProfileUsecase, ProfileUseCase},
         },
         user::repository::UserRepository,
     },
@@ -45,7 +45,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         &self,
         user_id: Option<Uuid>,
         username: String,
-    ) -> Result<ProfileResponse, AppError> {
+    ) -> Result<ProfileUsecase, AppError> {
         match self
             .user_repository
             .get_user_by_username(username.clone())
@@ -60,9 +60,9 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                             .profile_repository
                             .is_follower(user_id, profile.id)
                             .await?;
-                        Ok(ProfileResponse::from((following, profile)))
+                        Ok(ProfileUsecase::from((following, profile)))
                     }
-                    None => Ok(ProfileResponse::from((false, profile))),
+                    None => Ok(ProfileUsecase::from((false, profile))),
                 }
             }
             None => {
@@ -83,7 +83,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         &self,
         current_user_id: Uuid,
         username: String,
-    ) -> Result<ProfileResponse, AppError> {
+    ) -> Result<ProfileUsecase, AppError> {
         match self
             .user_repository
             .get_user_by_username(username.clone())
@@ -99,7 +99,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                         .add_user_follow(current_user_id, followee.id)
                         .await?;
                 }
-                Ok(ProfileResponse::from((true, followee)))
+                Ok(ProfileUsecase::from((true, followee)))
             }
             None => Err(AppError::NotFound(format!(
                 "Profile to follow with username '{}' not found.",
@@ -116,7 +116,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
         &self,
         username: String,
         current_user_id: Uuid,
-    ) -> Result<ProfileResponse, AppError> {
+    ) -> Result<ProfileUsecase, AppError> {
         match self
             .user_repository
             .get_user_by_username(username.clone())
@@ -132,7 +132,7 @@ impl ProfileUseCase for ProfileUseCaseImpl {
                         .remove_user_follow(current_user_id, followee.id)
                         .await?;
                 }
-                Ok(ProfileResponse::from((false, followee)))
+                Ok(ProfileUsecase::from((false, followee)))
             }
             None => Err(AppError::NotFound(format!(
                 "Profile to unfollow with username '{}' not found.",

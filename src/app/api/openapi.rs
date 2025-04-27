@@ -8,7 +8,7 @@ use crate::app::api::{
     profile::responses::ProfileResponse,
     tags::responses::TagsResponse,
     user::{
-        requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest},
+        requests::{SigninUserApiRequest, SignupUserApiRequest, UpdateUserApiRequest},
         responses::AuthenticationUserResponse,
     },
 };
@@ -27,7 +27,7 @@ use crate::app::api::{
         openapi,
     ),
     components(
-        schemas(SignupUserRequest, AuthenticationUserResponse, SigninUserRequest, UpdateUserRequest, ProfileResponse, TagsResponse),
+        schemas(SignupUserApiRequest, AuthenticationUserResponse, SigninUserApiRequest, UpdateUserApiRequest, ProfileResponse, TagsResponse),
     ),
     modifiers(&SecurityAddon),
     tags(

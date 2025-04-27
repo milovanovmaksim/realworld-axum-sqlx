@@ -1,7 +1,7 @@
-use crate::app::api;
+use crate::app::api::user::requests::{SigninUserApiRequest, SignupUserApiRequest, UpdateUserApiRequest};
 
 /// Запрос на регистрвцию нового пользовталя.
-pub struct SignupUserRequest {
+pub struct SignupUserUsecaseRequest {
     pub username: String,
     pub email: String,
     pub naive_password: String,
@@ -9,14 +9,14 @@ pub struct SignupUserRequest {
 
 ///
 /// Запрос на авторизацию пользователя.
-pub struct SigninUserRequest {
+pub struct SigninUserUsecaseRequest {
     pub email: String,
     pub naive_password: String,
 }
 
 ///
 /// Запрос для обновления информации о пользователе.
-pub struct UpdateUserRequest {
+pub struct UpdateUserUsecaseRequest {
     pub email: Option<String>,
     pub username: Option<String>,
     pub password: Option<String>,
@@ -24,9 +24,9 @@ pub struct UpdateUserRequest {
     pub image: Option<String>,
 }
 
-impl From<api::user::requests::UpdateUserRequest> for UpdateUserRequest {
-    fn from(value: api::user::requests::UpdateUserRequest) -> Self {
-        UpdateUserRequest {
+impl From<UpdateUserApiRequest> for UpdateUserUsecaseRequest {
+    fn from(value: UpdateUserApiRequest) -> Self {
+        UpdateUserUsecaseRequest {
             email: value.user.email,
             username: value.user.username,
             password: value.user.password,
@@ -36,9 +36,9 @@ impl From<api::user::requests::UpdateUserRequest> for UpdateUserRequest {
     }
 }
 
-impl From<api::user::requests::SignupUserRequest> for SignupUserRequest {
-    fn from(value: api::user::requests::SignupUserRequest) -> Self {
-        SignupUserRequest {
+impl From<SignupUserApiRequest> for SignupUserUsecaseRequest {
+    fn from(value: SignupUserApiRequest) -> Self {
+        SignupUserUsecaseRequest {
             username: value.user.username.unwrap(),
             email: value.user.email.unwrap(),
             naive_password: value.user.password.unwrap(),
@@ -46,9 +46,9 @@ impl From<api::user::requests::SignupUserRequest> for SignupUserRequest {
     }
 }
 
-impl From<api::user::requests::SigninUserRequest> for SigninUserRequest {
-    fn from(value: api::user::requests::SigninUserRequest) -> Self {
-        SigninUserRequest {
+impl From<SigninUserApiRequest> for SigninUserUsecaseRequest {
+    fn from(value: SigninUserApiRequest) -> Self {
+        SigninUserUsecaseRequest {
             email: value.user.email.unwrap(),
             naive_password: value.user.password.unwrap(),
         }

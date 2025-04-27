@@ -1,7 +1,7 @@
 use serde::Serialize;
 use utoipa::ToSchema;
 
-use crate::app::domain;
+use crate::app::domain::profile::usecase::responses::ProfileUsecase;
 
 ///
 /// Ответ api сервера.
@@ -19,8 +19,8 @@ pub struct ProfileInner {
     pub following: bool,
 }
 
-impl From<domain::profile::usecase::responses::ProfileResponse> for ProfileResponse {
-    fn from(value: domain::profile::usecase::responses::ProfileResponse) -> Self {
+impl From<ProfileUsecase> for ProfileResponse {
+    fn from(value: ProfileUsecase) -> Self {
         ProfileResponse {
             profile: ProfileInner {
                 username: value.username,

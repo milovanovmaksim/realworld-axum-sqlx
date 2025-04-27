@@ -1,7 +1,7 @@
 use serde::Serialize;
 use utoipa::ToSchema;
 
-use crate::app::domain::user::usecase::responses::UserUsecaseResponse;
+use crate::app::domain::user::usecase::responses::UserUsecase;
 
 ///
 /// Ответ api сервера. Содержит информацию о пользователе.
@@ -10,8 +10,8 @@ pub struct AuthenticationUserResponse {
     user: User,
 }
 
-impl From<UserUsecaseResponse> for AuthenticationUserResponse {
-    fn from(value: UserUsecaseResponse) -> Self {
+impl From<UserUsecase> for AuthenticationUserResponse {
+    fn from(value: UserUsecase) -> Self {
         AuthenticationUserResponse {
             user: User {
                 email: value.user.email,

@@ -1,19 +1,19 @@
-use crate::app::domain::user::repository::responses::UserEntity;
+use crate::app::domain::user::repository::entities::User;
 
 ///
 /// Ответ, возвращаемый слоем бизнес-логики профиля.
 /// Содержит информацию о профиле.
 #[derive(Debug)]
-pub struct ProfileResponse {
+pub struct ProfileUsecase {
     pub username: String,
     pub bio: Option<String>,
     pub image: Option<String>,
     pub following: bool,
 }
 
-impl From<(bool, UserEntity)> for ProfileResponse {
-    fn from((following, profile): (bool, UserEntity)) -> Self {
-        ProfileResponse {
+impl From<(bool, User)> for ProfileUsecase {
+    fn from((following, profile): (bool, User)) -> Self {
+        ProfileUsecase {
             username: profile.username,
             bio: profile.bio,
             image: profile.image,

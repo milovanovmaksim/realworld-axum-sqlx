@@ -1,7 +1,7 @@
 use crate::app::{
     domain::user::{
         self,
-        repository::{responses, Email, UserRepository},
+        repository::{entities, Email, UserRepository},
     },
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
@@ -35,15 +35,15 @@ impl UserRepository for UsersRepositoryImpl {
     /// Создает нового пользователя.
     async fn create_user(
         &self,
-        request: user::repository::requests::CreateUserRequest,
-    ) -> Result<responses::UserEntity, AppError> {
+        request: user::repository::requests::CreateUserRepoRequest,
+    ) -> Result<entities::User, AppError> {
         info!(
             "Creating new user {:?}/{:?}",
             request.email, request.username
         );
 
         let user = query_file_as!(
-            responses::UserEntity,
+            entities::User,
             "./src/app/infrastructure/queries/users/insert.sql",
             request.username,
             request.email,
@@ -57,11 +57,11 @@ impl UserRepository for UsersRepositoryImpl {
     
     ///
     /// Возвращает пользователя по email.
-    async fn get_user_by_email(&self, email: Email) -> Result<Option<responses::UserEntity>, AppError> {
+    async fn get_user_by_email(&self, email: Email) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by email in db {:?}", email);
 
         let user = query_as!(
-            responses::UserEntity,
+            entities::User,
             r#"select * from users where email = $1"#,
             email,
         )
@@ -72,11 +72,11 @@ impl UserRepository for UsersRepositoryImpl {
 
     ///
     /// Возвращает пользователя по id.
-    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<responses::UserEntity>, AppError> {
+    async fn get_user_by_id(&self, user_id: Uuid) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by id in db {:?}", user_id);
 
         let user = query_as!(
-            responses::UserEntity,
+            entities::User,
             r#"select * from users where id = $1"#,
             user_id,
         )
@@ -90,11 +90,11 @@ impl UserRepository for UsersRepositoryImpl {
     async fn get_user_by_username(
         &self,
         username: String,
-    ) -> Result<Option<responses::UserEntity>, AppError> {
+    ) -> Result<Option<entities::User>, AppError> {
         info!("Searching for user by username in db {:?}", username);
 
         let user = query_as!(
-            responses::UserEntity,
+            entities::User,
             r#"select * from users where username = $1"#,
             username,
         )
@@ -107,12 +107,12 @@ impl UserRepository for UsersRepositoryImpl {
     /// Обновляет информацию о пользователе.
     async fn update_user(
         &self,
-        request: user::repository::requests::UpdateUserRequest,
-    ) -> Result<responses::UserEntity, AppError> {
+        request: user::repository::requests::UpdateUserRepoRequest,
+    ) -> Result<entities::User, AppError> {
         info!("Updating user");
 
         let user = query_file_as!(
-            responses::UserEntity,
+            entities::User,
             "./src/app/infrastructure/queries/users/update.sql",
             request.username,
             request.email,
