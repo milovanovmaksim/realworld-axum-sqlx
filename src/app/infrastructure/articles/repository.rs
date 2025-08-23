@@ -2,7 +2,7 @@ use async_trait::async_trait;
 
 use crate::app::{
     domain::articles::repository::{
-        requests::CreateArticleRepoRequest, entities::Article, ArticlesRepository,
+        entities::Article, requests::CreateArticleRepoRequest, ArticlesRepository,
     },
     error::AppError,
     infrastructure::pgsql::db::PostgreSQL,
