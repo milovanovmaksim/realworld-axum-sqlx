@@ -12,4 +12,6 @@ create table if not exists articles
         updated_at timestamptz default current_timestamp
         
         
-)
+);
+
+create index if not exists articles_slug_idx on articles (slug);
