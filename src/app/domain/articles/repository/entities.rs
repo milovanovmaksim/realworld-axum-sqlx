@@ -11,5 +11,5 @@ pub struct Article {
     pub slug: String,
     pub user_id: Uuid,
     pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub updated_at: Option<DateTime<Utc>>,
 }
