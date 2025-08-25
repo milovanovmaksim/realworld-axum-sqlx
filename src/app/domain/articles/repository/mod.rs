@@ -1,11 +1,13 @@
+use std::any::Any;
+
 use async_trait::async_trait;
-use requests::CreateArticleRepoRequest;
 use entities::Article;
+use requests::CreateArticleRepoRequest;
 
 use crate::app::error::AppError;
 
-pub mod requests;
 pub mod entities;
+pub mod requests;
 
 ///
 /// Интерфейс, определяющий набор методов для работы с БД.
@@ -13,5 +15,9 @@ pub mod entities;
 pub trait ArticlesRepository {
     ///
     /// Добавляет новую статью в БД.
-    async fn create_article(&self, article: CreateArticleRepoRequest) -> Result<Article, AppError>;
+    async fn create_article(
+        &self,
+        connection: Option<&mut (dyn Any + Send + Sync)>,
+        article: CreateArticleRepoRequest,
+    ) -> Result<Article, AppError>;
 }

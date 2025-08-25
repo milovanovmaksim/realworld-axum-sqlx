@@ -1,4 +1,8 @@
+use std::any::Any;
+
 use async_trait::async_trait;
+use sqlx::{query_file_as, PgConnection};
+use tracing::error;
 
 use crate::app::{
     domain::articles::repository::{
@@ -20,7 +24,30 @@ impl ArticlesRepositoryImpl {
 
 #[async_trait]
 impl ArticlesRepository for ArticlesRepositoryImpl {
-    async fn create_article(&self, article: CreateArticleRepoRequest) -> Result<Article, AppError> {
-        todo!()
+    async fn create_article(
+        &self,
+        pg_connection: Option<&mut (dyn Any + Send + Sync)>,
+        article: CreateArticleRepoRequest,
+    ) -> Result<Article, AppError> {
+        let query = query_file_as!(
+            Article,
+            "./src/app/infrastructure/queries/articles/insert.sql",
+            article.title,
+            article.body,
+            article.description,
+            article.slug,
+            article.user_id
+        );
+
+        if let Some(conn) = pg_connection {
+            if let Some(connection) = conn.downcast_mut::<PgConnection>() {
+                Ok(query.fetch_one(connection).await?)
+            } else {
+                error!("Error while downcasting to PgConnection type.");
+                Err(AppError::InternalServerError)
+            }
+        } else {
+            Ok(query.fetch_one(&self.pg_sql.pool()).await?)
+        }
     }
 }
