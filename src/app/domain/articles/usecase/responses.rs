@@ -1,10 +1,9 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-
 ///
 /// Содержит информацию о статье.
-pub struct ArticleUsecase {
+pub struct ArticleUsecaseResponse {
     pub id: Uuid,
     pub slug: String,
     pub title: String,
@@ -17,7 +16,6 @@ pub struct ArticleUsecase {
     pub favorites_count: i64,
     pub author: Author,
 }
-
 
 ///
 /// Автор статьи.
