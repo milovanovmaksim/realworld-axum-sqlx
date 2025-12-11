@@ -5,13 +5,13 @@ type Token = String;
 ///
 /// Ответ, возвращаемый слоем бизнес логики пользователя.
 /// Содержит информацию о пользователе.
-pub struct UserUsecase {
+pub struct UserUsecaseResponse {
     pub user: User,
 }
 
-impl From<(entities::User, Token)> for UserUsecase {
+impl From<(entities::User, Token)> for UserUsecaseResponse {
     fn from((user, token): (entities::User, String)) -> Self {
-        UserUsecase {
+        UserUsecaseResponse {
             user: User {
                 email: user.email,
                 username: user.username,

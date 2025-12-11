@@ -17,7 +17,7 @@ pub trait ArticlesRepository {
     /// Добавляет новую статью в БД.
     async fn create_article(
         &self,
-        connection: Option<&mut (dyn Any + Send + Sync)>,
+        ctx: Option<&mut (dyn Any + Send + Sync)>,
         article: CreateArticleRepoRequest,
     ) -> Result<Article, AppError>;
 }

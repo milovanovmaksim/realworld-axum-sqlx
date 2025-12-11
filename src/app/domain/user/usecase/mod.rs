@@ -3,7 +3,7 @@ pub mod responses;
 
 use async_trait::async_trait;
 use requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest, UpdateUserUsecaseRequest};
-use responses::UserUsecase;
+use responses::UserUsecaseResponse;
 use uuid::Uuid;
 
 use crate::app::error::AppError;
@@ -14,17 +14,17 @@ use crate::app::error::AppError;
 pub trait UserUseCase: Send + Sync + 'static {
     ///
     /// Регистрирует нового пользователя.
-    async fn signup(&self, request: SignupUserUsecaseRequest) -> Result<UserUsecase, AppError>;
+    async fn signup(&self, request: SignupUserUsecaseRequest) -> Result<UserUsecaseResponse, AppError>;
 
     ///
     /// Авторизация пользователя.
-    async fn login(&self, request: SigninUserUsecaseRequest) -> Result<UserUsecase, AppError>;
-    async fn get_current_user(&self, user_id: Uuid) -> Result<UserUsecase, AppError>;
+    async fn login(&self, request: SigninUserUsecaseRequest) -> Result<UserUsecaseResponse, AppError>;
+    async fn get_current_user(&self, user_id: Uuid) -> Result<UserUsecaseResponse, AppError>;
 
     ///
     /// Обновляет информацию о пользователе.
     async fn update_user(
         &self,
         request: (Uuid, UpdateUserUsecaseRequest),
-    ) -> Result<UserUsecase, AppError>;
+    ) -> Result<UserUsecaseResponse, AppError>;
 }

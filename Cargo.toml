@@ -69,7 +69,7 @@ utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 
 
 slug = "0.1.4"
-
+itertools = "0.10.2"
 # A library to generate and parse UUIDs.
 # Compatible version is here: https://github.com/diesel-rs/diesel/blob/master/diesel/Cargo.toml#L26
 # uuid = { version = "0.8", features = ["serde", "v4"] }

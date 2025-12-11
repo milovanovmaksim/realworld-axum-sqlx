@@ -26,7 +26,7 @@ impl ArticlesRepositoryImpl {
 impl ArticlesRepository for ArticlesRepositoryImpl {
     async fn create_article(
         &self,
-        pg_connection: Option<&mut (dyn Any + Send + Sync)>,
+        ctx: Option<&mut (dyn Any + Send + Sync)>,
         article: CreateArticleRepoRequest,
     ) -> Result<Article, AppError> {
         let query = query_file_as!(
@@ -39,7 +39,7 @@ impl ArticlesRepository for ArticlesRepositoryImpl {
             article.user_id
         );
 
-        if let Some(conn) = pg_connection {
+        if let Some(conn) = ctx {
             if let Some(connection) = conn.downcast_mut::<PgConnection>() {
                 Ok(query.fetch_one(connection).await?)
             } else {
