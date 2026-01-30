@@ -9,8 +9,8 @@ pub struct UserUsecaseResponse {
     pub user: User,
 }
 
-impl From<(entities::UserEntity, Token)> for UserUsecaseResponse {
-    fn from((user, token): (entities::UserEntity, String)) -> Self {
+impl From<(entities::User, Token)> for UserUsecaseResponse {
+    fn from((user, token): (entities::User, String)) -> Self {
         UserUsecaseResponse {
             user: User {
                 email: user.email,

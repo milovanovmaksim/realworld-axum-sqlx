@@ -6,7 +6,7 @@ use validator::Validate;
 ///
 /// Запрос на регистрацию нового пользователя.
 #[derive(Deserialize, Debug, Validate, ToSchema)]
-pub struct SignupUserRequest {
+pub struct SignupUserApiRequest {
     #[validate]
     pub user: SignupUser,
 }
@@ -45,7 +45,7 @@ pub struct SigninUser {
 }
 
 #[derive(Deserialize, Debug, Validate, ToSchema)]
-pub struct SigninUserRequest {
+pub struct SigninUserApiRequest {
     #[validate]
     pub user: SigninUser,
 }
@@ -54,7 +54,7 @@ pub struct SigninUserRequest {
 ///
 /// Запрос на обновление информации о текущем пользователе.
 #[derive(Deserialize, Debug, Validate, ToSchema)]
-pub struct UpdateUserRequest {
+pub struct UpdateUserApiRequest {
     #[validate]
     pub user: UpdateUser,
 }

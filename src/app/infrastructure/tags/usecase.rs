@@ -28,7 +28,7 @@ impl TagsUseCase for TagsUsacaseImpl {
             .get_tags(vec![])
             .await?
             .into_iter()
-            .map(|v| v.tag)
+            .map(|tag| tag.into())
             .collect())
     }
 }

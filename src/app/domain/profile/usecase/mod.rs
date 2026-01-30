@@ -2,7 +2,7 @@ pub mod responses;
 
 use crate::app::error::AppError;
 use async_trait::async_trait;
-use responses::ProfileResponse;
+use responses::ProfileUsecase;
 use uuid::Uuid;
 
 ///
@@ -17,7 +17,7 @@ pub trait ProfileUseCase: Sync + Send + 'static {
         &self,
         user_id: Option<Uuid>,
         username: String,
-    ) -> Result<ProfileResponse, AppError>;
+    ) -> Result<ProfileUsecase, AppError>;
 
     ///
     /// Делает текущего пользователя подписчиком.
@@ -27,7 +27,7 @@ pub trait ProfileUseCase: Sync + Send + 'static {
         &self,
         current_user_id: Uuid,
         username: String,
-    ) -> Result<ProfileResponse, AppError>;
+    ) -> Result<ProfileUsecase, AppError>;
 
     ///
     /// Отписывает текущего пользователя.
@@ -37,5 +37,5 @@ pub trait ProfileUseCase: Sync + Send + 'static {
         &self,
         username: String,
         current_user_id: Uuid,
-    ) -> Result<ProfileResponse, AppError>;
+    ) -> Result<ProfileUsecase, AppError>;
 }

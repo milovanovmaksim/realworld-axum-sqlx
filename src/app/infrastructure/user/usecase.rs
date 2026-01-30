@@ -6,7 +6,7 @@ use uuid::Uuid;
 use crate::app::{
     domain::{
         jwt_token::jwt_token::JwtAuthToken,
-        user::{self, repository::UserRepository, usecase::UserUseCase},
+        user::{repository::{UserRepository, requests::{CreateUserRepoRequest, UpdateUserRepoRequest}}, usecase::{UserUseCase, requests::{SigninUserUsecaseRequest, SignupUserUsecaseRequest, UpdateUserUsecaseRequest}, responses::UserUsecaseResponse}},
     },
     error::AppError,
     infrastructure::utils::hasher,
@@ -37,8 +37,8 @@ impl UserUseCase for UserUseCaseImpl {
     /// Авторизация пользователя.
     async fn login(
         &self,
-        request: user::usecase::requests::SigninUserRequest,
-    ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+        request: SigninUserUsecaseRequest,
+    ) -> Result<UserUsecaseResponse, AppError> {
         let user = self
             .user_repository
             .get_user_by_email(request.email.clone())
@@ -54,7 +54,7 @@ impl UserUseCase for UserUseCaseImpl {
                 if hasher::verify(&request.naive_password, &user.password)? {
                     info!("User login successful, generating token.");
                     let token = self.jwt_auth_token.generate_token(&user)?;
-                    Ok(user::usecase::responses::UserUsecaseResponse::from((
+                    Ok(UserUsecaseResponse::from((
                         user, token,
                     )))
                 } else {
@@ -80,8 +80,8 @@ impl UserUseCase for UserUseCaseImpl {
     /// Регистрация нового пользователя.
     async fn signup(
         &self,
-        request: user::usecase::requests::SignupUserRequest,
-    ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+        request: SignupUserUsecaseRequest,
+    ) -> Result<UserUsecaseResponse, AppError> {
         info!("Creating password hash for user {:?}", request.email);
         let hashed_password = hasher::hash_password(&request.naive_password)?;
 
@@ -91,7 +91,7 @@ impl UserUseCase for UserUseCaseImpl {
         );
         let user = self
             .user_repository
-            .create_user(user::repository::requests::CreateUserRequest {
+            .create_user(CreateUserRepoRequest {
                 username: request.username,
                 email: request.email,
                 hashed_password,
@@ -101,7 +101,7 @@ impl UserUseCase for UserUseCaseImpl {
         info!("User successfully created, generating token");
         let token = self.jwt_auth_token.generate_token(&user)?;
 
-        Ok(user::usecase::responses::UserUsecaseResponse::from((
+        Ok(UserUsecaseResponse::from((
             user, token,
         )))
     }
@@ -111,7 +111,7 @@ impl UserUseCase for UserUseCaseImpl {
     async fn get_current_user(
         &self,
         user_id: Uuid,
-    ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+    ) -> Result<UserUsecaseResponse, AppError> {
         info!("Retrieving user by id {:?}", user_id);
 
         // a token is passed and validly extracted, user with user_id exists.
@@ -123,7 +123,7 @@ impl UserUseCase for UserUseCaseImpl {
         );
         let token = self.jwt_auth_token.generate_token(&user)?;
 
-        Ok(user::usecase::responses::UserUsecaseResponse::from((
+        Ok(UserUsecaseResponse::from((
             user, token,
         )))
     }
@@ -132,12 +132,12 @@ impl UserUseCase for UserUseCaseImpl {
     /// Обновляет информацию о пользователе.
     async fn update_user(
         &self,
-        (user_id, request): (Uuid, user::usecase::requests::UpdateUserRequest),
-    ) -> Result<user::usecase::responses::UserUsecaseResponse, AppError> {
+        (user_id, request): (Uuid, UpdateUserUsecaseRequest),
+    ) -> Result<UserUsecaseResponse, AppError> {
         info!("Update user {:?}", user_id);
         let user = self
             .user_repository
-            .update_user(user::repository::requests::UpdateUserRequest::try_from((
+            .update_user(UpdateUserRepoRequest::try_from((
                 user_id, request,
             ))?)
             .await?;
@@ -145,7 +145,7 @@ impl UserUseCase for UserUseCaseImpl {
         info!("User {:?} updated, generating a new token", user_id);
         let token = self.jwt_auth_token.generate_token(&user)?;
 
-        Ok(user::usecase::responses::UserUsecaseResponse::from((
+        Ok(UserUsecaseResponse::from((
             user, token,
         )))
     }

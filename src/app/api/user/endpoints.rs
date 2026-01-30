@@ -7,7 +7,7 @@ use crate::app::{
     api::{extractors::{required_authentication::RequiredAuthentication, validation_extractor::ValidationExtractor}, response::ApiResponse}, domain::user::{self, usecase::UserUseCase}, error::AppError, infrastructure::user::usecase::UserUseCaseImpl
 };
 
-use super::{requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest}, responses::AuthenticationUserResponse};
+use super::{requests::{SigninUserApiRequest, SignupUserApiRequest, UpdateUserApiRequest}, responses::AuthenticationUserResponse};
 
 ///
 /// Регистрирует нового пользователя.
@@ -15,7 +15,7 @@ use super::{requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest},
 #[utoipa::path(post,
     path = "/api/v1/users",
     tag = "User and Authentication",
-    request_body(content = SignupUserRequest, content_type = "application/json"),
+    request_body(content = SignupUserApiRequest, content_type = "application/json"),
     description = "Register a new user",
     responses(
         (status = StatusCode::OK, description = "New user has been created", body = AuthenticationUserResponse,
@@ -38,11 +38,11 @@ use super::{requests::{SigninUserRequest, SignupUserRequest, UpdateUserRequest},
 )]
 pub async fn signup(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
-    ValidationExtractor(request): ValidationExtractor<SignupUserRequest>,
+    ValidationExtractor(request): ValidationExtractor<SignupUserApiRequest>,
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to create new user {:?}/{:?}", request.user.email, request.user.username);
 
-    let user = user_usecase.signup(user::usecase::requests::SignupUserRequest::from(request)).await?;
+    let user = user_usecase.signup(user::usecase::requests::SignupUserUsecaseRequest::from(request)).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }
 
@@ -54,7 +54,7 @@ pub async fn signup(
 #[utoipa::path(post,
     path = "/api/v1/users/login",
     tag = "User and Authentication",
-    request_body(content = SigninUserRequest, content_type = "application/json"),
+    request_body(content = SigninUserApiRequest, content_type = "application/json"),
     description = "Login for existing user",
     responses(
         (status = StatusCode::OK, description = "User has been logged", body = AuthenticationUserResponse, content_type = "application/json"),
@@ -80,11 +80,11 @@ pub async fn signup(
 )]
 pub async fn login(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
-    ValidationExtractor(request): ValidationExtractor<SigninUserRequest>,
+    ValidationExtractor(request): ValidationExtractor<SigninUserApiRequest>,
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to login a user {:?}", request.user.email);
 
-    let user = user_usecase.login(user::usecase::requests::SigninUserRequest::from(request)).await?;
+    let user = user_usecase.login(user::usecase::requests::SigninUserUsecaseRequest::from(request)).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }
 
@@ -127,7 +127,7 @@ pub async fn get_current_user(
 #[utoipa::path(put,
     path = "/api/v1/user",
     tag = "User and Authentication",
-    request_body(content = UpdateUserRequest, content_type = "application/json"),
+    request_body(content = UpdateUserApiRequest, content_type = "application/json"),
     description = "Update current user",
     responses(
         (status = StatusCode::OK, description = "Current user", body = AuthenticationUserResponse, content_type = "application/json"),
@@ -148,10 +148,10 @@ pub async fn get_current_user(
 pub async fn update_user(
     Extension(user_usecase): Extension<Arc<UserUseCaseImpl>>,
     RequiredAuthentication(user_id): RequiredAuthentication,
-    ValidationExtractor(request): ValidationExtractor<UpdateUserRequest>,
+    ValidationExtractor(request): ValidationExtractor<UpdateUserApiRequest>,
 ) -> ApiResponse<Json<AuthenticationUserResponse>> {
     info!("Recieved request to update current user");
 
-    let user = user_usecase.update_user((user_id, user::usecase::requests::UpdateUserRequest::from(request))).await?;
+    let user = user_usecase.update_user((user_id, user::usecase::requests::UpdateUserUsecaseRequest::from(request))).await?;
     Ok(Json(AuthenticationUserResponse::from(user)))
 }
